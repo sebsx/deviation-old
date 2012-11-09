@@ -1,0 +1,423 @@
+Français
+:# Channels:
+# Voies:
+:%s is %d%%, safe value = %d%%\n
+%s = %d%%,valeur sécu. = %d%%\n
+:%s is %d%%,\nsafe value = %d%%
+%s = %d%%,\nvaleur sécu. = %d%%\n
+>:+
+>:-
+:1-to-1
+1 vers 1
+:11 Point
+11 points
+:13 Point
+13 points
+:3 Point
+3 points
+:4 Bars
+4 Barres
+:4 Inside
+4 Intérieurs
+:4 Outside
+4 Extérieurs
+:4Ch w/ Dual-Rates
+4ch et Double deb.
+:5 Point
+5 points
+:6 Trims
+6 Trims
+:6Ch Airplane
+6ch Avion
+:6Ch Helicopter
+6ch Hélicoptère
+:7 Point
+7 points
+:8 Bars
+8 Barres
+:9 Point
+9 points
+:< 0
+< 0
+:> 0
+> 0
+:ABSVAL
+ValAbs
+:AIL
+AIL
+:AIL DR
+AIL DR
+:AIL Inv:
+:Sens aileron
+:AUX4
+AUX4
+:AUX5
+AUX5
+:Airplane
+Avion
+>:Alarm
+>:Altitude
+:Backlight:
+Rétroéclairage:
+:Bar %d:
+Barre %d:
+:Bars:
+Barres:
+>:Basic Config
+:Battery Alarm:
+Alarme batterie:
+>:Battery too low,\ncan't save!
+:Bind
+Appairage
+:Binding
+Appairage
+:Binding is in progress...\nMake sure model is on!\n\nPressing OK will NOT cancel binding procedure\nbut will allow full control of Tx.
+Appairage en cours...\nAssurez vous que le récepteur fonctionne\n\nAppuyer sur OK n'annulera pas la procédure \nmais permettra le contrôle du TX.
+>:Binding... %d seconds\nPress ENT to stop
+:Box %d:
+Box%d:
+:Buttons
+Boutons
+:COL
+pas
+:COL Inv:
+:Sens du pas
+:CYC
+CYC
+:Calibrate
+Calibration
+:Cancel
+Annuler
+>:Celcius
+>:Center all sticks\nthen press ENT
+:Ch
+Ch
+:Change
+Changer
+:Channels
+Voies
+:Complex
+Complexe
+:Configure
+Configurer
+>:Contrast:
+>:Copy To
+:Copy To...
+Copier...
+>:Critical battery level detected.\nSettings have been saved.\nAny future configuration settings\nwill NOT be saved.\n\nChange batteries now!
+:Curve:
+Courbe:
+:Cyclic1
+Cyclique1
+:Cyclic2
+Cyclique2
+:Cyclic3
+Cyclique3
+:DR
+DR
+>:Deadband
+:Default
+Défaut
+:Deviation FW\nversion:
+Deviation FW\nversion:
+>:Dn
+:Down
+Bas
+:ELE
+ELE
+:ELE DR
+ELE DR
+:ELE Inv:
+:Sens profondeur
+:EXPO
+EXP.
+:Enter
+Entrée
+:Exit
+Sortie
+:Expo&DR
+Expo&DR 
+:FMODE0
+FMODE0
+:FMODE1
+FMODE1
+:FMODE2
+FMODE2
+>:Fahrenheit
+:Failsafe:
+Failsafe:
+>:Feet
+:File:
+Fichier:
+:Fixed
+Fixe
+:Fixed ID:
+ID fixe:
+:GEAR
+GEAR
+:Helicopter
+Helicoptère
+:High-Rate
+Déb. Haut
+:Icon
+Icône
+:Input:
+Entrée:
+:Inputs
+Entrées
+>:Insert
+:Inverted
+Inversé
+:LEFT_H
+GAUCHE_H
+:LEFT_V
+GAUCHE_V
+:Language:
+Langue:
+>:Latitude
+:Left
+Gauche
+:Linked
+Lié
+:Load
+Charger
+:Load...
+Charger...
+>:Longitude
+>:Low Battery
+:Low-Rate
+Déb. bas
+:MIX0
+MIX0
+:MIX1
+MIX1
+:MIX2
+MIX2
+>:Main Menu
+:Main Page Config
+Config. de la page principale
+:Max:
+Max:
+>:Meters
+:Mid-Rate
+Déb. Med
+:Min/Max
+Min/Max
+:Min:
+Min:
+:Mixer
+Mixer
+>:Mixer Mode
+:Mixers:
+Mixers:
+:Mode %d
+Mode %d
+:Model
+Modèle
+>:Model Config
+:Model Name:
+Nom de modèle:
+:Model Type:
+Type de modèle:
+>:Monitor
+>:Move Down
+>:Move Up
+>:Move sticks\nto max & min\nthen press ENT
+:Mux:
+Opération:
+:Neg
+Neg.
+>:New
+:No Bars
+Désactivé
+:No Trim
+Pas de Trim
+:No Trims
+Pas de Trim
+:None
+Néant
+:Normal
+Normal
+:OK
+OK
+:Off
+Off
+:Offset:
+Offset:
+>:Ok
+:On
+On
+:Page:
+Page:
+:Point:
+Point:
+:Pos
+Pos.
+:Pos/Neg:
+Pos./Neg.:
+:Press 'Ent' to turn USB Filesystem:
+Presser 'Ent' pour passer en mode USB
+>:Press ENT to change:
+>:Press ENT to copy to:
+>:Press ENT to load:
+>:Press ENT to start\ncalibration\nPress EXT to exit
+>:Press ENT to turn \nUSB drive: 
+>:Procotol:
+>:Protocol&Binding
+:Protocol:
+Protocole:
+:RIGHT_H
+DROITE_H
+:RIGHT_V
+DROITE_V
+>:RPM
+:RUD
+RUD
+:RUD DR
+RUD DR
+:Re-Init
+Réinitialiser
+>:Remove
+:Reset
+Reset
+:Reverse:
+Sens:
+:Reversed
+Inversé
+>:Revert
+:Right
+Droite
+:Safe Val:
+Val. Sécu
+:Safety
+Sécurité
+:Safety:
+Sécurité:
+:Save
+Sauve
+:Scale:
+Echelle:
+:Scanner
+Scanner
+:Simple
+Simple
+:Simple 4 Channel
+4Ch. Simple
+>:Speed
+:Src
+Source
+:Src:
+Source:
+:Start:
+Start:
+>:Step:
+:Stick Mode:
+Mode de pilotage:
+:Sticks:
+Manches:
+:Subtrim:
+Subtrim
+:SwashType:
+Plateau cyclique:
+:Switch1
+Inter1
+:Switch2
+Inter2
+:Switch:
+Commande:
+:Symmetric
+Symétrique
+:THR
+THR
+:TRIMLH+
+TRIMGH+
+:TRIMLH-
+TRIMGH-
+:TRIMLV+
+TRIMGV+
+:TRIMLV-
+TRIMGV-
+:TRIMRH+
+TRIMDH+
+:TRIMRH-
+TRIMDH-
+:TRIMRV+
+TRIMDV+
+:TRIMRV-
+TRIMDV-
+:TRIM_L+
+TRIM_G+
+:TRIM_L-
+TRIM_G-
+:TRIM_R+
+TRIM_D+
+:TRIM_R-
+TRIM_D-
+>:TelemRPM
+>:TelemT
+>:TelemV
+>:Telemetry
+>:Temp
+:Template..
+Modèle...
+:Test
+Test
+>:Time
+:Timer
+Timer
+:Toggle%d
+Voyant%d
+:Touch Calibrate
+Calibration du tactile
+:Touch Screen:
+Ecran tactile:
+:Touch Test
+Test du tactile
+:Touch target %d
+Toucher la cible %d 
+:Touch to Lock
+Toucher pour verrouiller
+:Touch to Unlock
+Toucher pour déverrouiller
+:Trim
+Trim
+:Trim +:
+Trim +:
+:Trim -:
+Trim -:
+:Trim Step:
+Finesse:
+:Trims:
+Trim:
+:Turn Off
+Désactiver
+:Turn On
+Activer
+>:Tx Config
+:Tx Power:
+Puissance TX:
+:USB
+USB
+:Unknown
+Inconnu
+:Up
+Haut
+:Value:
+Valeur:
+:Virt
+Virt
+>:Volt
+:Zero/Max
+0/Max
+:\n\nBinding will end in %d seconds...
+\n\nFin d'appairage dans %d secondes...
+:add
+Ajouter
+:countdown
+Décompte
+:mult
+Mult.
+:replace
+Remplacer
+:stopwatch
+Chronomètre
