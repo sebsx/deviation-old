@@ -1,0 +1,566 @@
+﻿Magyar 
+:# Channels:
+Csatornák:
+:%s is %d%%, safe value = %d%%\n
+%s = %d%%, a biztonságos érték = %d%%\n
+:%s is %d%%,\nsafe value = %d%%
+%s = %d%%,\na biztonságos érték = %d%%\n
+:1-to-1
+1 az 1
+:11 Point
+11 pont
+:13 Point
+13 pont
+:3 Point
+3 pont
+:4 Bars
+4 oszlop
+:4 Inside
+4 belül
+:4 Outside
+4 kívül
+:4Ch w/ Dual-Rates
+4 csat. + DR
+:5 Point
+5 pont
+:5+1
+5+1
+:6 Trims
+6 trim
+:6+1
+6+1
+:6Ch Airplane
+6 csat. repülőgép
+:6Ch Helicopter
+6 csat. helikopter
+:7 Point
+7 pont
+:8 Bars
+8 oszlop
+:9 Point
+9 pont
+:ABSVAL
+ABSZ.É.
+:AIL
+AIL
+:AIL DR
+AIL DR
+:AIL Inv:
+Csűrés inv.:
+:AIL Mix:
+Csűrés mix:
+:AUX4
+AUX4
+:AUX5
+AUX5
+:About Deviation
+Deviation névjegye
+:Airplane
+Repülőgép
+:Alarm
+Riasztás 
+:Altitude
+Magasság
+:Backlight:
+Fényerő:
+:Bar %d:
+Oszlop%d:
+:Bars:
+Oszlop:
+:Batt alarm:
+Fesz. riaszt.:
+:Battery alarm:
+Fesz. riasztás:
+:Battery too low,\ncan't save!
+Tápfesz. túl alacsony,\nnem tudok menteni!
+:Bind
+Csatol
+:Binding
+Kapcsolódás a modellhez
+:Binding is in progress...\nMake sure model is on!\n\nPressing OK will NOT cancel binding procedure\nbut will allow full control of Tx.
+Kapcsolódás folyamatban...\nGyőződjön meg róla, hogy a modell be van kapcsolva!\n\nAz OK gomb NEM szakítja meg a kapcsolódást,\ncsak lehetővé teszi a rádió használatát.
+:Binding...\n%d seconds\nPress ENT to stop
+Kapcsolódás...\n%d másodperc\nNyomjon ENT-t a leállításához
+:Box %d:
+Doboz%d:
+:Button monitor
+Nyomógomb ellenőrzés
+:Buzz volume:
+Hangerő:
+:COL
+Kollektív
+:COL Inv
+Koll. inv.:
+:COL Inv:
+Kollektív inv.:
+|devo10:COL Inv:
+Koll. inv.:
+:COL Limit
+Koll. limit
+:COL Mix:
+Kollektív mix:
+|devo10:COL Mix:
+Koll. mix:
+:CYC
+CYC
+:Calibrate
+Kalibrálás
+:Calibration done.
+Kalibrálás kész.
+:Cancel
+Mégsem
+:Celsius
+°C
+:Center PW
+Közép imp. hossz
+:Center all \nsticks and knobs\nthen press ENT
+Állítsa középre a \nbotkormányokat és potikat\nés nyomjon ENT-t
+:Ch
+Cs
+:Chan mode
+Csat. mód
+:Change
+Váltás
+:Channel monitor
+Csatornák
+:Channel output
+Csatornák
+:Complex
+Komplex
+:Configure
+Konfigurálás
+:Contrast:
+Kontraszt:
+:Copy To
+Másolás
+:Copy To...
+Másolás...
+:Critical battery level detected.\nSettings have been saved.\nAny future configuration settings\nwill NOT be saved.\n\nChange batteries now!
+A telepfeszültség kritikusan alacsony!\nA beállítások el lettek mentve,\nde a további változtatások\nNEM lesznek elmentve!\n\nCseréljen elemet!
+:Curve:
+Görbe:
+:Cyclic1
+Ciklikus1
+:Cyclic2
+Ciklikus2
+:Cyclic3
+Ciklikus3
+:DR
+DR
+:Deadband
+Holtsáv
+:Default
+Default
+:Delta PW
+Impulzus eltérés
+:Deviation FW version:
+Deviation verzió:
+:Dimmer target:
+Alvó fényerő:
+:Dimmer time:
+Alvó mód ideje:
+:Dn
+Le
+:Down
+Le
+:ELE
+ELE
+:ELE DR
+ELE DR
+:ELE Inv:
+Magassági inv.:
+|devo10:ELE Inv:
+Magas. inv.:
+:ELE Mix:
+Magassági mix:
+|devo10:ELE Mix:
+Magas. mix:
+:EXPO
+EXP.
+:Enter
+Enter
+:Exit
+Exit
+:Expo&DR
+Expó+DR
+:FMODE0
+FMODE0
+:FMODE1
+FMODE1
+:FMODE2
+FMODE2
+:Fahren
+°F
+:Failsafe:
+Hibaérték:
+:File:
+Fájl:
+:Fixed
+Fix
+:Fixed ID:
+Fix ID:
+:Foot
+Láb
+>:Frame Size
+:GEAR
+GEAR
+:GPS
+GPS
+:Generic settings
+Általános beállítások
+:Heli
+Heli
+:Helicopter
+Helikopter
+:High-Rate
+Magas
+:Icon
+Ikon
+:Icon:
+Ikon:
+:Input monitor
+Bemenetek
+:Input:
+Bemenet:
+:Insert
+Beszúrás
+:Inverted
+Inverz
+:LCD settings
+LCD beállítások
+:LEFT_H
+BAL_V
+:LEFT_V
+BAL_F
+:Language:
+Nyelv:
+:Latitude
+Szélesség
+:Left
+Bal
+:Length:
+Hossz:
+:Linked
+Csatolt
+:Load
+Betöltés
+:Load...
+Betöltés...
+:Longitude
+Hosszúság
+:Low Battery
+Telep üres
+:Low-Rate
+Alacsony
+:MIX0
+MIX0
+:MIX1
+MIX1
+:MIX2
+MIX2
+:Main menu
+Főmenü
+:Main page
+Főablak
+:Main page config
+Főablak konfig.
+>:Max Limit:
+<:Max:
+<Max:
+:Menu
+Menü
+:Meter
+Méter
+:Mid-Rate
+Közepes
+>:Min Limit:
+:Min/Max
+Min/Max
+<:Min:
+<Min:
+:Mixer
+Mixer
+:Mixers:
+Mixerek:
+:Mode %d
+Mód %d
+:Model menu
+Modell menü
+:Model name:
+Modell név:
+:Model setup
+Modell konfig.
+:Model type:
+Modell típus:
+:Move Down
+Lejjebb
+:Move Up
+Feljebb
+:Move sticks and knobs\nto Max & Min positions\nthen press ENT
+Mozgassa a botokat és potikat\nmin-tól max-ig\nés nyomjon ENT-t
+:Mux:
+Művelet:
+:Neg
+Neg.
+:New
+Új
+:No Bars
+Nincs
+:No Trim
+Nincs Trim
+:No Trims
+Nincs
+:None
+Nincs
+:Normal
+Normál
+:Notch PW
+Szünet hossz
+:Off
+Ki
+:Offset:
+Eltolás:
+:Ok
+Ok
+:On
+Be
+:Page:
+Oldal:
+:Plane
+Repülő
+:Point:
+Pont:
+:Pos
+Poz.
+:Pos/Neg:
+Poz/Neg:
+:Prealert intvl:
+Előjelz. interv.:
+:Prealert time:
+Előjelz. idő:
+:Press 'Ent' to turn USB Filesystem:
+\nNyomjon 'ENT'-t, hogy az USB: 
+:Press ENT to change:
+Változtatáshoz ENT:
+:Press ENT to copy to:
+Másolás ENT:
+:Press ENT to load:
+Betöltés ENT:
+:Press ENT to turn \nUSB drive:
+Nyomjon ENT-t \naz USB: 
+:Preview: Long-Press ENT
+Előnézet: hosszú ENT
+:Protocol:
+Protokoll:
+:RIGHT_H
+JOBB_V
+:RIGHT_V
+JOBB_F
+:RPM
+Ford.
+:RPM:
+Ford.:
+:RUD
+RUD
+:RUD DR
+RUD DR
+:Re-Init
+Csatol
+:Remove
+Törlés
+:Reset
+Törlés
+:Reverse:
+Invertálás:
+:Reversed
+Inverz
+:Revert
+Mégsem
+:Right
+Jobb
+:Safe Val:
+Bizt. érték:
+:Safety
+Biztonsági ellenőrzés
+:Safety:
+Biztonság:
+:Save
+Mentés
+:Scale%s:
+Skála%s:
+:Scanner
+Szkenner
+:Simple
+Egyszerű
+:Simple 4 Channel
+Egyszerű 4 csat.
+:Speed
+Sebesség
+:Speed:
+Sebesség:
+:Src
+Forrás
+:Src:
+Forrás:
+:Start:
+Start:
+:Step:
+Lépés
+:Stick input
+Bemenetek
+:Stick mode:
+Mód:
+:Sticks:
+Botkormány:
+:Subtrim:
+Subtrim:
+:SwashType:
+Imbolygó típusa:
+|devo10:SwashType:
+Imbolygó:
+:Switch %d:
+Kapcs.%d:
+:Switch1
+Kapcs.1
+:Switch2
+Kapcs.2
+:Switch:
+Kapcsoló:
+:Symmetric
+Szimmetr.
+:THR
+THR
+:TRIMLH+
+TRIM_BV+
+:TRIMLH-
+TRIM_BV-
+:TRIMLV+
+TRIM_BF+
+:TRIMLV-
+TRIM_BF-
+:TRIMRH+
+TRIM_JV+
+:TRIMRH-
+TRIM_JV-
+:TRIMRV+
+TRIM_JF+
+:TRIMRV-
+TRIM_JF-
+:TRIM_L+
+TRIM_B+
+:TRIM_L-
+TRIM_B-
+:TRIM_R+
+TRIM_J+
+:TRIM_R-
+TRIM_J-
+:TelemRPM
+TelemFord
+:TelemT
+TelemHőm
+:TelemV
+TelemFesz
+:Telemetry
+Telemetria
+:Telemetry config
+Telemetria konfig.
+:Telemetry monitor
+Telemetria adatok
+:Telemetry settings
+Telemetria beállítások
+:Temp
+Hőm.
+:Temp:
+Hőm.:
+:Temperature:
+Hőmérséklet:
+:Template..
+Sablon...
+:Test
+Teszt
+:Time
+Idő
+:Timer
+Időzítő
+:Timer settings
+Időzítő beállítások
+:Timer%d:
+Időzítő%1:
+:Timers
+Időzítők
+:Timeup intvl:
+Ismétlés interv.:
+:Toggle%d
+Jelzés%d
+:Touch Calibrate
+Érintés kalibrálás
+:Touch Test
+Érintés teszt
+:Touch screen:
+Képernyő:
+:Touch target %d
+Érintse meg a(z) %d pontot!
+:Touch to Lock
+Érintse meg a zároláshoz  
+:Touch to Unlock
+Érintse meg a feloldáshoz
+:Transmitter config
+Távirányító konfig.
+:Transmitter menu
+Távirányító menü
+:Trim
+Trim
+:Trim +:
+Trim +:
+:Trim -:
+Trim -:
+:Trim Step:
+Trim lépés:
+:Trims
+Trim-ek
+:Trims:
+Trim-ek:
+:Turn Off
+Kikapcsol
+:Turn On
+Bekapcsol
+:Tx power:
+Kimenő telj.:
+:USB
+USB
+:Unknown
+Ismeretlen
+:Up
+Fel
+:Value:
+Érték:
+:Vibration:
+Rezgés:
+:Virt
+Virt.
+:Volt
+Fesz.
+:Volt:
+Fesz.:
+:Zero/Max
+Nulla/Max
+:\n\nBinding will end in %d seconds...
+\n\nKapcsolódás vége %d másodperc múlva...
+:add
+hozzáad
+:countdown
+Időzítő
+:is not supported
+nem támogatott
+:is turned off
+ki van kapcsolva
+:max
+max
+:min
+min
+:mult
+szoroz
+:replace
+cserél
+:stopwatch
+Stopper
