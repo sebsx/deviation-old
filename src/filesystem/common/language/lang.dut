@@ -1,0 +1,520 @@
+﻿Nederlands
+:# Channels:
+# Kanelen:
+:%s is %d%%, safe value = %d%%\n
+%s is %d%%, veilige waarde = %d%%\n
+:%s is %d%%,\nsafe value = %d%%
+%s is %d%%,\nveilige waarde = %d%%\n
+:1-to-1
+1-op-1
+:11 Point
+11 punten
+:13 Point
+13 punten
+:3 Point
+3 punten
+:4 Bars
+4 balken
+:4 Inside
+4 binnen
+:4 Outside
+4 buiten
+:4Ch w/ Dual-Rates
+4-kan. met Dual-Rates
+:5 Point
+5 punten
+>:5+1
+:6 Trims
+6 trims
+>:6+1
+:6Ch Airplane
+6-kan. vliegtuig
+:6Ch Helicopter
+6-kan. helikopter
+:7 Point
+7 punten
+:8 Bars
+8 balken
+:9 Point
+9 punten
+:ABSVAL
+absolute waarde
+:AIL
+AIL
+:AIL DR
+AIL DR
+:AIL Inv:
+AIL omg:
+>:AIL Mix:
+>:AUX2
+>:AUX3
+:AUX4
+AUX4
+:AUX5
+AUX5
+>:AUX6
+>:AUX7
+>:About Deviation
+>:Advanced
+:Airplane
+Vliegtuig
+>:Alarm
+>:Alarm intvl:
+>:Altitude
+>:Auto
+>:Aux2
+:Backlight:
+Helderheid:
+>:Bad/missing\nprotocol modules!
+:Bar %d:
+Balk %d:
+:Bars:
+Balken:
+>:Batt alarm:
+:Battery alarm:
+Batterijalarm:
+>:Battery too low,\ncan't save!
+:Bind
+Koppelen
+:Binding
+Bezig met koppelen
+:Binding is in progress...\nMake sure model is on!\n\nPressing OK will NOT cancel binding procedure\nbut will allow full control of Tx.
+Bezig met koppelen...\nZorg dat model aan staat!\n\nSelecteer OK voor volledige controle over zender.\nKoppelingsprocedure wordt niet afgebroken.
+>:Binding...\n%d seconds\nPress ENT to stop
+:Box %d:
+Kader %d:
+>:Button monitor
+>:Buzz settings
+>:Buzz volume:
+>:Buzzer settings
+:COL
+COL
+>:COL Inv
+:COL Inv:
+COL omg:
+>:COL Limit
+>:COL Mix:
+:CYC
+CYC
+:Calibrate
+Kalibreren
+>:Calibration done.
+:Cancel
+Annuleren
+>:Celsius
+>:Center PW
+>:Center all \nsticks and knobs\nthen press ENT
+:Ch
+Kan
+>:Chan mode
+:Change
+Aanpassen
+>:Channel
+>:Channel monitor
+>:Channel output
+:Complex
+Complex
+:Configure
+Configureren
+>:Contrast:
+>:Copy To
+:Copy To...
+Kopieer...
+>:Critical battery level detected.\nSettings have been saved.\nAny future configuration settings\nwill NOT be saved.\n\nChange batteries now!
+:Curve:
+Curve:
+:Cyclic1
+Cyclic1
+:Cyclic2
+Cyclic2
+:Cyclic3
+Cyclic3
+>:D/R & Exp
+>:D/R&Exp -AIL
+>:D/R&Exp -ELE
+>:D/R&Exp -RUD
+:DR
+DR
+>:Deadband
+:Default
+Standaard
+>:Delta PW
+:Deviation FW version:
+Deviation FW Versie:
+>:Dimmer target:
+>:Dimmer time:
+>:Dn
+:Down
+Omlaag
+:ELE
+ELE
+:ELE DR
+ELE DR
+:ELE Inv:
+ELE inv:
+>:ELE Mix:
+:EXPO
+Expo
+:Enter
+Toepassen
+:Exit
+Stoppen
+:Expo&DR
+Expo&DR
+>:FMODE
+<:FMODE0
+<FMODE0
+<:FMODE1
+<FMODE1
+<:FMODE2
+<FMODE2
+>:Fahren
+>:Fail safe
+>:Failsafe
+:Failsafe:
+Veilige modus:
+:File:
+Bestand:
+:Fixed
+Vast
+:Fixed ID:
+Vast ID:
+>:Fly mode
+>:Foot
+>:Frame Size
+:GEAR
+GEA
+>:GPS
+>:Gear
+>:Generic settings
+>:Gyro sense
+>:H
+>:HOLD
+>:Heli
+>:Heli/Standard GUI
+:Helicopter
+Helikopter
+:High-Rate
+Hoog
+>:Hold position
+:Icon
+Icoon
+>:Icon:
+>:Idle 1
+>:Idle 2
+>:Input monitor
+:Input:
+Invoer:
+>:Insert
+:Inverted
+Omgekeerd
+>:L
+>:LCD settings
+:LEFT_H
+LINKS_H
+:LEFT_V
+LINKS_V
+>:LIN
+:Language:
+Taal:
+>:Latitude
+:Left
+Links
+>:Length:
+:Linked
+Verbonden
+:Load
+Laad
+:Load...
+Laad...
+>:Locked
+>:Longitude
+>:Low Battery
+:Low-Rate
+Laag
+>:M
+>:MIX
+<:MIX0
+<MIX0
+<:MIX1
+<MIX1
+<:MIX2
+<MIX2
+>:Main menu
+>:Main page
+:Main page config
+Configuratie hoofdscherm
+>:Max Limit:
+>:Menu
+>:Meter
+:Mid-Rate
+Middel
+>:Min Limit:
+:Min/Max
+Min/Max
+:Mixer
+Mixer
+>:Mixer GUI:
+:Mixers:
+Mixers:
+>:Mode
+:Mode %d
+Mode %d
+>:Model menu
+:Model name:
+Modelnaam:
+>:Model needs reset\nfor standard mixer
+>:Model needs to be reset\nin order to switch to the standard mixer
+>:Model setup
+:Model type:
+Modeltype:
+>:Move Down
+>:Move Up
+>:Move sticks and knobs\nto Max & Min positions\nthen press ENT
+:Mux:
+Mux:
+:Neg
+-
+>:New
+:No Bars
+Geen balken
+:No Trim
+Geen trim
+:No Trims
+Geen trims
+:None
+Geen
+:Normal
+Normaal
+>:Notch PW
+:Off
+Uit
+:Offset:
+Offset:
+:Ok
+Ok
+:On
+Aan
+>:PIT
+:Page:
+Pagina:
+>:Pit Mix:
+>:Pitch curves
+>:Plane
+:Point:
+Punt:
+:Pos
++
+>:Pos 0:
+>:Pos 1:
+>:Pos 2:
+:Pos/Neg:
++/-:
+>:Position %d
+>:PowerOff alert
+>:Prealert intvl:
+>:Prealert time:
+:Press 'Ent' to turn USB Filesystem:
+Druk op 'ENT' om USB-bestandssysteem te activeren
+>:Press ENT to change:
+>:Press ENT to copy to:
+>:Press ENT to load:
+>:Press ENT to turn \nUSB drive:
+>:Preview: Long-Press ENT
+:Protocol:
+Protocol:
+>:PwrDn alert:
+:RIGHT_H
+RECHTS_H
+:RIGHT_V
+RECHTS_V
+>:RPM
+>:RPM:
+:RUD
+RUD
+:RUD DR
+RUD DR
+:Re-Init
+Herinitialiseren
+>:Remove
+:Reset
+Reset
+>:Reset sw:
+>:Reverse
+:Reverse:
+Keer om:
+:Reversed
+Omgekeerd
+>:Revert
+:Right
+Rechts
+:Safe Val:
+Veilige waarde:
+:Safety
+Veiligheid
+:Safety:
+Veiligheid:
+:Save
+OPslaan
+:Scale%s:
+Schaal%s:
+>:Scale:
+:Scanner
+Scanner
+>:Servo
+:Simple
+Eenvoudig
+:Simple 4 Channel
+Eenvoudig 4 kanalen
+>:Speed
+>:Speed:
+:Src
+Bron
+:Src:
+Bron:
+>:Standard
+>:Standard Mixer
+:Start:
+Start:
+>:Step:
+>:Stick input
+:Stick mode:
+Stickmodus:
+:Sticks:
+Sticks:
+>:Sub-trim
+>:Subtrim
+:Subtrim:
+Fijnafstelling:
+>:Swash
+:SwashType:
+Type tuimelschijf:
+>:Switch assignment
+:Switch1
+Schakelaar1
+:Switch2
+Schakelaar2
+:Switch:
+Schakelaar:
+:Symmetric
+Symmetrisch
+:THR
+THR
+:TRIMLH+
+TRIMLH+
+:TRIMLH-
+TRIMLH-
+:TRIMLV+
+TRIMLV+
+:TRIMLV-
+TRIMLV-
+:TRIMRH+
+TRIMRH+
+:TRIMRH-
+TRIMRH-
+:TRIMRV+
+TRIMRV+
+:TRIMRV-
+TRIMRV-
+:TRIM_L+
+TRIM_L+
+:TRIM_L-
+TRIM_L-
+:TRIM_R+
+TRIM_R+
+:TRIM_R-
+TRIM_R-
+>:TRN
+>:TelemRPM
+>:TelemT
+>:TelemV
+>:Telemetry
+>:Telemetry config
+>:Telemetry monitor
+>:Telemetry settings
+>:Temp
+>:Temp:
+>:Temperature:
+:Template..
+Sjabloon...
+:Test
+Testen
+>:Thr hold
+>:Throttle curves
+>:Throttle hold
+>:Time
+:Timer
+Timer
+>:Timer settings
+>:Timer%d:
+>:Timers
+>:Timeup intvl:
+:Toggle%d
+Schakel%d
+:Touch Calibrate
+Aanraakscherm kalibreren
+:Touch Test
+Aanraakscherm testen
+:Touch screen:
+Aanraakscherm:
+:Touch target %d
+Raak indicator %d aan
+:Touch to Lock
+Raak aan om vast te zetten
+:Touch to Unlock
+Raak aan om los te maken
+>:Transmitter config
+>:Transmitter menu
+>:Travel adjust
+:Trim
+Trim
+:Trim +:
+Trim +:
+:Trim -:
+Trim -:
+:Trim Step:
+Trimstap:
+>:Trims
+:Trims:
+Trims:
+:Turn Off
+Uitschakelen
+:Turn On
+Inschakelen
+:Tx power:
+Zendvermogen:
+:USB
+USB
+>:USB Filesystem is currently 
+:Unknown
+Onbekend
+>:Unlocked
+:Up
+Omhoog
+>:Value
+:Value:
+Waarde:
+>:Vibration:
+:Virt
+Virt
+>:Volt
+>:Volt:
+:Zero/Max
+Nul/Max
+:\n\nBinding will end in %d seconds...
+\n\nKoppeling eindigt over %d seconden...
+:add
++
+:countdown
+Aftellen
+>:is not supported
+>:is turned off
+>:max
+>:min
+:mult
+*
+>:permanent
+:replace
+Vervangen
+:stopwatch
+Stopwatch

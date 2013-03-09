@@ -1,0 +1,620 @@
+﻿Deutsch
+:# Channels:
+Kanäle:
+:%s is %d%%, safe value = %d%%\n
+%s %d%%, Ausfallwert = %d%%\n
+:%s is %d%%,\nsafe value = %d%%
+%s %d%%,\nAusfallwert = %d%%\n
+:1-to-1
+1-zu-1
+:11 Point
+11 Punkt
+:13 Point
+13 Punkt
+:3 Point
+3 Punkt
+:4 Bars
+4 Balken
+:4 Inside
+4 innen
+:4 Outside
+4 außen
+:4Ch w/ Dual-Rates
+4K mit DR
+:5 Point
+5 Punkt
+:5+1
+5+1
+:6 Trims
+6 Trimms
+:6+1
+6+1
+:6Ch Airplane
+6K Flugzeug
+:6Ch Helicopter
+6K Helikopter
+:7 Point
+7 Punkt
+:8 Bars
+8 Balken
+:9 Point
+9 Punkt
+:ABSVAL
+Absolut
+:AIL
+QUE
+:AIL DR
+QUE DR
+:AIL Inv:
+QUE Inv:
+:AIL Mix:
+QUE Mix:
+>:AUX2
+>:AUX3
+:AUX4
+AUX4
+:AUX5
+AUX5
+>:AUX6
+>:AUX7
+:About Deviation
+:Über Deviation
+>:Advanced
+:Airplane
+Flugzeug
+:Alarm
+Alarm
+>:Alarm intvl:
+:Altitude
+Höhe
+>:Auto
+>:Aux2
+:Backlight:
+Helligkeit:
+>:Bad/missing\nprotocol modules!
+:Bar %d:
+Balken %d:
+:Bars:
+Balken:
+:Batt alarm:
+Akkuwarner:
+:Battery alarm:
+Akkuwarner:
+:Battery too low,\ncan't save!
+Akku zu schwach,\nkann nicht speichern!
+:Bind
+Binden
+:Binding
+Binden
+:Binding is in progress...\nMake sure model is on!\n\nPressing OK will NOT cancel binding procedure\nbut will allow full control of Tx.
+Bindevorgang läuft...\nSchalte das Modell ein!\n\nOK beendet NICHT den Bindevorgang,\nes erlaubt die Bedienung des Senders.
+:Binding...\n%d seconds\nPress ENT to stop
+:Bindevorgang...\n%d Sekunden\nDrücke ENT zum stoppen
+:Box %d:
+Kasten %d:
+:Button monitor
+Knöpfe Anzeige
+>:Buzz settings
+:Buzz volume:
+Buzzer Lautst:
+>:Buzzer settings
+:COL
+COL
+:COL Inv
+COL Inv
+:COL Inv:
+COL Inv:
+:COL Limit
+COL Limit
+:COL Mix:
+COL Mix:
+:CYC
+TAUM
+:Calibrate
+Kalibrieren
+:Calibration done.
+Kalibrierung abgeschlossen.
+:Cancel
+Abbruch
+:Celsius
+Celsius
+:Center PW
+Zentriere PW
+:Center all \nsticks and knobs\nthen press ENT
+Zentriere alle \nKnüppel und Hebel\ndann drücke ENT
+:Ch
+K
+:Chan mode
+K Modus
+:Change
+Ändern
+>:Channel
+:Channel monitor
+Kanal Anzeige
+:Channel output
+Kanal Ausgabe
+:Complex
+Komplex
+:Configure
+Konfigurieren
+:Contrast:
+Kontrast:
+:Copy To
+Kopiere zu
+:Copy To...
+Kopieren...
+:Critical battery level detected.\nSettings have been saved.\nAny future configuration settings\nwill NOT be saved.\n\nChange batteries now!
+Kritischer Akkustand erkannt.\nEinstellungen wurden gespeichert.\nAlle nachträglichen Einstellungen\nwerden NICHT gespeichert.\n\nAkku umgehend wechseln!
+:Curve:
+Kurve:
+:Cyclic1
+Zyklisch1
+:Cyclic2
+Zyklisch2
+:Cyclic3
+Zyklisch3
+>:D/R & Exp
+>:D/R&Exp -AIL
+>:D/R&Exp -ELE
+>:D/R&Exp -RUD
+:DR
+DR
+:Deadband
+Totzone
+:Default
+Standard
+:Delta PW
+Delta PW
+:Deviation FW version:
+Deviation FW Version:
+:Dimmer target:
+Dimmer target:
+:Dimmer time:
+Dimmer time:
+:Dn
+Dn
+:Down
+Runter
+:ELE
+HOE
+:ELE DR
+HOE DR
+:ELE Inv:
+HOE Inv:
+:ELE Mix:
+HOE Mix:
+:EXPO
+EXPO
+:Enter
+Eingabe
+:Exit
+EXT
+:Expo&DR
+Expo&DR
+>:FMODE
+<:FMODE0
+<FMODE0
+<:FMODE1
+<FMODE1
+<:FMODE2
+<FMODE2
+:Fahren
+Fahrenheit
+>:Fail safe
+>:Failsafe
+:Failsafe:
+Ausfallschutz:
+:File:
+Modell:
+:Fixed
+Fest
+:Fixed ID:
+Feste ID:
+>:Fly mode
+:Foot
+Fuß
+:Frame Size
+Rahmen Größe
+:GEAR
+FAHRW
+:GPS
+GPS
+>:Gear
+:Generic settings
+Allgemeine Einstellungen
+>:Gyro sense
+>:H
+>:HOLD
+:Heli
+Heli
+>:Heli/Standard GUI
+:Helicopter
+Helikopter
+:High-Rate
+Hoch
+>:Hold position
+:Icon
+Bild
+:Icon:
+Bild:
+>:Idle 1
+>:Idle 2
+:Input monitor
+Eingaben Anzeige
+:Input:
+Eingabe:
+:Insert
+Einfügen
+:Inverted
+Umgekehrt
+>:L
+:LCD settings
+LCD Einstellungen
+:LEFT_H
+LINKS_H
+:LEFT_V
+LINKS_V
+>:LIN
+:Language:
+Sprache:
+:Latitude
+Breite
+:Left
+Links
+:Length:
+Länge:
+:Linked
+Verknüpft
+:Load
+Laden
+:Load...
+Laden...
+>:Locked
+:Longitude
+Länge
+:Low Battery
+Akku schwach
+:Low-Rate
+Niedrig
+>:M
+>:MIX
+<:MIX0
+<MIX0
+<:MIX1
+<MIX1
+<:MIX2
+<MIX2
+:Main menu
+Hauptmenü
+:Main page
+Startseite
+:Main page config
+Startseitenkonfiguration
+:Max Limit:
+Max Limit:
+:Menu
+Menü
+:Meter
+Meter
+:Mid-Rate
+Mittel
+:Min Limit:
+Min Limit:
+:Min/Max
+Min/Max
+:Mixer
+Mixer
+>:Mixer GUI:
+:Mixers:
+Mixers:
+>:Mode
+:Mode %d
+Mode %d
+:Model menu
+Modell Menü
+:Model name:
+Modellname:
+>:Model needs reset\nfor standard mixer
+>:Model needs to be reset\nin order to switch to the standard mixer
+:Model setup
+Modell Einstellungen
+:Model type:
+Modelltyp:
+:Move Down
+Nach unten
+:Move Up
+Nach oben
+:Move sticks and knobs\nto Max & Min positions\nthen press ENT
+Bewege die Knüppel und Hebel\nin die Max & Min Positionen\nDann drücke ENT
+:Mux:
+Mux:
+:Neg
+-
+:New
+Neu
+:No Bars
+Keine
+:No Trim
+Keine
+:No Trims
+Keine
+:None
+Nichts
+:Normal
+Normal
+:Notch PW
+Notch PW
+:Off
+Aus
+:Offset:
+Ausgleich:
+:Ok
+Ok
+:On
+Ein
+>:PIT
+:Page:
+Seite:
+>:Pit Mix:
+>:Pitch curves
+:Plane
+Flugzeug
+:Point:
+Punkt:
+:Pos
++
+>:Pos 0:
+>:Pos 1:
+>:Pos 2:
+:Pos/Neg:
++/-:
+>:Position %d
+>:PowerOff alert
+:Prealert intvl:
+Prealert intvl:
+:Prealert time:
+Prealert time:
+:Press 'Ent' to turn USB Filesystem:
+'ENT' schaltet das USB Filesystem:
+:Press ENT to change:
+Drücke ENT zum Ändern:
+:Press ENT to copy to:
+Drücke ENT zum Kopieren:
+:Press ENT to load:
+Drücke ENT zum Laden:
+:Press ENT to turn \nUSB drive:
+ENT schaltet \ndas USB Laufwerk:
+:Preview: Long-Press ENT
+Vorschau: Lange ENT drücken
+:Protocol:
+Protokoll:
+>:PwrDn alert:
+:RIGHT_H
+RECHTS_H
+:RIGHT_V
+RECHTS_V
+:RPM
+UPM
+:RPM:
+UPM:
+:RUD
+RUD
+:RUD DR
+RUD DR
+:Re-Init
+Neu binden
+:Remove
+Löschen
+:Reset
+Reset
+>:Reset sw:
+>:Reverse
+:Reverse:
+Umkehr:
+:Reversed
+Umgekehrt
+:Revert
+Zurücknehmen
+:Right
+Rechts
+:Safe Val:
+Sicherer Wert:
+:Safety
+Sicherheit
+:Safety:
+Sicherheit:
+:Save
+Kopieren
+:Scale%s:
+Skalierung%s:
+>:Scale:
+:Scanner
+Scanner
+>:Servo
+:Simple
+Nichts
+:Simple 4 Channel
+Einfach 4 Kanäle
+:Speed
+Geschw:
+:Speed:
+Geschwindigkeit:
+:Src
+Quelle
+:Src:
+Quelle:
+>:Standard
+>:Standard Mixer
+:Start:
+Start:
+:Step:
+Schritt:
+:Stick input
+Knüppel Eingabe
+:Stick mode:
+Knüppel Mode:
+:Sticks:
+Knüppel:
+>:Sub-trim
+>:Subtrim
+:Subtrim:
+Untertrimmung:
+>:Swash
+:SwashType:
+Taumelscheibe:
+<:Switch %d:
+<Hebel %d:
+>:Switch assignment
+:Switch1
+Hebel1
+:Switch2
+Hebel2
+:Switch:
+Hebel:
+:Symmetric
+Symmetrie
+:THR
+GAS
+:TRIMLH+
+TRIMLH+
+:TRIMLH-
+TRIMLH-
+:TRIMLV+
+TRIMLV+
+:TRIMLV-
+TRIMLV-
+:TRIMRH+
+TRIMRH+
+:TRIMRH-
+TRIMRH-
+:TRIMRV+
+TRIMRV+
+:TRIMRV-
+TRIMRV-
+:TRIM_L+
+TRIM_L+
+:TRIM_L-
+TRIM_L-
+:TRIM_R+
+TRIM_R+
+:TRIM_R-
+TRIM_R-
+>:TRN
+:TelemRPM
+TelemUPM
+:TelemT
+TelemT
+:TelemV
+TelemV
+:Telemetry
+Telemetrie
+:Telemetry config
+Telemetrie Einstellung
+:Telemetry monitor
+Telemetrie Anzeige
+:Telemetry settings
+Telemetrie Einstellungen
+:Temp
+Temp
+:Temp:
+Temp:
+:Temperature:
+Temp:
+:Template..
+Vorlage...
+:Test
+Testen
+>:Thr hold
+>:Throttle curves
+>:Throttle hold
+:Time
+Zeit
+:Timer
+Timer
+:Timer settings
+Timer Einstellungen
+:Timer%d:
+Timer%d:
+:Timers
+Timer
+:Timeup intvl:
+Timeup intvl:
+:Toggle%d
+Hebel%d
+:Touch Calibrate
+Touchscreen kalibrieren
+:Touch Test
+Touchscreen testen
+:Touch screen:
+Bildschirm:
+:Touch target %d
+Tippe auf Ziel %d
+:Touch to Lock
+Antippen zum Sperren
+:Touch to Unlock
+Antippen zum Entsperren
+:Transmitter config
+Sender Einstellungen
+:Transmitter menu
+Sender Menü
+>:Travel adjust
+:Trim
+Trimmung
+:Trim +:
+Trim +:
+:Trim -:
+Trim -:
+:Trim Step:
+Schritt:
+:Trims
+Trimmung
+:Trims:
+Trimm:
+:Turn Off
+Ausschalten
+:Turn On
+Einschalten
+:Tx power:
+Sendeleistung:
+:USB
+USB
+>:USB Filesystem is currently 
+:Unknown
+Unbekannt
+>:Unlocked
+:Up
+Hoch
+>:Value
+:Value:
+Wert:
+:Vibration:
+Vibration:
+:Virt
+Virt
+:Volt
+Volt
+:Volt:
+Volt:
+:Zero/Max
+Null/Max
+:\n\nBinding will end in %d seconds...
+\n\nBindevorgang endet in %d Sekunden...
+:add
++
+:countdown
+Countdown
+:is not supported
+wird nicht unterstützt
+:is turned off
+ist ausgeschaltet
+:max
+max
+:min
+min
+:mult
+*
+>:permanent
+:replace
+ersetzen
+:stopwatch
+Stoppuhr
