@@ -56,7 +56,7 @@ u8 usb_cb(u32 button, u8 flags, void *data)
         wait_release();
         wait_press();
         wait_release();
-        USB_Disable(1);
+        USB_Disable();
         _draw_page(0);
     }
     return 1;
@@ -67,7 +67,7 @@ void PAGE_USBInit(int page)
     (void)page;
     PAGE_SetModal(0);
     _draw_page(0);
-    BUTTON_RegisterCallback(&up->action, CHAN_ButtonMask(BUT_ENTER), BUTTON_PRESS | BUTTON_RELEASE, usb_cb, NULL);
+    BUTTON_RegisterCallback(&up->action, CHAN_ButtonMask(BUT_ENTER), BUTTON_PRESS | BUTTON_RELEASE | BUTTON_PRIORITY, usb_cb, NULL);
 }
 
 void PAGE_USBExit()
@@ -81,5 +81,5 @@ void USB_Connect()
     wait_release();
     wait_press();
     wait_release();
-    USB_Disable(1);
+    USB_Disable();
 }

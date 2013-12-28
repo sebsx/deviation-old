@@ -18,27 +18,30 @@
 
 #include "../../common/advanced/_mixer_setup.c"
 
-#define gui1 (&gui_objs.u.advmixcfg.u.g1)
-#define gui2 (&gui_objs.u.advmixcfg.u.g2)
-#define gui3 (&gui_objs.u.advmixcfg.u.g3)
-#ifndef COL1
+static struct advmixcfg_obj_g1 * const gui1 = &gui_objs.u.advmixcfg.u.g1;
+static struct advmixcfg_obj_g2 * const gui2 = &gui_objs.u.advmixcfg.u.g2;
+static struct advmixcfg_obj_g3 * const gui3 = &gui_objs.u.advmixcfg.u.g3;
+
+#if LCD_WIDTH == 320
     //320x240
-    #define COL1        10
-    #define COL2        56
-    #define COL3        ((310 - 120 - (COL2 + 106)) / 2 + COL2 + 106)
-    #define COL_SCALEHI 36
-    #define COL_EXP2    112
-    #define COL_EXP3    216
-    #define COL_GRAPH   192
-    #define COL1_TEXT   4
-    #define COL1_VALUE  56
-    #define COL2_TEXT   164
-    #define COL2_VALUE  216
-    #define EXP_WIDTH   77
-    #define EXP_HEIGHT  96
+enum {
+     COL1        =  10,
+     COL2        =  56,
+     COL3        = ((310 - 120 - (COL2 + 106)) / 2 + COL2 + 106),
+     COL_SCALEHI =  36,
+     COL_EXP2    = 112,
+     COL_EXP3    = 216,
+     COL_GRAPH   = 192,
+     COL1_TEXT   =   4,
+     COL1_VALUE  =  56,
+     COL2_TEXT   = 164,
+     COL2_VALUE  = 216,
+     EXP_WIDTH   =  77,
+     EXP_HEIGHT  =  96,
+};
 #endif
-#define COL_TEMPLATE 56
-#define GRAPH_Y ((220 - 40 - 150) / 2 + 40)
+static const int COL_TEMPLATE = 56;
+static const int GRAPH_Y = ((220 - 40 - 150) / 2 + 40);
 
 static void _show_titlerow()
 {
@@ -53,12 +56,12 @@ static void _show_simple()
     const int space = 40;
     int x = 60;
     //Row 1
-    mp->firstObj = GUI_CreateLabel(&gui1->srclbl, COL1, x, NULL, DEFAULT_FONT, _tr("Src"));
-    GUI_CreateTextSelect(&gui1->src, COL2, x, TEXTSELECT_96, sourceselect_cb, set_source_cb, &mp->mixer[0].src);
+    mp->firstObj = GUI_CreateLabel(&gui1->srclbl, COL1_TEXT, x, NULL, DEFAULT_FONT, _tr("Src"));
+    GUI_CreateTextSelect(&gui1->src, COL1_VALUE, x, TEXTSELECT_96, sourceselect_cb, set_source_cb, &mp->mixer[0].src);
     x += space;
     //Row 2
-    GUI_CreateLabel(&gui1->curvelbl, COL1, x, NULL, DEFAULT_FONT, _tr("Curve"));
-    GUI_CreateTextSelect(&gui1->curve, COL2, x, TEXTSELECT_96, curveselect_cb, set_curvename_cb, &mp->mixer[0]);
+    GUI_CreateLabel(&gui1->curvelbl, COL1_TEXT, x, NULL, DEFAULT_FONT, _tr("Curve"));
+    GUI_CreateTextSelect(&gui1->curve, COL1_VALUE, x, TEXTSELECT_96, curveselect_cb, set_curvename_cb, &mp->mixer[0]);
     x += space;
 
     GUI_CreateXYGraph(&gui1->graph, COL3, GRAPH_Y, 120, 150,
@@ -66,13 +69,13 @@ static void _show_simple()
                               CHAN_MAX_VALUE, CHAN_MAX_VALUE * 125 / 100,
                               0, PCT_TO_RANGE(25), eval_mixer_cb, curpos_cb, touch_cb, &mp->mixer[0]);
     //Row 4
-    GUI_CreateLabel(&gui1->scalelbl, COL1, x, scalestring_cb, DEFAULT_FONT, (void *)0);
-    GUI_CreateTextSelect(&gui1->scale, COL2, x, TEXTSELECT_96, NULL, set_number100_cb, &mp->mixer[0].scalar);
+    GUI_CreateLabel(&gui1->scalelbl, COL1_TEXT, x, scalestring_cb, DEFAULT_FONT, (void *)0);
+    GUI_CreateTextSelect(&gui1->scale, COL1_VALUE, x, TEXTSELECT_96, NULL, set_number100_cb, &mp->mixer[0].scalar);
     x += space;
     //Row 4
-    GUI_CreateLabel(&gui1->offsetlbl, COL1, x, NULL, DEFAULT_FONT, _tr("Offset"));
-    GUI_CreateTextSelect(&gui1->offset, COL2, x, TEXTSELECT_96, NULL, set_number100_cb, &mp->mixer[0].offset);
-    x += space;
+    GUI_CreateLabel(&gui1->offsetlbl, COL1_TEXT, x, NULL, DEFAULT_FONT, _tr("Offset"));
+    GUI_CreateTextSelect(&gui1->offset, COL1_VALUE, x, TEXTSELECT_96, NULL, set_number100_cb, &mp->mixer[0].offset);
+    //x += space;
     //Row 5
     /*
     mp->trimObj = GUI_CreateButton(COL1_VALUE, 214, BUTTON_96x16, show_trim_cb, 0x0000, toggle_trim_cb, NULL);

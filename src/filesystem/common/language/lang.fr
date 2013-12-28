@@ -1,42 +1,38 @@
 ﻿Français
 :# Channels
 Nbr canaux
-:%s is %d%%, safe value = %d%%\n
-%s = %d%%,valeur sécu. = %d%%\n
-:%s is %d%%,\nsafe value = %d%%
-%s = %d%%,\nvaleur sécu. = %d%%\n
+>:%d bytes left
+: is %d%%, safe value = %d%%\n
+ = %d%%,valeur sécu. = %d%%\n
+: is %d%%,\nsafe value = %d%%
+ = %d%%,\nvaleur sécu. = %d%%\n
+>:1 sec
 :1-to-1
 1 à 1
+>:10 sec
 :11 Point
 11 Pts
 :13 Point
 13 Pts
 :3 Point
 3 Pts
-:4 Bars
-4 Barres
-:4 Inside
-4 Centraux
-:4 Outside
-4 Externes
+>:30 sec
 :4Ch w/ Dual-Rates
 4ch et DR
 :5 Point
 5 Pts
+>:5 sec
 :5+1
 5+1
-:6 Trims
-6 Trims
 :6+1
 6+1
+>:60 sec
 :6Ch Airplane
 6ch Avion
 :6Ch Helicopter
 6ch Hélicoptère
 :7 Point
 7 Pts
-:8 Bars
-8 Barres
 :9 Point
 9 Pts
 :ABSVAL
@@ -59,44 +55,43 @@ AUX5
 >:AUX7
 :About Deviation
 A propos...
+>:Add
 :Advanced
 Expert
 :Airplane
 Avion
 :Alarm
 Alarme
+:Alarm interval
+Tempo alarme
 :Alarm intvl
 Tempo alarme
+>:All
 :Altitude
 Altitude
 >:Auto
->:Aux2
 :Backlight
 Luminosité
 :Bad/missing\nprotocol modules!
 Module de protocole\nabsent ou défaillant!
-:Bar %d
-Barre %d
-:Bars
-Barres
+>:Bar
+>:Bargraph
 :Batt alarm
 Alarme batt.
 :Battery alarm
 Alarme batterie
 :Battery too low,\ncan't save!
 Batterie vide!\n Sauvegarde \n impossible.
+>:Big-box
 :Bind
 Appairer
 :Binding
 Appairage
 :Binding is in progress...\nMake sure model is on!\n\nPressing OK will NOT cancel binding procedure\nbut will allow full control of Tx.
 Appairage en cours...\nS'assurer que le récepteur fonctionne\n\nAppuyer sur OK n'annule pas la procédure \nmais permet le contrôle du TX.
-<:Binding...\n%d seconds\nPress ENT to stop
-<Appairage...   %d sec.\n Appuyer sur ENT\npour arrêter
 :Binding...\nPress ENT to stop
 Appairage...\nENT pour arrêter
-:Box %d
-Box%d
+>:Box
 :Button monitor
 Ctrl des boutons
 :Buzz settings
@@ -107,8 +102,6 @@ Volume
 Réglages Son
 :COL
 PAS
-:COL Inv
-Sens PAS
 :COL Inv
 Sens PAS
 :COL Limit
@@ -131,6 +124,7 @@ Imp. Neutre
 Centrer tous les sticks\net potentiomètres AUX,\n puis presser ENT
 :Ch
 Ch
+>:Ch%d
 :Chan mode
 Mode canaux
 :Change
@@ -141,12 +135,14 @@ Canaux
 Ctrl. des Canaux
 :Channel output
 Sorties canaux
+>:Clock
 :Complex
 Complexe
 :Configure
 Configurer
 :Contrast
 Contraste
+>:Control
 :Copy To
 Copier
 :Copy To...
@@ -168,10 +164,17 @@ D/R & Exp
 >:D/R&Exp -RUD
 :DR
 DR
+>:Datalog
+>:Date
+>:Date / Time
+>:Date format
+>:Date:
+>:Day
 :Deadband
 Deadband
 :Default
 Défaut
+>:Delete
 :Delta PW
 Delta Imp.
 :Deviation FW version:
@@ -196,6 +199,8 @@ Sens ELE
 Mix. ELE
 :EXPO %d
 EXP. %d
+>:Edit
+>:Enable
 :Enabled
 Etat
 :Enter
@@ -204,8 +209,10 @@ Entrée
 Sortie
 :Expo&DR
 Expo&DR
+>:Extend
 :FMODE
 FMODE
+>:Fades
 :Fahren
 °F
 :Fail-safe
@@ -226,12 +233,16 @@ Larg. Signal
 GEAR
 :GPS
 GPS
->:Gear
+>:GPS Alt.
+>:GPS Coords
+>:GPS Speed
+>:GPS Time
 :Generic settings
 Réglages
 :Gyro sense
 Gain gyro
 >:H
+>:H-trim
 >:HOLD
 :Heli
 Heli
@@ -241,26 +252,20 @@ Heli/Interface Std.
 Helicoptère
 :High-Rate
 Petit Déb.
-<:Hold Position
-<Valeur gaz
 :Hold position
 Valeur gaz
+>:Holds
+>:Hour
 :Icon
 Icône
-:Icon
-Icône
-<:Idle 1
-<Sport 1
-<:Idle 2
-<Sport 2
 :Idle Up 1
 Sport 1
 :Idle Up 2
 Sport 2
-:Input monitor
-Ctrl. des entrées
 :Input
 Entrée
+:Input monitor
+Ctrl. des entrées
 :Insert
 Ajouter
 :Inverted
@@ -277,6 +282,7 @@ GAUCHE_V
 Langue
 :Latitude
 Latitude
+>:Layout: Long-Press ENT
 :Left
 Gauche
 :Length
@@ -287,10 +293,9 @@ Lié
 Charger
 :Load...
 Charger...
-<:Locked
-<Bloqué
 :Longitude
 Longitude
+>:Loss
 :Low Battery
 Batterie vide
 :Low-Rate
@@ -316,6 +321,7 @@ Déb. Med
 Limite Min
 :Min/Max
 Min/Max
+>:Minute
 :Mixer
 Mixer
 :Mixer GUI
@@ -325,6 +331,7 @@ Nbr mixers
 >:Mode
 :Mode %d
 Mode %d
+>:Model
 :Model menu
 Menu Modèle
 :Model name
@@ -337,6 +344,8 @@ Pour le mode de réglage standard,\n le modèle doit être réinitialisé.
 Config. Modèle
 :Model type
 Type Modèle
+>:Momentary
+>:Month
 :Move Down
 Baisser
 :Move Up
@@ -349,11 +358,8 @@ Opération
 Neg.
 :New
 Nouveau
-:No Bars
-Désactivé
+>:No
 :No Trim
-Pas de Trim
-:No Trims
 Pas de Trim
 :None
 Néant
@@ -361,6 +367,7 @@ Néant
 Normal
 :Notch PW
 Imp. Fin
+>:Num Channels
 :Off
 Arrêt
 :Offset
@@ -369,12 +376,18 @@ Offset
 Ok
 :On
 Marche
+>:On/Off
 :PIT
 PAS
 :PIT Mix
 Mix. PAS
+>:PPM
+>:PPM In
+>:PPM%d
+>:PPMIn Cfg (Extend)
 :Page
 Page
+>:Page Config
 :Pitch curves
 Courbes de pas
 :Plane
@@ -389,9 +402,10 @@ Pos.
 :Pos/Neg
 Pos./Neg.
 >:Position %d
+>:Power On alarm
 >:Power-down alert
-<:Power-down alert
-<Mélodie d'arrêt
+:Prealert interval
+Tempo préAlarm
 :Prealert intvl
 Tempo préAlarm
 :Prealert time
@@ -406,26 +420,26 @@ Appuyer sur ENT\n pour passer \n le mode USB sur
 'ENT' pour charger
 :Press ENT to turn \nUSB drive
 Appuyer sur ENT\n pour passer \n le mode USB sur
-:Preview: Long-Press ENT
-Aperçu: Appuie-Long ENT
 :Protocol
 Protocole
 :PwrDn alert
 Mélodie arrêt
+>:PwrOn alarm
 :RIGHT_H
 DROITE_H
 :RIGHT_V
 DROITE_V
 :RPM
 T/mn
-:RPM
-T/mn
+>:RTC Time
 :RUD
 RUD
 :RUD DR
 RUD DR
+>:Rate
 :Re-Init
 Réinit.
+>:Real Time Clock
 :Remove
 Supprimer
 :Reset
@@ -434,8 +448,6 @@ RàZ
 RaZ Totalisateur?
 :Reset sw
 Cmd. RàZ
-:Reverse
-Sens servos
 :Reverse
 Sens
 :Reversed
@@ -448,26 +460,31 @@ Droite
 Val. Sécu
 :Safety
 Sécurité
-:Safety
-Sécurité
+>:Sample Rate
 :Save
 Sauve
+>:Scale
 :Scale%s
 Echelle%s
->:Scale
 :Scanner
 Scanner
+>:Second
+>:Select
 >:Servo
+>:Set
+>:Set date
+>:Set permanent timer
+>:Set time
+>:Set to
+>:Set:
 :Simple
 Simple
 :Simple 4 Channel
 4Ch. Simple
+>:Small-box
+>:Smooth
 :Speed
 Vitesse
-:Speed
-Vitesse
-:Src
-Source
 :Src
 Source
 :Standard
@@ -477,28 +494,27 @@ Standard
 Durée
 :Step
 <Pas>
+>:Stick
 :Stick input
 Entrées  sticks/aux.
 :Stick mode
 Mode
 :Sticks
 Sticks
->:Sub-trim
->:Subtrim
 :Subtrim
 Subtrim
 :Swash
 Plateau cycl.
 :SwashType
 Plateau cycl.
+:Switch
+Commande
 :Switch assignment
 Affect. Inters
 :Switch1
 Inter1
 :Switch2
 Inter2
-:Switch
-Commande
 :Symmetric
 Symétrique
 :THR
@@ -544,14 +560,11 @@ Ctrl. Télémétrie
 Réglages télémétrie
 :Temp
 T°
-:Temp
-T°
 :Temperature
 Unité T°
+>:Template
 :Template..
 Gabarit...
-:Test
-Test
 :Thr hold
 Stop gaz
 :Throttle curves
@@ -560,6 +573,7 @@ Courbes de gaz
 Coupure gaz
 :Time
 Heure
+>:Time format
 :Timer
 Chrono
 :Timer settings
@@ -568,10 +582,11 @@ Alarmes Chronos
 Chrono %d
 :Timers
 Chronos
+:Timeup interval
+Tempo Alarme
 :Timeup intvl
 Tempo Alarme
-:Toggle%d
-Inter%d
+>:Toggle
 :Touch Calibrate
 Calibration du tactile
 :Touch Test
@@ -584,6 +599,9 @@ Toucher la cible %d
 Toucher pour verrouiller
 :Touch to Unlock
 Toucher pour déverrouiller
+>:Trainer Cfg (Channel)
+>:Trainer Cfg (Stick)
+>:Trainer Sw
 :Transmitter config
 Config. Emetteur
 :Transmitter menu
@@ -598,8 +616,7 @@ Trim +
 Trim -
 :Trim Step
 Finesse
-:Trims
-Trims
+>:Trimbar
 :Trims
 Trims
 :Turn Off
@@ -608,18 +625,15 @@ Désactiver
 Activer
 :Tx power
 Puiss. TX
+>:Type
 :USB
 USB
-:USB Filesystem is currently
-Etat de la partition USB
+>:USB Filesystem is currently 
 :Unknown
 Inconnu
-<:Unlocked
-<Débloqué
 :Up
 Haut
-:Value
-Valeur
+>:V-trim
 :Value
 Valeur
 :Vibration
@@ -628,18 +642,22 @@ Vibreur
 Virt
 :Volt
 Volt
-:Volt
-Volt
+>:Welcome
+>:Year
+>:Yes
 :Zero/Max
 0/Max
 :\n%d seconds left
-\n%d secondes à gauche
+\n%d secondes restant
 :\n\nBinding will end in %d seconds...
 \n\nAppairage terminé dans %d secondes...
+>:actual value
 :add
 ajouter
+>:cntdn-prop
 :countdown
 A rebours
+>:delay
 :is not supported
 Non supporté
 :is turned off
@@ -654,5 +672,9 @@ multiplier
 permanent
 :replace
 remplacer
+>:resulting value
+>:stop-prop
 :stopwatch
 Chrono
+>:value to add or set
+>:value to set

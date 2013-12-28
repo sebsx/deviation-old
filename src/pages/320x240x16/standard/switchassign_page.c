@@ -18,6 +18,8 @@
 #include "gui/gui.h"
 #include "config/model.h"
 #include "standard.h"
+
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_switchassign_page.c"
 
 static const char *switch_cb2(guiObject_t *obj, int dir, void *data)
@@ -31,12 +33,13 @@ static const char *switch_cb2(guiObject_t *obj, int dir, void *data)
 void PAGE_SwitchAssignInit(int page)
 {
     (void)page;
+    const int COL1 = (10 + ((LCD_WIDTH - 320) / 2));
+    const int COL2 = (150 + ((LCD_WIDTH - 320) / 2));
+    const int ROW_SPACE = 30;
+
     PAGE_ShowHeader_ExitOnly(PAGE_GetName(PAGEID_SWITCHASSIGN), MODELMENU_Show);
     refresh_switches();
 
-    #define COL1 (10 + ((LCD_WIDTH - 320) / 2))
-    #define COL2 (150 + ((LCD_WIDTH - 320) / 2))
-    #define ROW_SPACE 30
     /* Row 1 */
     int row = 40 + ((LCD_HEIGHT - 240) / 2);
     GUI_CreateLabelBox(&gui->modelbl, COL1, row, 0, 16, &DEFAULT_FONT, NULL, NULL, _tr("Fly mode"));
@@ -63,4 +66,4 @@ void PAGE_SwitchAssignInit(int page)
     GUI_CreateLabelBox(&gui->drrudlbl, COL1, row, 0, 16, &DEFAULT_FONT, NULL, NULL,  _tr("D/R&Exp -RUD"));
     GUI_CreateTextSelect(&gui->drrud, COL2, row, TEXTSELECT_128, NULL, switch_cb2, (void *)(long)SWITCHFUNC_DREXP_RUD);
 }
-
+#endif //HAS_STANDARD_GUI

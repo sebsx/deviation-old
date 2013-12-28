@@ -37,7 +37,13 @@
 
 #include "iface_nrf24l01.h"
 
+#ifdef EMULATOR
+#define USE_FIXED_MFGID
+#define BIND_COUNT 5
+#else
 #define BIND_COUNT 1000
+#endif
+
 // Timeout for callback in uSec, 4ms=4000us for V202
 #define PACKET_PERIOD 4000
 // Every second
@@ -132,7 +138,7 @@ static void v202_init()
     NRF24L01_WriteReg(NRF24L01_03_SETUP_AW, 0x03);   // 5-byte RX/TX address
     NRF24L01_WriteReg(NRF24L01_04_SETUP_RETR, 0xFF); // 4ms retransmit t/o, 15 tries
     NRF24L01_WriteReg(NRF24L01_05_RF_CH, 0x08);      // Channel 8
-    NRF24L01_SetBitrate(0);                          // 1Mbps
+    NRF24L01_SetBitrate(NRF24L01_BR_1M);                          // 1Mbps
     NRF24L01_SetPower(Model.tx_power);
     NRF24L01_WriteReg(NRF24L01_07_STATUS, 0x70);     // Clear data ready, data sent, and retransmit
 //    NRF24L01_WriteReg(NRF24L01_08_OBSERVE_TX, 0x00); // no write bits in this field
@@ -446,6 +452,44 @@ static u16 v202_callback()
     return PACKET_PERIOD;
 }
 
+// Linear feedback shift register with 32-bit Xilinx polinomial x^32 + x^22 + x^2 + x + 1
+static const uint32_t LFSR_FEEDBACK = 0x80200003ul;
+static const uint32_t LFSR_INTAP = 32-1;
+
+static void update_lfsr(uint32_t *lfsr, uint8_t b)
+{
+    for (int i = 0; i < 8; ++i) {
+        *lfsr = (*lfsr >> 1) ^ ((-(*lfsr & 1u) & LFSR_FEEDBACK) ^ ~((uint32_t)(b & 1) << LFSR_INTAP));
+        b >>= 1;
+    }
+}
+
+// Generate internal id from TX id and manufacturer id (STM32 unique id)
+static void initialize_tx_id()
+{
+    u32 lfsr = 0xb2c54a2ful;
+
+#ifndef USE_FIXED_MFGID
+    u8 var[12];
+    MCU_SerialNumber(var, 12);
+    printf("Manufacturer id: ");
+    for (int i = 0; i < 12; ++i) {
+        printf("%02X", var[i]);
+        update_lfsr(&lfsr, var[i]);
+    }
+    printf("\r\n");
+#endif
+
+    if (Model.fixed_id) {
+       for (u8 i = 0, j = 0; i < sizeof(Model.fixed_id); ++i, j += 8)
+           update_lfsr(&lfsr, (Model.fixed_id >> j) & 0xff);
+    }
+    // Pump zero bytes for LFSR to diverge more
+    for (u8 i = 0; i < sizeof(lfsr); ++i) update_lfsr(&lfsr, 0);
+
+    set_tx_id(lfsr);
+}
+
 static void initialize(u8 bind)
 {
     CLOCK_StopTimer();
@@ -461,19 +505,8 @@ static void initialize(u8 bind)
         counter = BLINK_COUNT;
     }
 
-    u32 id = 0xb2c54a2f;
-    if (Model.fixed_id) {
-        id ^= Model.fixed_id + (Model.fixed_id << 16);
-    } else {
-        /*
-        u32* stm32id = (uint32_t*) 0x1FFFF7E8;
-        id ^= *stm32id++;
-        id ^= *stm32id++;
-        id ^= *stm32id;
-        */
-        id = (Crc(&Model, sizeof(Model)) + Crc(&Transmitter, sizeof(Transmitter))) % 999999;
-    }
-    set_tx_id(id);
+    initialize_tx_id();
+
     CLOCK_StartTimer(50000, v202_callback);
 }
 

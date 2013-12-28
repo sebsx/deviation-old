@@ -19,16 +19,19 @@
 
 #include "../common/_trim_page.c"
 
-#define gui (&gui_objs.u.trim)
-#define gui_ed (&gui_objs.u.trimedit)
+static struct trim_obj     * const gui    = &gui_objs.u.trim;
+static struct trimedit_obj * const gui_ed = &gui_objs.u.trimedit;
 
-#define PCOL1 (4 + ((LCD_WIDTH - 320) / 2))
-#define PCOL2 (72 + ((LCD_WIDTH - 320) / 2))
-#define PCOL3 (134 + ((LCD_WIDTH - 320) / 2))
-#define PCOL4 (196 + ((LCD_WIDTH - 320) / 2))
-#define PROW1 (40 + ((LCD_HEIGHT - 240) / 2))
-#define PROW2 (66 + ((LCD_HEIGHT - 240) / 2))
-#define PROW3 (PROW2 + 2)
+enum {
+     PCOL1 = (4 + ((LCD_WIDTH - 320) / 2)),
+     PCOL2 = (72 + ((LCD_WIDTH - 320) / 2)),
+     PCOL3 = (134 + ((LCD_WIDTH - 320) / 2)),
+     PCOL4 = (196 + ((LCD_WIDTH - 320) / 2)),
+     PROW1 = (40 + ((LCD_HEIGHT - 240) / 2)),
+     //slightly higher on Devo12 screen for additional line
+     PROW2 = ((LCD_HEIGHT == 240 ? 66 : 64) + ((LCD_HEIGHT - 240) / 2)),
+     PROW3 = (PROW2 + 2),
+};
 
 static guiObject_t *getobj_cb(int relrow, int col, void *data)
 {
@@ -54,15 +57,18 @@ static int row_cb(int absrow, int relrow, int y, void *data)
         trimsource_name_cb, 0x0000, _edit_cb, (void *)((long)absrow));
     GUI_CreateLabelBox(&gui->neg[relrow], PCOL2 + 6, y, PCOL3 - PCOL2, 24, &DEFAULT_FONT, negtrim_str, NULL, (void *)(long)absrow);
     GUI_CreateLabel(&gui->pos[relrow], PCOL3 + 6, y, NULL, DEFAULT_FONT, (void *)INPUT_ButtonName(trim[absrow].pos));
-    GUI_CreateTextSelect(&gui->step[relrow], PCOL4 + 6, y, TEXTSELECT_96, NULL, set_trimstep_cb, (void *)(long)absrow);
+    GUI_CreateTextSelect(&gui->step[relrow], PCOL4 + 6, y, TEXTSELECT_96, NULL,
+                         set_trimstep_cb, (void *)(long)(absrow + 0x000)); //0x000: Use Model.trims
     return 2;
 }
 
 static void _show_page()
 {
+#if HAS_STANDARD_GUI
     if (Model.mixer_mode == MIXER_STANDARD)
         PAGE_ShowHeader_ExitOnly(PAGE_GetName(PAGEID_TRIM), MODELMENU_Show);
     else
+#endif
         PAGE_ShowHeader(PAGE_GetName(PAGEID_TRIM));
     GUI_CreateLabelBox(&gui->inplbl, PCOL1, PROW1, 64, 15, &NARROW_FONT, NULL, NULL, _tr("Input"));
     GUI_CreateLabelBox(&gui->neglbl, PCOL2, PROW1, 64, 15, &NARROW_FONT, NULL, NULL, _tr("Trim -"));
@@ -86,19 +92,22 @@ static void _edit_cb(guiObject_t *obj, const void *data)
     PAGE_CreateCancelButton(LCD_WIDTH-160, 4, okcancel_cb);
     PAGE_CreateOkButton(LCD_WIDTH-56, 4, okcancel_cb);
 
-    #define COL1 (8 + ((LCD_WIDTH - 320) / 2))
-    #define COL2 (104 + ((LCD_WIDTH - 320) / 2))
-    #define ROW1 (48 + ((LCD_HEIGHT - 240) / 2))
-    #define ROW2 (ROW1 + 24)
-    #define ROW3 (ROW1 + 48)
-    #define ROW4 (ROW1 + 72)
-    #define ROW5 (ROW1 + 96)
+    enum {
+         COL1 = (8 + ((LCD_WIDTH - 320) / 2)),
+         COL2 = (104 + ((LCD_WIDTH - 320) / 2)),
+         ROW1 = (48 + ((LCD_HEIGHT - 240) / 2)),
+         ROW2 = (ROW1 + 24),
+         ROW3 = (ROW1 + 48),
+         ROW4 = (ROW1 + 72),
+         ROW5 = (ROW1 + 96),
+    };
     //Row 1
     GUI_CreateLabel(&gui_ed->srclbl, COL1, ROW1, NULL, DEFAULT_FONT, _tr("Input"));
     GUI_CreateTextSelect(&gui_ed->src, COL2, ROW1, TEXTSELECT_96, NULL, set_source_cb, &tp->trim.src);
     //Row 2
     GUI_CreateLabel(&gui_ed->steplbl, COL1, ROW2, NULL, DEFAULT_FONT, _tr("Trim Step"));
-    GUI_CreateTextSelect(&gui_ed->step, COL2, ROW2, TEXTSELECT_96, NULL, set_trimstep_cb, (void *)(long)tp->index);
+    GUI_CreateTextSelect(&gui_ed->step, COL2, ROW2, TEXTSELECT_96, NULL,
+                         set_trimstep_cb, (void *)(long)(tp->index + 0x100)); //0x100: Use tp->trim
     //Row 3
     GUI_CreateLabel(&gui_ed->poslbl, COL1, ROW3, NULL, DEFAULT_FONT, _tr("Trim +"));
     GUI_CreateTextSelect(&gui_ed->pos, COL2, ROW3, TEXTSELECT_96, NULL, set_trim_cb, &tp->trim.pos);

@@ -22,17 +22,23 @@
 #include "telemetry.h"
 #include "rtc.h"
 
-#define VTRIM_W      10
-#define VTRIM_H     140
-#define HTRIM_W     125
-#define HTRIM_H      10
-#define MODEL_ICO_W  96
-#define MODEL_ICO_H  96
-#define GRAPH_H      59
-#define GRAPH_W      10
-#define BOX_W       113
-#define SMALLBOX_H   24
-#define BIGBOX_H     40
+enum {
+    VTRIM_W      = 10,
+    VTRIM_H     = 140,
+    HTRIM_W     = 125,
+    HTRIM_H      = 10,
+    MODEL_ICO_W  = 96,
+    MODEL_ICO_H  = 96,
+    GRAPH_H      = 59,
+    GRAPH_W      = 10,
+    BOX_W       = 113,
+    SMALLBOX_H   = 24,
+    BIGBOX_H     = 40,
+    BATTERY_W    = 0,
+    BATTERY_H    = 0,
+    TXPOWER_W    = 0,
+    TXPOWER_H    = 0,
+};
 
 void press_icon_cb(guiObject_t *obj, s8 press_type, const void *data);
 void press_box_cb(guiObject_t *obj, s8 press_type, const void *data);
@@ -88,8 +94,9 @@ void PAGE_MainExit()
     BUTTON_UnregisterCallback(&mp->action);
 }
 
-static void _check_voltage()
+static void _check_voltage(guiLabel_t *obj)
 {
+    (void)obj;
     s16 batt = PWR_ReadVoltage();
     if (batt / 10 != mp->battery / 10 && batt / 10 != mp->battery / 10 + 1) {
         
@@ -158,8 +165,9 @@ static u8 _action_cb(u32 button, u8 flags, void *data)
             GUI_SetSelected((guiObject_t *)&gui->optico);
         }else if ((flags & BUTTON_LONGPRESS) && CHAN_ButtonIsPressed(button, BUT_EXIT)) {
             mp->ignore_release = 1;
-            TIMER_Reset(0);
-            TIMER_Reset(1);
+            for (u8 timer=0; timer<NUM_TIMERS; timer++) {
+                TIMER_Reset(timer);
+            }
         } else if (! PAGE_QuickPage(button, flags, data)) {
             MIXER_UpdateTrim(button, flags, data);
         }

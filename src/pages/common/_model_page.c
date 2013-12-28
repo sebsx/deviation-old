@@ -14,7 +14,7 @@
  */
 
 static struct model_page * const mp = &pagemem.u.model_page;
-#define gui (&gui_objs.u.modelpage)
+static struct modelpage_obj * const gui = &gui_objs.u.modelpage;
 static long callback_result; // Bug fix: u8 is a wrong data type, causing memory violation and unpredictable behavior in real devo10's modelname editing
 
 static void _changename_cb(guiObject_t *obj, const void *data);
@@ -43,7 +43,7 @@ enum {
     ITEM_PROTO,
     ITEM_FIXEDID,
     ITEM_NUMCHAN,
-#if !defined(NO_STANDARD_GUI)
+#if HAS_STANDARD_GUI
     ITEM_GUI,
 #endif
     ITEM_LAST,
@@ -54,23 +54,23 @@ const char *show_text_cb(guiObject_t *obj, const void *data)
     (void)obj;
     int width; int height;
     u16 txt_w, txt_h;
-    strcpy(mp->tmpstr, (const char *)data);
+    strcpy(tempstring, (const char *)data);
     GUI_GetSize(obj, &width, &height);
     width -=2;
     while(1) {
-        LCD_GetStringDimensions((const u8 *)mp->tmpstr, &txt_w, &txt_h);
+        LCD_GetStringDimensions((const u8 *)tempstring, &txt_w, &txt_h);
         if (txt_w > width) {
-            int len = strlen(mp->tmpstr);
-            if (mp->tmpstr[len-1] == '.')
+            int len = strlen(tempstring);
+            if (tempstring[len-1] == '.')
                 len--;
-            mp->tmpstr[len-3] = '.';
-            mp->tmpstr[len-2] = '.';
-            mp->tmpstr[len-1] = '\0';
+            tempstring[len-3] = '.';
+            tempstring[len-2] = '.';
+            tempstring[len-1] = '\0';
         } else {
             break;
         }
     }
-    return mp->tmpstr;
+    return tempstring;
 }
 
 const char *show_bindtext_cb(guiObject_t *obj, const void *data)
@@ -139,9 +139,11 @@ static const char *type_val_cb(guiObject_t *obj, int dir, void *data)
     if (changed && Model.type != 0) {
         //Standard GUI is not supported
         Model.mixer_mode = MIXER_ADVANCED;
+#if HAS_STANDARD_GUI
         guiObject_t *obj = _get_obj(ITEM_GUI, 0);
         if(obj)
             GUI_Redraw(obj);
+#endif
     }
 
     switch (Model.type) {
@@ -163,8 +165,8 @@ static const char *numchanselect_cb(guiObject_t *obj, int dir, void *data)
     (void)data;
     (void)obj;
     Model.num_channels = GUI_TextSelectHelper(Model.num_channels, 1, PROTOCOL_NumChannels(), dir, 1, 1, NULL);
-    sprintf(mp->tmpstr, "%d", Model.num_channels);
-    return mp->tmpstr;
+    sprintf(tempstring, "%d", Model.num_channels);
+    return tempstring;
 }
 
 static const char *powerselect_cb(guiObject_t *obj, int dir, void *data)
@@ -236,10 +238,15 @@ static const char *protoselect_cb(guiObject_t *obj, int dir, void *data)
     (void)data;
     (void)obj;
     u8 changed;
-    Model.protocol = GUI_TextSelectHelper(Model.protocol, PROTOCOL_NONE, PROTOCOL_COUNT-1, dir, 1, 1, &changed);
+    enum Protocols new_protocol;
+    new_protocol = GUI_TextSelectHelper(Model.protocol, PROTOCOL_NONE, PROTOCOL_COUNT-1, dir, 1, 1, &changed);
     if (changed) {
+    	// DeInit() the old protocol (Model.protocol unchanged)
         PROTOCOL_DeInit();
+        // Load() the new protocol
+        Model.protocol = new_protocol;
         PROTOCOL_Load(1);
+        TELEMETRY_SetTypeByProtocol(Model.protocol);
         Model.num_channels = PROTOCOL_DefaultNumChannels();
         if (! PROTOCOL_HasPowerAmp(Model.protocol))
             Model.tx_power = TXPOWER_150mW;
@@ -261,8 +268,8 @@ static const char *protoselect_cb(guiObject_t *obj, int dir, void *data)
         return _tr("None");
     if(PROTOCOL_HasModule(Model.protocol))
         return ProtocolNames[Model.protocol];
-    sprintf(mp->tmpstr, "*%s", ProtocolNames[Model.protocol]);
-    return mp->tmpstr;
+    sprintf(tempstring, "*%s", ProtocolNames[Model.protocol]);
+    return tempstring;
 }
 void proto_press_cb(guiObject_t *obj, void *data)
 {
@@ -310,6 +317,7 @@ static void changeicon_cb(guiObject_t *obj, const void *data)
     MODELPage_ShowLoadSave(LOAD_ICON, PAGE_ModelInit);
 }
 
+#if HAS_STANDARD_GUI
 static const char *mixermode_cb(guiObject_t *obj, int dir, void *data)
 {
     (void)data;
@@ -326,4 +334,4 @@ static const char *mixermode_cb(guiObject_t *obj, int dir, void *data)
     }
     return STDMIXER_ModeName(Model.mixer_mode);
 }
-
+#endif

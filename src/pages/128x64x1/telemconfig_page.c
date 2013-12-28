@@ -19,6 +19,7 @@
 #include "gui/gui.h"
 #include "config/model.h"
 
+#if HAS_TELEMETRY
 #include "../common/_telemconfig_page.c"
 
 static u8 _action_cb(u32 button, u8 flags, void *data);
@@ -62,13 +63,14 @@ static int row_cb(int absrow, int relrow, int y, void *data)
 void PAGE_TelemconfigInit(int page)
 {
     (void)label_cb;
-    if (page < 0)
-        page = current_selected;
+    (void)page;
+    //if (page < 0)
+    //    page = current_selected;
     PAGE_SetModal(0);
     PAGE_RemoveAllObjects();
     PAGE_SetActionCB(_action_cb);
     if (telem_state_check() == 0) {
-        GUI_CreateLabelBox(&gui->msg, 20, 10, 0, 0, &DEFAULT_FONT, NULL, NULL, tp.str);
+        GUI_CreateLabelBox(&gui->msg, 20, 10, 0, 0, &DEFAULT_FONT, NULL, NULL, tempstring);
         OBJ_SET_USED(&gui->value, 0);  // A indication not allow to scroll up/down
         return;
     }
@@ -81,15 +83,16 @@ void PAGE_TelemconfigInit(int page)
 }
 void PAGE_TelemconfigExit()
 {
-    current_selected = GUI_ScrollableGetObjRowOffset(&gui->scrollable, GUI_GetSelected());
+    if(telem_state_check())
+        current_selected = GUI_ScrollableGetObjRowOffset(&gui->scrollable, GUI_GetSelected());
 }
 
 static const char *idx_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     u8 idx = (long)data;
-    sprintf(tp.str, "%d", idx+1);
-    return tp.str;
+    sprintf(tempstring, "%d", idx+1);
+    return tempstring;
 }
 
 static u8 _action_cb(u32 button, u8 flags, void *data)
@@ -111,3 +114,5 @@ static inline guiObject_t *_get_obj(int idx, int objid)
 {
     return GUI_GetScrollableObj(&gui->scrollable, idx, objid);
 }
+
+#endif //HAS_TELEMETRY

@@ -39,7 +39,7 @@ struct mainconfig_obj {
 
 struct mainlayout_obj {
     struct LabelDesc desc[5];
-    guiLabel_t editelem;
+    guiRect_t editelem;
     guiLabel_t move;
     //guiTextSelect_t newelem;
     guiLabel_t xlbl;
@@ -67,8 +67,6 @@ struct mainpage_obj {
         guiLabel_t    box;
         guiImage_t    img;
     } elem[NUM_ELEMS];
-    guiLabel_t battery;
-    guiLabel_t power;
 };
 
 struct menu_obj {
@@ -141,8 +139,24 @@ struct timer_obj {
     guiTextSelect_t resetsrc;
     guiLabel_t resetpermlbl;
     guiButton_t resetperm;
+// don't include this in Devo7e due to memory restrictions
+#if HAS_PERMANENT_TIMER
+    guiButton_t setperm;
+#endif
     guiScrollable_t scrollable;
 };
+
+// don't include this in Devo7e due to memory restrictions
+#if HAS_PERMANENT_TIMER
+struct settimer_obj {
+    guiLabel_t      oldtime;
+    guiTextSelect_t hms;
+    guiTextSelect_t value;
+    guiLabel_t      addtime;
+    guiTextSelect_t addset;
+    guiLabel_t      newvalue;
+};
+#endif
 
 struct trim_obj {
     guiLabel_t steplbl;
@@ -321,6 +335,10 @@ struct gui_objs {
         struct telemcfg_obj telemcfg;
         struct telemtest_obj telemtest1;
         struct timer_obj timer;
+// don't include this in Devo7e due to memory restrictions
+#if HAS_PERMANENT_TIMER
+        struct settimer_obj settimer;
+#endif
         struct trim_obj trim;
         struct trim2_obj trim2;
         struct datalog_obj datalog;
@@ -345,4 +363,4 @@ struct gui_objs {
     } u;
 } gui_objs;
 
-#endif
+#endif //_GUIOBJ_H_

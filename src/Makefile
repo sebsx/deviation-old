@@ -49,12 +49,8 @@ else
    SRC_C    := $(SRC_C) $(wildcard protocol/*.c)
 endif
 
-ifndef NO_STANDARD_GUI
-   SRC_C    := $(SRC_C) $(wildcard pages/$(SCREENSIZE)/standard/*.c)
-endif
-ifndef NO_ADVANCED_GUI
-   SRC_C    := $(SRC_C) $(wildcard pages/$(SCREENSIZE)/advanced/*.c)
-endif
+SRC_C    := $(SRC_C) $(wildcard pages/$(SCREENSIZE)/standard/*.c)
+SRC_C    := $(SRC_C) $(wildcard pages/$(SCREENSIZE)/advanced/*.c)
 
 SRC_S    := $(SRC_S) $(wildcard *.s)
 SRC_CXX  := $(SRC_CXX) $(wildcard *.cpp)
@@ -105,7 +101,8 @@ ifdef MODULAR
 CFLAGS   +=  -DMODULAR=$(MODULAR)
 endif
 
-CFLAGS   := $(CFLAGS) -Wall -Wextra -I. -D$(PROGMODE) -std=gnu99 -Itarget/$(TARGET) -Igui/$(SCREENSIZE) -DHGVERSION="\"${HGVERSION}\""
+CFLAGS   := $(CFLAGS) -Wall -Wextra -I. -D$(PROGMODE) -std=gnu99 -Itarget/$(TARGET) -Igui/$(SCREENSIZE) \
+            -DHGVERSION="\"${HGVERSION}\""
 CXXFLAGS := $(CXXFLAGS) $(patsubst -std=gnu99,,$(CFLAGS))
 EXEEXT   ?= elf
 ##################################################
@@ -153,7 +150,8 @@ $(VERBOSE).SILENT:
 
 clean:
 	rm -f $(TARGET).$(EXEEXT) $(TARGET).bin $(TARGET).dfu $(TARGET).list \
-		$(TARGET).map $(ODIR)/*.o $(ODIR)/*.o_ $(ODIR)/*.P  $(ODIR)/*.bin
+		$(TARGET).map $(ODIR)/*.o $(ODIR)/*.o_ $(ODIR)/*.P  $(ODIR)/*.bin \
+		filesystem/devo7e filesystem/devo12 2> /dev/null || true
 
 distclean:
 	rm -f *.$(EXEEXT) *.bin *.dfu *.list *.map
@@ -168,6 +166,7 @@ language:
 zip: $(TARGET).zip
 
 %.zip: $(TARGET).dfu $(PROTO_MODULES) $(ALL)
+	#This is not an emulator build (emulator is hanled in target/common/emu/Makefile.inc)
 	mv -f $(TARGET).dfu deviation-$(HGVERSION).dfu
 	rm -f deviation-$(HGVERSION).zip
 	rm -f debug-$(HGVERSION).zip
@@ -179,6 +178,9 @@ ifdef MODULAR
 	export p=`pwd`; cd $(ODIR) && zip -u $$p/debug-$(HGVERSION).zip *.elf
 	rm -rf $(ODIR)/protocol
 endif
+ifeq "$(INCLUDE_FS)" "1"
+	export p=`pwd`; cd filesystem/$(FILESYSTEM) && zip -ur $$p/deviation-$(HGVERSION).zip  *
+endif
 	zip -u deviation-$(HGVERSION).zip debug-$(HGVERSION).zip
 	rm -f debug-$(HGVERSION).zip
 	rm -f deviation-$(HGVERSION).dfu
@@ -189,15 +191,17 @@ fs: $(TARGET).fs
 	rm -f deviation-fs-$(HGVERSION).zip; zip -r deviation-fs-$(HGVERSION).zip filesystem/$(TARGET)
 
 release:
-	make TARGET=devo8 zip
-	make TARGET=devo6 zip
+	make TARGET=devo8  zip
+	make TARGET=devo6  zip
 	make TARGET=devo10 zip
 	make TARGET=devo7e zip
 	make TARGET=devo12 zip
+ifneq "$(INCLUDE_FS)" "1"
 	make TARGET=devo8 fs
 	make TARGET=devo10 fs
 	make TARGET=devo7e fs
 	make TARGET=devo12 fs
+endif
 	#make TARGET=emu_devo8 TYPE=prd WINDOWS=1 
 
 ##########################################
@@ -231,8 +235,8 @@ endif
 %.fs_wrapper: $(LAST_MODEL)
 	true
 
-.PHONY: $(LAST_MODEL)
-$(LAST_MODEL): model_template.ini tx_template.ini $(FONTS)
+.PHONY: $(PRE_FS) $(LAST_MODEL)
+$(LAST_MODEL): model_template.ini tx_template.ini $(FONTS) $(PRE_FS)
 	@echo " + Copying template files for $(FILESYSTEM)"
 	mkdir -p filesystem/$(FILESYSTEM) || true
 	cp -prf filesystem/common/media filesystem/$(FILESYSTEM)/
@@ -247,14 +251,14 @@ $(LAST_MODEL): model_template.ini tx_template.ini $(FONTS)
 		&& cat model_template.ini >> filesystem/$(FILESYSTEM)/models/model1.ini
 	cp model_template.ini filesystem/$(FILESYSTEM)/models/default.ini
 	mkdir filesystem/$(FILESYSTEM)/language 2> /dev/null; \
-               ../utils/extract_strings.pl -target $(FILESYSTEM) -update
+               ../utils/extract_strings.pl -target $(FILESYSTEM) -update -objdir $(ODIR)
 	export tx=$(FILESYSTEM); \
 	number=2 ; while [ $$number -le 30 ] ; do \
 		cp model_template.ini filesystem/$$tx/models/model$$number.ini; \
 		number=`expr $$number + 1`; \
 		done
 	@echo " + Checking string list length for $(FILESYSTEM)"
-	../utils/check_string_size.pl -target $(FILESYSTEM) -quiet
+	../utils/check_string_size.pl -target $(FILESYSTEM) -objdir $(ODIR) -quiet
 
 ######################
 #Necessary Font files#

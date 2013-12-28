@@ -18,10 +18,10 @@
 #include "gui/gui.h"
 #include "config/model.h"
 
-#define tp pagemem.u.toggle_select_page
-#define gui (&gui_objs.u.toggleselect)
+static struct toggleselect_obj   * const gui = &gui_objs.u.toggleselect;
+static struct toggle_select_page * const tp  = &pagemem.u.toggle_select_page;
 
-#define NUM_COLS 8
+static const int NUM_COLS = 8;
 
 #include "../common/_toggle_select.c"
 
@@ -35,7 +35,7 @@ static void tglico_select_cb(guiObject_t *obj, s8 press_type, const void *data)
         // --> data = (ToggleNumber << 12) | (IconNumber << 8) | IconPosition
         u8 IconPosition = ((long)data      ) & 0xff;
         u8 IconNumber   = ((long)data >> 8 ) & 0x0f;
-        Model.pagecfg2.elem[tp.tglidx].extra[IconNumber] = IconPosition;
+        Model.pagecfg2.elem[tp->tglidx].extra[IconNumber] = IconPosition;
         show_iconsel_page(IconNumber);
     }
 }
@@ -44,7 +44,7 @@ static void revert_cb(guiObject_t *obj, const void *data)
 {
     (void)data;
     (void)obj;
-    memcpy(Model.pagecfg2.elem[tp.tglidx].extra, tp.tglicons, sizeof(tp.tglicons));
+    memcpy(Model.pagecfg2.elem[tp->tglidx].extra, tp->tglicons, sizeof(tp->tglicons));
     show_iconsel_page(0);
 }
 
@@ -73,7 +73,6 @@ static int row_cb(int absrow, int relrow, int y, void *data)
     for(i = 0; i < NUM_COLS * absrow; i++) {
         idx = get_next_icon(idx);
         if (idx < 0) {
-            idx = 0;
             return 0;
         }
     }
@@ -97,15 +96,15 @@ static void show_iconsel_page(int SelectedIcon)
     PAGE_RemoveAllObjects();
     PAGE_SetActionCB(_action_cb);
     PAGE_SetModal(0);
-    memset(gui, 0, sizeof(gui));
+    memset(gui, 0, sizeof(*gui));
     current_toggleicon = SelectedIcon;
-    u8 toggleinput = MIXER_SRC(Model.pagecfg2.elem[tp.tglidx].src);
+    u8 toggleinput = MIXER_SRC(Model.pagecfg2.elem[tp->tglidx].src);
     int num_positions = INPUT_NumSwitchPos(toggleinput);
     if(num_positions < 2)
         num_positions = 2;
 
     //Header
-    PAGE_ShowHeader(INPUT_SourceNameAbbrevSwitch(tp.str, toggleinput));
+    PAGE_ShowHeader(INPUT_SourceNameAbbrevSwitch(tempstring, toggleinput));
     labelDesc.style = LABEL_CENTER;
     w = 50;
     GUI_CreateButtonPlateText(&gui->revert, LCD_WIDTH - w, 0, w, ITEM_HEIGHT, &labelDesc, NULL, 0, revert_cb, (void *)_tr("Revert"));
@@ -116,14 +115,14 @@ static void show_iconsel_page(int SelectedIcon)
 
     int row = ITEM_HEIGHT + 5;
     GUI_CreateLabelBox(&gui->togglelabel[0], 0, row, 10, ITEM_HEIGHT, SelectedIcon == 0 ? &labelDesc : &DEFAULT_FONT, NULL, NULL, "0:");
-    img = TGLICO_GetImage(Model.pagecfg2.elem[tp.tglidx].extra[0]);
+    img = TGLICO_GetImage(Model.pagecfg2.elem[tp->tglidx].extra[0]);
     GUI_CreateImageOffset(&gui->toggleicon[0], 10, row, TOGGLEICON_WIDTH, TOGGLEICON_HEIGHT, img.x_off, img.y_off, img.file,
              NULL, //SelectedIcon == 0 ? tglico_reset_cb : tglico_setpos_cb,
              (void *)0L);
 
     row += ITEM_HEIGHT + 2;
     GUI_CreateLabelBox(&gui->togglelabel[1], 0, row, 10, ITEM_HEIGHT, SelectedIcon == 1 ? &labelDesc : &DEFAULT_FONT, NULL, NULL, "1:");
-    img = TGLICO_GetImage(Model.pagecfg2.elem[tp.tglidx].extra[1]);
+    img = TGLICO_GetImage(Model.pagecfg2.elem[tp->tglidx].extra[1]);
     GUI_CreateImageOffset(&gui->toggleicon[1], 10, row, TOGGLEICON_WIDTH, TOGGLEICON_HEIGHT, img.x_off, img.y_off, img.file,
              NULL, //SelectedIcon == 1 ? tglico_reset_cb : tglico_setpos_cb,
              (void *)1L);
@@ -131,7 +130,7 @@ static void show_iconsel_page(int SelectedIcon)
     if (num_positions == 3) {
         row += ITEM_HEIGHT + 2;
         GUI_CreateLabelBox(&gui->togglelabel[2], 0, row, 10, ITEM_HEIGHT, SelectedIcon == 2 ? &labelDesc : &DEFAULT_FONT, NULL, NULL, "2:");
-        img = TGLICO_GetImage(Model.pagecfg2.elem[tp.tglidx].extra[2]);
+        img = TGLICO_GetImage(Model.pagecfg2.elem[tp->tglidx].extra[2]);
         GUI_CreateImageOffset(&gui->toggleicon[2], 10, row, TOGGLEICON_WIDTH, TOGGLEICON_HEIGHT, img.x_off, img.y_off, img.file,
              NULL, //SelectedIcon == 2 ? tglico_reset_cb : tglico_setpos_cb,
              (void *)2L);
@@ -142,11 +141,11 @@ static void show_iconsel_page(int SelectedIcon)
 
     GUI_CreateScrollable(&gui->scrollable, 22, ITEM_HEIGHT + 2, LCD_WIDTH - 22, 4 *(TOGGLEICON_HEIGHT + 1),
                      TOGGLEICON_HEIGHT + 1, rows, row_cb, getobj_cb, NULL, (void *)(long)SelectedIcon);
-    //GUI_SetSelected(GUI_ShowScrollableRowOffset(&gui->scrollable, Model.pagecfg.tglico[tp.tglidx][SelectedIcon]));
+    //GUI_SetSelected(GUI_ShowScrollableRowOffset(&gui->scrollable, Model.pagecfg.tglico[tp->tglidx][SelectedIcon]));
 }
 
 void navigate_toggleicons(s8 direction) {
-    u8 toggleinput = MIXER_SRC(Model.pagecfg2.elem[tp.tglidx].src);
+    u8 toggleinput = MIXER_SRC(Model.pagecfg2.elem[tp->tglidx].src);
     int num_positions = INPUT_NumSwitchPos(toggleinput);
     current_toggleicon += direction;
     if (current_toggleicon < 0)

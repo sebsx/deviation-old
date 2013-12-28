@@ -1,3 +1,16 @@
+/** @defgroup pwr_defines PWR Defines
+
+@brief <b>Defined Constants and Types for the STM32F2xx PWR Control</b>
+
+@ingroup STM32F2xx_defines
+
+@version 1.0.0
+
+@date 4 March 2013
+
+LGPL License Terms @ref lgpl_license
+ */
+
 /*
  * This file is part of the libopencm3 project.
  *
@@ -20,7 +33,8 @@
 #ifndef LIBOPENCM3_PWR_F2_H
 #define LIBOPENCM3_PWR_F2_H
 
-#include <libopencm3/stm32/pwr.h>
+#define LIBOPENCM3_PWR_H
+#include <libopencm3/stm32/common/pwr_common_all.h>
 
 /*
  * This file extends the common STM32 version with definitions only

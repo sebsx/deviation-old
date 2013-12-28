@@ -15,7 +15,7 @@
 
 #ifdef MODULAR
   //Allows the linker to properly relocate
-  #define PPMOUT_Cmds PROTO_Cmds
+  #define USBHID_Cmds PROTO_Cmds
   #pragma long_calls
 #endif
 
@@ -36,12 +36,6 @@ static s8 packet[USBHID_MAX_CHANNELS];
 u8 num_channels;
 volatile u8 PrevXferComplete;
 extern void HID_Write(s8 *packet, u8 num_channels);
-
-/* FIXME:  The original imlementation used a PWM to output the PPM signal.
-           However, I could not get TIM1 woring properly.
-           The current implementation just bit-bangs the output.
-           It works fine but is less efficient
-*/
 
 static void build_data_pkt()
 {
@@ -76,7 +70,7 @@ static void initialize()
     CLOCK_StopTimer();
     num_channels = Model.num_channels;
     PrevXferComplete = 1;
-    USB_Enable(1, 1);
+    HID_Enable();
     CLOCK_StartTimer(1000, usbhid_cb);
 }
 
@@ -84,7 +78,7 @@ const void * USBHID_Cmds(enum ProtoCmds cmd)
 {
     switch(cmd) {
         case PROTOCMD_INIT:  initialize(); return 0;
-        case PROTOCMD_DEINIT: USB_Disable(); return 0;
+        case PROTOCMD_DEINIT: HID_Disable(); return 0;
         case PROTOCMD_CHECK_AUTOBIND: return (void *)1L;
         case PROTOCMD_BIND:  initialize(); return 0;
         case PROTOCMD_NUMCHAN: return (void *)((unsigned long)USBHID_MAX_CHANNELS);

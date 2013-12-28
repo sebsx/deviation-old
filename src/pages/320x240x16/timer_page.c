@@ -21,8 +21,10 @@
 
 #include "../common/_timer_page.c"
 
-#define TIMERCOLUMNS (LCD_WIDTH == 480 ? 2 : 1)
-#define MAX_TIMER_PAGE ((NUM_TIMERS - 1) / (2 * TIMERCOLUMNS))
+enum {
+    TIMERCOLUMNS   = (LCD_WIDTH == 480 ? 2 : 1),
+    MAX_TIMER_PAGE = ((NUM_TIMERS - 1) / (2 * TIMERCOLUMNS)),
+};
 
 static void _draw_body();
 guiObject_t *firstObj;
@@ -51,15 +53,17 @@ static int scroll_cb(guiObject_t *parent, u8 pos, s8 direction, void *data)
 }
 
 
-static void _show_page()
+static void _show_page(int page)
 {
     PAGE_SetModal(0);
     firstObj = NULL;
-    timer_page_num = 0 ;
+    timer_page_num = (LCD_WIDTH == 480 ? 0 : page);  // ignore for big screen because everything is on one page
 
+#if HAS_STANDARD_GUI
     if (Model.mixer_mode == MIXER_STANDARD)
         PAGE_ShowHeader_ExitOnly(PAGE_GetName(PAGEID_TIMER), MODELMENU_Show);
     else
+#endif
         PAGE_ShowHeader(PAGE_GetName(PAGEID_TIMER));
     
     GUI_CreateScrollbar(&gui->scrollbar, LCD_WIDTH-16, 32, LCD_HEIGHT-32, MAX_TIMER_PAGE + 1, NULL, scroll_cb, NULL);
@@ -67,6 +71,12 @@ static void _show_page()
     _draw_body();
 }
 
+/*            Advanced                     Standard
+   Row1       Timer                        Timer
+   Row2       Switch                       Switch
+   Row3       Reset(perm)/ResetSwitch      Reset(perm)/Start
+   Row4       Start/Set-to                 Set-to
+*/
 static void _draw_body() {
     if (firstObj) {
         GUI_RemoveHierObjects(firstObj);
@@ -100,18 +110,21 @@ static void _draw_body() {
         GUI_CreateTextSelect(&gui->src[i],  COL2, row, TEXTSELECT_96, toggle_source_cb, set_source_cb, (void *)(long)i);
         //Row 3
         row+=20;
-        int next_row = row;
-        if(Model.mixer_mode != MIXER_STANDARD) {
-            GUI_CreateLabelBox(&gui->resetlbl[i], COL1, row, COL2-COL1, 16, &DEFAULT_FONT, NULL, NULL, _tr("Reset sw"));
-            GUI_CreateTextSelect(&gui->resetsrc[i],  COL2, row, TEXTSELECT_96, toggle_resetsrc_cb, set_resetsrc_cb, (void *)(long)i);
-            next_row+=20;
-        }
-        /* or Reset Perm timer*/
+        /* Reset Perm timer*/
         GUI_CreateLabelBox(&gui->resetpermlbl[i], COL1, row, COL2-COL1, 16, &DEFAULT_FONT, NULL, NULL, _tr("Reset"));
         GUI_CreateButton(&gui->resetperm[i], COL2, row, TEXTSELECT_96, show_timerperm_cb, 0x0000, reset_timerperm_cb, (void *)(long)i);
+        if(Model.mixer_mode != MIXER_STANDARD) {
+            /* or Reset switch */
+            GUI_CreateLabelBox(&gui->resetlbl[i], COL1, row, COL2-COL1, 16, &DEFAULT_FONT, NULL, NULL, _tr("Reset sw"));
+            GUI_CreateTextSelect(&gui->resetsrc[i],  COL2, row, TEXTSELECT_96, toggle_resetsrc_cb, set_resetsrc_cb, (void *)(long)i);
+            row+=20;
+        }
         //Row 4
-        GUI_CreateLabelBox(&gui->startlbl[i], COL1, next_row, COL2-COL1, 16, &DEFAULT_FONT, NULL, NULL, _tr("Start"));
-        GUI_CreateTextSelect(&gui->start[i], COL2, next_row, TEXTSELECT_96, NULL, set_start_cb, (void *)(long)i);
+        GUI_CreateLabelBox(&gui->startlbl[i], COL1, row, COL2-COL1, 16, &DEFAULT_FONT, NULL, NULL, _tr("Start"));
+        GUI_CreateTextSelect(&gui->start[i], COL2, row, TEXTSELECT_96, NULL, set_start_cb, (void *)(long)i);
+        if(Model.mixer_mode == MIXER_STANDARD)
+            row += 20;
+        GUI_CreateButton(&gui->setperm[i], COL2, row, TEXTSELECT_96, show_timerperm_cb, 0x0000, reset_timerperm_cb, (void *)(long)(i | 0x80));
 #if 0 //HAS_RTC
         // date label and set date/time button
         GUI_CreateLabelBox(&gui->datelbl[i], COL1, row, COL2-COL1, 16, &DEFAULT_FONT, NULL, NULL, _tr("Date:"));
@@ -144,10 +157,24 @@ static void update_countdown(u8 idx)
            || Model.timer[idx].type == TIMER_COUNTDOWN_PROP;
     GUI_SetHidden((guiObject_t *)&gui->resetperm[idx], hide);
     GUI_SetSelectable((guiObject_t *)&gui->resetperm[idx], !hide);
+    GUI_SetHidden((guiObject_t *)&gui->setperm[idx], hide);
+    GUI_SetSelectable((guiObject_t *)&gui->setperm[idx], !hide);
     GUI_SetHidden((guiObject_t *)&gui->resetpermlbl[idx], hide);
 
     GUI_Redraw(&gui->switchlbl[idx]);
 }
+
+void reset_timerperm_cb(guiObject_t *obj, const void *data)
+{
+    long index = (long)data & 0xff;
+    if (index & 0x80) {   // set
+        PAGE_RemoveAllObjects();
+        PAGE_SetTimerInit(index & 0x7f);
+    } else  {  // reset
+        PAGE_ShowResetPermTimerDialog(obj,(void *)(index & 0x7f));
+    }
+}
+
 #if HAS_RTC
 void press_set_cb(guiObject_t *obj, const void *data)
 {
@@ -161,23 +188,23 @@ const char *show_set_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    sprintf(tp->tmpstr, "%s", _tr("Date / Time"));
-    return tp->tmpstr;
+    snprintf(tempstring, sizeof(tempstring), "%s", _tr("Date / Time"));
+    return tempstring;
 }
 
 const char *show_time_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    RTC_GetTimeString(tp->tmpstr, RTC_GetValue());
-    return tp->tmpstr;
+    RTC_GetTimeString(tempstring, RTC_GetValue());
+    return tempstring;
 }
 
 const char *show_date_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    RTC_GetDateStringLong(tp->tmpstr, RTC_GetValue());
-    return tp->tmpstr;
+    RTC_GetDateStringLong(tempstring, RTC_GetValue());
+    return tempstring;
 }
 #endif

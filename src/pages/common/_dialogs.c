@@ -14,9 +14,7 @@
  */
 
 
-#define DLG_STR_LEN (80 * 5)
 static guiObject_t *dialog = NULL;
-static char dlgstr[DLG_STR_LEN];
 static u8 disable_safety = 0;//by default =0, means enable
 static guiObject_t *current_selected_obj = NULL; // used for devo10 only
 
@@ -53,7 +51,7 @@ void PAGE_DisableSafetyDialog(u8 disable)
 
 static void invalid_stdmixer_cb(u8 state, void *guiObj)
 {
-#define STANDARD_TEMPLATE "heli_std.ini"
+    static const char * const STANDARD_TEMPLATE = "heli_std.ini";
     if (current_selected_obj != NULL)
         GUI_SetSelected(current_selected_obj);
     dialog = NULL;
@@ -84,6 +82,6 @@ const char *reset_timer_string_cb(guiObject_t *obj, void *data)
     (void)obj;
     (void)data;
     u8 idx = (long)data;
-    sprintf(dlgstr, _tr("Do you really want\nto reset the\n permanent timer %d?"),idx+1);
-    return dlgstr;
+    snprintf(tempstring, sizeof(tempstring), _tr("Do you really want\nto reset the\n permanent timer %d?"),idx+1);
+    return tempstring;
 }

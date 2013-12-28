@@ -106,10 +106,10 @@ void LCD_Init()
     lcd_set_start_line(0);
     // Display data write (6)
     //Clear the screen
-    for(int page = 0; page < 9; page++) {
+    for(int page = 0; page < LCD_PAGES; page++) {
         lcd_set_page_address(page);
         lcd_set_column_address(0);
-        for(int col = 0; col < 129; col++)
+        for(int col = 0; col < PHY_LCD_WIDTH; col++)
             LCD_Data(0x00);
     }
     lcd_display(1);
@@ -175,16 +175,19 @@ void LCD_DrawStop(void)
 
 void LCD_DrawPixel(unsigned int color)
 {
-    int y = ypos;
-    int x = xpos;
-    int ycol = y / 8;
-    int ybit = y & 0x07;
-    if(color) {
-        img[ycol * PHY_LCD_WIDTH + x] |= 1 << ybit;
-    } else {
-        img[ycol * PHY_LCD_WIDTH + x] &= ~(1 << ybit);
+	if (xpos < LCD_WIDTH && ypos < LCD_HEIGHT) {	// both are unsigned, can not be < 0
+		int y = ypos;
+		int x = xpos;
+		int ycol = y / 8;
+		int ybit = y & 0x07;
+        if (color) {
+            img[ycol * PHY_LCD_WIDTH + x] |= 1 << ybit;
+        } else {
+            img[ycol * PHY_LCD_WIDTH + x] &= ~(1 << ybit);
+        }
+        dirty[x] |= 1 << ycol;
     }
-    dirty[x] |= 1 << ycol;
+	// this must be executed to continue drawing in the next row
     xpos++;
     if (xpos > xend) {
         xpos = xstart;

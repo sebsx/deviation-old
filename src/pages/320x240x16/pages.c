@@ -14,7 +14,7 @@
  */
 #include "pages.h"
 
-#define gui (&gui_objs.page)
+static struct page_obj * const gui = &gui_objs.page;
 
 static void (*enter_cmd)(guiObject_t *obj, const void *data);
 static const void *enter_data;
@@ -23,7 +23,6 @@ static const void *exit_data;
 static u8 page_change_cb(u32 buttons, u8 flags, void *data);
 void PAGE_Exit();
 
-#define PAGE_NAME_MAX 10
 struct page {
     void (*init)(int i);
     void (*event)();
@@ -52,7 +51,7 @@ struct page_group groups[] = {
     {1, PAGEID_TIMER},
     {1, PAGEID_TELEMCFG},
     {1, PAGEID_TRIM},
-#if DATALOG_ENABLED
+#if HAS_DATALOG
     {1, PAGEID_DATALOG},
 #endif
     {1, PAGEID_MAINCFG},
@@ -61,11 +60,13 @@ struct page_group groups[] = {
     {2, PAGEID_CHANMON},
     {2, PAGEID_INPUTMON},
     {2, PAGEID_BTNMON},
-#ifdef ENABLE_SCANNER
+#if HAS_SCANNER
     {2, PAGEID_SCANNER},
 #endif
     {2, PAGEID_USB},
+#if HAS_STANDARD_GUI
     {0x81, PAGEID_MODELMENU},
+#endif
     {255, PAGEID_SPLASH},
     {255, 0}
 };

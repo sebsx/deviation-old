@@ -1,42 +1,38 @@
 ﻿Español
 :# Channels
 # Canales
-:%s is %d%%, safe value = %d%%\n
-%s = %d%%, valor seguro  = %d%%\n
-:%s is %d%%,\nsafe value = %d%%
-%s = %d%%, \nvalor seguro  = %d%%
+>:%d bytes left
+: is %d%%, safe value = %d%%\n
+ = %d%%, valor seguro  = %d%%\n
+: is %d%%,\nsafe value = %d%%
+ = %d%%, \nvalor seguro  = %d%%
+>:1 sec
 :1-to-1
 1 a 1
+>:10 sec
 :11 Point
 11 Puntos
 :13 Point
 13 Puntos
 :3 Point
 3 Puntos
-:4 Bars
-4 Barras
-:4 Inside
-4 Dentro
-:4 Outside
-4 Fuera
+>:30 sec
 :4Ch w/ Dual-Rates
 4Ch con DualRate
 :5 Point
 5 Puntos
+>:5 sec
 :5+1
 5+1
-:6 Trims
-6 Trims
 :6+1
 6+1
+>:60 sec
 :6Ch Airplane
 Avión 6Ch
 :6Ch Helicopter
 Helicóptero 6Ch
 :7 Point
 7 Puntos
-:8 Bars
-8 Barras
 :9 Point
 9 Puntos
 :ABSVAL
@@ -59,29 +55,30 @@ AUX5
 >:AUX7
 :About Deviation
 Acerca de Deviation
+>:Add
 >:Advanced
 :Airplane
 Avión
 :Alarm
 Alarma
+>:Alarm interval
 >:Alarm intvl
+>:All
 :Altitude
 Altitud
 >:Auto
->:Aux2
 :Backlight
 Iluminación
 >:Bad/missing\nprotocol modules!
-:Bar %d
-Barra %d
-:Bars
-Barras
+>:Bar
+>:Bargraph
 :Batt alarm
 Alarma bat
 :Battery alarm
 Alarma Batería
 :Battery too low,\ncan't save!
 Batería demadiado baja,\nno se puede grabar!
+>:Big-box
 :Bind
 Bind
 :Binding
@@ -90,8 +87,7 @@ Emparejando
 Emparejamiento en curso...\nAsegurese de que el modelo está encendido\n\nPresionar OK NO cancelará el emparejado\npero le permitirá control completo de la emisora.
 :Binding...\nPress ENT to stop
 Emparejando...\nPulsar ENT para parar
-:Box %d
-Caja%d
+>:Box
 :Button monitor
 Monitor pulsadores
 >:Buzz settings
@@ -102,7 +98,6 @@ Volumen Altavoz
 PASO
 :COL Inv
 PASO Inv
->:COL Inv
 :COL Limit
 Paso Limite
 :COL Mix
@@ -123,6 +118,7 @@ Centro PW
 Centrar todos los\nsticks y ruedas \nentonces pulsar ENT
 :Ch
 Ch
+>:Ch%d
 :Chan mode
 Modo canales
 :Change
@@ -132,12 +128,14 @@ Cambiar
 Monitor canales
 :Channel output
 Salida de canales
+>:Clock
 :Complex
 Complejo
 :Configure
 Configurar
 :Contrast
 Contraste
+>:Control
 :Copy To
 Copiar a
 :Copy To...
@@ -158,10 +156,17 @@ Ciclico3
 >:D/R&Exp -RUD
 :DR
 DR
+>:Datalog
+>:Date
+>:Date / Time
+>:Date format
+>:Date:
+>:Day
 :Deadband
 Zona muert
 :Default
 Defecto
+>:Delete
 :Delta PW
 Delta PW
 :Deviation FW version:
@@ -185,6 +190,8 @@ PROF Inv
 PROF Mez
 :EXPO %d
 Expo. %d
+>:Edit
+>:Enable
 >:Enabled
 :Enter
 Entrar
@@ -192,7 +199,9 @@ Entrar
 Salir
 :Expo&DR
 Expo&DR
+>:Extend
 >:FMODE
+>:Fades
 :Fahren
 Fahren
 :Fail-safe
@@ -212,11 +221,15 @@ Tamaño trama
 TREN
 :GPS
 GPS
->:Gear
+>:GPS Alt.
+>:GPS Coords
+>:GPS Speed
+>:GPS Time
 :Generic settings
 Ajustes generales
 >:Gyro sense
 >:H
+>:H-trim
 >:HOLD
 :Heli
 HEli
@@ -226,16 +239,16 @@ Helicóptero
 :High-Rate
 Valor Alto
 >:Hold position
-:Icon
-Icono
+>:Holds
+>:Hour
 :Icon
 Icono
 >:Idle Up 1
 >:Idle Up 2
-:Input monitor
-Monitor entradas
 :Input
 Entrada
+:Input monitor
+Monitor entradas
 :Insert
 Insertar
 :Inverted
@@ -252,6 +265,7 @@ IZQUIERDA_V
 Lenguaje
 :Latitude
 Latitud
+>:Layout: Long-Press ENT
 :Left
 Izquierda
 :Length
@@ -264,6 +278,7 @@ Cargar
 Cargar...
 :Longitude
 Longitud
+>:Loss
 :Low Battery
 Bateria baja
 :Low-Rate
@@ -289,6 +304,7 @@ Valor Medio
 Límite Min
 :Min/Max
 Min/Max
+>:Minute
 :Mixer
 Mezclas
 >:Mixer GUI
@@ -297,6 +313,7 @@ Mezcladores
 >:Mode
 :Mode %d
 Modo %d
+>:Model
 :Model menu
 Menú modelo
 :Model name
@@ -307,6 +324,8 @@ Nombre del modelo
 Ajustes del modelo
 :Model type
 Tipo del modelo
+>:Momentary
+>:Month
 :Move Down
 Mover Abajo
 :Move Up
@@ -319,18 +338,16 @@ Mezcla
 Neg.
 :New
 Nuevo
-:No Bars
-Sin Barras
+>:No
 :No Trim
 No Trim
-:No Trims
-No Trims
 :None
 Ninguno
 :Normal
 Normal
 :Notch PW
 Notch PW
+>:Num Channels
 :Off
 Apagado
 :Offset
@@ -339,10 +356,16 @@ Desvío
 Ok
 :On
 On
+>:On/Off
 >:PIT
 >:PIT Mix
+>:PPM
+>:PPM In
+>:PPM%d
+>:PPMIn Cfg (Extend)
 :Page
 Página
+>:Page Config
 >:Pitch curves
 :Plane
 Avión
@@ -356,7 +379,10 @@ Pos.
 :Pos/Neg
 Pos/Neg
 >:Position %d
+>:Power On alarm
 >:Power-down alert
+:Prealert interval
+Intervalo prealerta
 :Prealert intvl
 Intervalo prealerta
 :Prealert time
@@ -371,32 +397,31 @@ Pulsar ENT para copiar a
 Pulsar ENT para cargar
 :Press ENT to turn \nUSB drive
 Pulsar ENT para activar la unidad USB
-:Preview: Long-Press ENT
-Previsualizar: pulsación larga ENT
 :Protocol
 Protocolo
 >:PwrDn alert
+>:PwrOn alarm
 :RIGHT_H
 DERECHA_H
 :RIGHT_V
 DERECHA_V
 :RPM
 RPM
-:RPM
-RPM
+>:RTC Time
 :RUD
 COLA
 :RUD DR
 DR COLA
+>:Rate
 :Re-Init
 Reiniciar
+>:Real Time Clock
 :Remove
 Quitar
 :Reset
 Reiniciar
 >:Reset Permanent Timer?
 >:Reset sw
->:Reverse
 :Reverse
 Inverso
 :Reversed
@@ -409,26 +434,31 @@ Derecha
 Val. Seguro
 :Safety
 Seguridad
-:Safety
-Seguridad
+>:Sample Rate
 :Save
 Guardar
+>:Scale
 :Scale%s
 Escala%s
->:Scale
 :Scanner
 Scanner
+>:Second
+>:Select
 >:Servo
+>:Set
+>:Set date
+>:Set permanent timer
+>:Set time
+>:Set to
+>:Set:
 :Simple
 Simple
 :Simple 4 Channel
 4Ch. Simple
+>:Small-box
+>:Smooth
 :Speed
 Velocidad
-:Speed
-Velocidad
-:Src
-Origen
 :Src
 Origen
 >:Standard
@@ -437,26 +467,25 @@ Origen
 Inicio
 :Step
 Paso
+>:Stick
 :Stick input
 Posiciones sticks
 :Stick mode
 Modo de vuelo
 :Sticks
 Sticks
->:Sub-trim
->:Subtrim
 :Subtrim
 Subtrim
 >:Swash
 :SwashType
 Plato
+:Switch
+Interruptor
 >:Switch assignment
 :Switch1
 Interr1
 :Switch2
 Interr2
-:Switch
-Interruptor
 :Symmetric
 Simétrico
 :THR
@@ -502,19 +531,17 @@ Monitor telemetría
 Ajustes telemetría
 :Temp
 Temp
-:Temp
-Temp
 :Temperature
 Temperatura
+>:Template
 :Template..
 Plantilla..
-:Test
-Prueba
 >:Thr hold
 >:Throttle curves
 >:Throttle hold
 :Time
 Hora
+>:Time format
 :Timer
 Temporiz
 :Timer settings
@@ -523,10 +550,11 @@ Config. Timer
 Temporiz%d
 :Timers
 Temporizadores
+:Timeup interval
+Duración
 :Timeup intvl
 Duración
-:Toggle%d
-Indic%d
+>:Toggle
 :Touch Calibrate
 Calibración táctil
 :Touch Test
@@ -539,6 +567,9 @@ Pulsar %d
 Pulsar para bloquear
 :Touch to Unlock
 Pulsar para desbloquear
+>:Trainer Cfg (Channel)
+>:Trainer Cfg (Stick)
+>:Trainer Sw
 :Transmitter config
 Configuración emisora
 :Transmitter menu
@@ -552,8 +583,7 @@ Trim +
 Trim -
 :Trim Step
 Trim paso
-:Trims
-Trims
+>:Trimbar
 :Trims
 Trims
 :Turn Off
@@ -562,14 +592,15 @@ Apagar
 Encender
 :Tx power
 Potencia del TX
+>:Type
 :USB
 USB
->:USB Filesystem is currently
+>:USB Filesystem is currently 
 :Unknown
 Desconocido
 :Up
 Arriba
->:Value
+>:V-trim
 :Value
 Valor
 :Vibration
@@ -578,18 +609,22 @@ Vibración
 Virt
 :Volt
 Volt
-:Volt
-Volt
+>:Welcome
+>:Year
+>:Yes
 :Zero/Max
 Zero/Max
 :\n%d seconds left
 \n%d segundos restantes
 :\n\nBinding will end in %d seconds...
 \n\nEmparejamiento termina en %d segundos...
+>:actual value
 :add
 añadir
+>:cntdn-prop
 :countdown
 cuentaatras
+>:delay
 :is not supported
 no está soportada
 :is turned off
@@ -603,5 +638,9 @@ mult
 >:permanent
 :replace
 sustituir
+>:resulting value
+>:stop-prop
 :stopwatch
 cronómetro
+>:value to add or set
+>:value to set

@@ -20,7 +20,7 @@
 
 #include "../common/_usb_page.c"
 
-#define gui (&gui_objs.u.usb)
+static struct usb_obj * const gui = &gui_objs.u.usb;
 
 const char *show_usb_time_cb(guiObject_t *obj, const void *data);
 const char *show_usb_date_cb(guiObject_t *obj, const void *data);
@@ -30,17 +30,17 @@ static void _draw_page(u8 enable)
     PAGE_RemoveAllObjects();
     PAGE_ShowHeader(PAGE_GetName(PAGEID_USB));
 #if HAS_RTC
-    GUI_CreateLabelBox(&gui->time, (LCD_WIDTH - (120 + 160 +20)) / 2, 40, 120, 28, &BIGBOX_FONT, show_usb_time_cb, NULL, NULL);
-    GUI_CreateLabelBox(&gui->date, (LCD_WIDTH - (120 + 160 +20)) / 2 + 120 + 20, 40, 160, 28, &BIGBOX_FONT, show_usb_date_cb, NULL, NULL);
+    GUI_CreateLabelBox(&gui->time, (LCD_WIDTH - (113 + 113 +20)) / 2, 40, 113, 28, &SMALLBOX_FONT, show_usb_time_cb, NULL, NULL);
+    GUI_CreateLabelBox(&gui->date, (LCD_WIDTH - (113 + 113 +20)) / 2 + 96 + 20, 40, 113, 28, &SMALLBOX_FONT, show_usb_date_cb, NULL, NULL);
 #endif
 
     GUI_CreateLabelBox(&gui->headline, LCD_WIDTH/2-100, 60, 200, 40, &MODELNAME_FONT, NULL, NULL, "www.deviationtx.com");
-    sprintf(up->tmpstr, "%s\n%s\n\n%s... %s\n%s %s",
+    sprintf(tempstring, "%s\n%s\n\n%s... %s\n%s %s",
             _tr("Deviation FW version:"), DeviationVersion,
             _tr("USB Filesystem is currently "), enable == 0 ? _tr("Off") : _tr("On"),
             _tr("Press 'Ent' to turn USB Filesystem"),
             enable == 0 ? _tr("On") : _tr("Off"));
-    GUI_CreateLabelBox(&gui->msg, LCD_WIDTH/2-126, 120, 252, LCD_HEIGHT-120, &DEFAULT_FONT, NULL, NULL, up->tmpstr);
+    GUI_CreateLabelBox(&gui->msg, LCD_WIDTH/2-126, 120, 252, LCD_HEIGHT-120, &DEFAULT_FONT, NULL, NULL, tempstring);
 }
 
 #if HAS_RTC
@@ -48,7 +48,7 @@ const char *show_usb_time_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    RTC_GetTimeString(up->datetime, RTC_GetValue());
+    RTC_GetTimeFormatted(up->datetime, RTC_GetValue());
     return up->datetime;
 }
 
@@ -56,7 +56,7 @@ const char *show_usb_date_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    RTC_GetDateString(up->datetime, RTC_GetValue());
+    RTC_GetDateFormatted(up->datetime, RTC_GetValue());
     return up->datetime;
 }
 

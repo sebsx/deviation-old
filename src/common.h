@@ -5,7 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "std.h"
+#define TEMPSTRINGLENGTH 400 //This is the max dialog size (80 characters * 5 lines)
+                             //We could reduce this to ~240 on the 128x64 screens
+                             //But only after all sprintf are replaced with snprintf
+                             //Maybe move this to target_defs.h
+extern char tempstring[TEMPSTRINGLENGTH];
+
 
 #ifndef LIBOPENCM3_CM3_COMMON_H
 //Older gcc does not allow typedef redefinition even to thesame type
@@ -19,9 +24,16 @@ typedef uint64_t u64;
 #endif
 
 #include "target.h"
+#include "std.h"
+
+//FATFS is defined by target_defs.h
+struct FAT {
+    char a[FILE_SIZE];
+};
+
 
 extern volatile s16 Channels[NUM_OUT_CHANNELS];
-extern const char DeviationVersion[32];
+extern const char DeviationVersion[33];
 
 /* Temproary definition until we have real translation */
 #define _tr_noop(x) x
@@ -36,6 +48,7 @@ void CONFIG_EnableLanguage(int state);
 int CONFIG_IniParse(const char* filename,
          int (*handler)(void*, const char*, const char*, const char*),
          void* user);
+u8 CONFIG_IsModelChanged();
 u8 CONFIG_SaveModelIfNeeded();
 void CONFIG_SaveTxIfNeeded();
 
@@ -161,10 +174,10 @@ const char *INPUT_ButtonName(u8 src);
 void Delay(u32 count);
 u32 Crc(const void *buffer, u32 size);
 const char *utf8_to_u32(const char *str, u32 *ch);
+int exact_atoi(const char *str); //Like atoi but will not decode a number followed by non-number
 extern volatile u8 priority_ready;
 void medium_priority_cb();
 void debug_timing(u32 type, int startend); //This is only defined if TIMING_DEBUG is defined
-void fempty(FILE *fh);
 /* Battery */
 #define BATTERY_CRITICAL 0x01
 #define BATTERY_LOW      0x02
@@ -185,6 +198,7 @@ void STDMIXER_InitSwitches();
 void STDMIXER_SaveSwitches();
 const char *GetElemName(int type);
 const char *GetBoxSource(char *str, int src);
+const char *GetBoxSourceReal(char *str, int src);
 
 #define PPMin_Mode() (Model.num_ppmin >> 6)
 #endif

@@ -1,16 +1,25 @@
 #ifndef _DEVO10_TARGET_H_
 #define _DEVO10_TARGET_H_
 
+#include "../common/devo/common_devo.h"
+
 #define TXID 0x0a
 #define VECTOR_TABLE_LOCATION 0x4000
 #define SPIFLASH_SECTOR_OFFSET 54
 #define SPIFLASH_SECTORS 1024
 
+#define HAS_STANDARD_GUI    1
+#define HAS_ADVANCED_GUI    1
+#define HAS_PERMANENT_TIMER 1
+#define HAS_TELEMETRY       1
+#define HAS_TOUCH           0
+#define HAS_RTC             0
+#define HAS_VIBRATINGMOTOR  1
+#define HAS_DATALOG         1
+#define HAS_LAYOUT_EDITOR   1
+#define HAS_SCANNER         0
+
 #define MIN_BRIGHTNESS 0
-#define HAS_TOUCH 0
-#define HAS_VIBRATINGMOTOR 1
-#define HAS_LOGICALVIEW 1
-#define DATALOG_ENABLED 1
 #define DEFAULT_BATTERY_ALARM 8000
 #define DEFAULT_BATTERY_CRITICAL 7500
 #define MAX_BATTERY_ALARM 12000
@@ -31,5 +40,4 @@
 #define VOLTAGE_NUMERATOR 324
 #define VOLTAGE_OFFSET    421
 
-#define ENABLE_LAYOUT_EDIT 1
 #endif //_DEVO10_TARGET_H_

@@ -1,25 +1,36 @@
 #ifndef _DEVO7E_TARGET_H_
 #define _DEVO7E_TARGET_H_
 
+#include "../common/devo/common_devo.h"
+
 #define TXID 0x7e
 #define VECTOR_TABLE_LOCATION 0x3000
 #define SPIFLASH_SECTOR_OFFSET 0
 #define SPIFLASH_SECTORS 512
 
-//#ifdef BUILDTYPE_DEV
+#if defined BUILDTYPE_DEV && ! defined EMULATOR
 //No room for debug and standard gui
-//#define NO_STANDARD_GUI     1
-//#endif
+ #define HAS_STANDARD_GUI   0
+#else
+ #define HAS_STANDARD_GUI   1
+#endif
+
+#define HAS_ADVANCED_GUI    1
+#define HAS_PERMANENT_TIMER 0
+#define HAS_TELEMETRY       1
+#define HAS_TOUCH           0
+#define HAS_RTC             0
+#define HAS_VIBRATINGMOTOR  1
+#define HAS_DATALOG         0
+#define HAS_SCANNER         0
+#define HAS_LAYOUT_EDITOR   0
 
 #define NO_LANGUAGE_SUPPORT 1
 
 #define MIN_BRIGHTNESS 0
-#define HAS_TOUCH 0
-#define HAS_VIBRATINGMOTOR 1
-#define HAS_LOGICALVIEW 1
 #define DEFAULT_BATTERY_ALARM 4100
 #define DEFAULT_BATTERY_CRITICAL 3900
-#define MAX_BATTERY_ALARM 12000
+#define MAX_BATTERY_ALARM 6000
 #define MIN_BATTERY_ALARM 3300
 #define MAX_POWER_ALARM 60
 
@@ -38,3 +49,4 @@
 #define VOLTAGE_OFFSET    249
 
 #endif //_DEVO7E_TARGET_H_
+

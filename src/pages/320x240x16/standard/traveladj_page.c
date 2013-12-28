@@ -18,9 +18,11 @@
 #include "gui/gui.h"
 #include "config/model.h"
 #include "standard.h"
+
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_traveladj_page.c"
 
-#define gui (&gui_objs.u.stdtravel)
+static struct stdtravel_obj * const gui = &gui_objs.u.stdtravel;
 
 static void show_page(int page)
 {
@@ -57,3 +59,4 @@ void PAGE_TravelAdjInit(int page)
     GUI_CreateLabelBox(&gui->uplbl, 196 + ((LCD_WIDTH - 320) / 2), 36 + ((LCD_HEIGHT - 240) / 2),  96, 16, &NARROW_FONT, NULL, NULL, _tr("Up"));
     show_page(page);
 }
+#endif //HAS_STANDARD_GUI

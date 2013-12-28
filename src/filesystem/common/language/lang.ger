@@ -1,79 +1,99 @@
 ﻿Deutsch
 :# Channels
 Kanäle
-:%s is %d%%, safe value = %d%%\n
-%s %d%%, Ausfallwert = %d%%\n
-:%s is %d%%,\nsafe value = %d%%
-%s %d%%,\nAusfallwert = %d%%\n
+:%d bytes left
+%d Bytes übrig
+: is %d%%, safe value = %d%%\n
+ ist %d%%, Sicherer Wert = %d%%\n
+: is %d%%,\nsafe value = %d%%
+=%d%%, SOLL=%d%%\n
+:1 sec
+1 Sek.
 :1-to-1
 1-zu-1
+:10 sec
+10 Sek.
 :11 Point
 11 Punkt
 :13 Point
 13 Punkt
 :3 Point
 3 Punkt
-:4 Bars
-4 Balken
-:4 Inside
-4 innen
-:4 Outside
-4 außen
+:30 sec
+30 Sek.
 :4Ch w/ Dual-Rates
 4K mit DR
 :5 Point
 5 Punkt
+:5 sec
+5 Sek.
 :5+1
 5+1
-:6 Trims
-6 Trimms
 :6+1
 6+1
+:60 sec
+60 Sek.
 :6Ch Airplane
 6K Flugzeug
 :6Ch Helicopter
 6K Helikopter
 :7 Point
 7 Punkt
-:8 Bars
-8 Balken
 :9 Point
 9 Punkt
 :ABSVAL
 Absolut
 :AIL
-QUE
+QR
 :AIL DR
-QUE DR
+QR DR
 :AIL Inv
-QUE Inv
+QR Inv
+|devo8:AIL Inv
+Richtung Querruder
 :AIL Mix
-QUE Mix
->:AUX2
->:AUX3
+QR Mix
+|devo8:AIL Mix
+Mischanteil Querruder
+:AUX2
+AUX2
+:AUX3
+AUX3
 :AUX4
 AUX4
 :AUX5
 AUX5
->:AUX6
->:AUX7
->:About Deviation
->:Advanced
+:AUX6
+AUX6
+:AUX7
+AUX7
+:About Deviation
+über Deviation
+:Add
+Hinzu
+:Advanced
+Erweitert
 :Airplane
 Flugzeug
 :Alarm
 Alarm
->:Alarm intvl
+:Alarm interval
+Alarm-Intervall
+:Alarm intvl
+Alarm-Intrvl
+:All
+Alle
 :Altitude
 Höhe
->:Auto
->:Aux2
+:Auto
+Auto
 :Backlight
 Helligkeit
->:Bad/missing\nprotocol modules!
-:Bar %d
-Balken %d
-:Bars
+:Bad/missing\nprotocol modules!
+Falsches/fehlen-\ndes Protokollmodul!
+:Bar
+Balken
+:Bargraph
 Balken
 :Batt alarm
 Akkuwarner
@@ -81,6 +101,8 @@ Akkuwarner
 Akkuwarner
 :Battery too low,\ncan't save!
 Akku zu schwach,\nkann nicht speichern!
+:Big-box
+Box groß
 :Bind
 Binden
 :Binding
@@ -89,121 +111,171 @@ Binden
 Bindevorgang läuft...\nSchalte das Modell ein!\n\nOK beendet NICHT den Bindevorgang,\nes erlaubt die Bedienung des Senders.
 :Binding...\nPress ENT to stop
 Binden...\nENT zu stoppen
-:Box %d
-Kasten %d
+:Box
+Box
 :Button monitor
 Knöpfe Anzeige
->:Buzz settings
+:Buzz settings
+Summer Einstellungen
 :Buzz volume
-Buzzer Lautst
->:Buzzer settings
+Lautstärke
+:Buzzer settings
+Summer Einstellungen
 :COL
 COL
 :COL Inv
 COL Inv
-:COL Inv
-COL Inv
+|devo8:COL Inv
+Richtung Pitch
 :COL Limit
 COL Limit
 :COL Mix
 COL Mix
+|devo8:COL Mix
+Mischanteil Pitch
 :CYC
 TAUM
 :Calibrate
+Kalibrier.
+|devo8:Calibrate
 Kalibrieren
 :Calibration done.
-Kalibrierung abgeschlossen.
+Kalibrierung\nabgeschlossen.
 :Cancel
-Abbruch
+Abbr.
+|devo8:Cancel
+Abbrechen
 :Celsius
 Celsius
 :Center PW
-Zentriere PW
+Mitte PW
 :Center all \nsticks and knobs\nthen press ENT
 Zentriere alle \nKnüppel und Hebel\ndann drücke ENT
 :Ch
 K
+:Ch%d
+K%d
 :Chan mode
 K Modus
 :Change
 Ändern
->:Channel
+:Channel
+Kanal
 :Channel monitor
 Kanal Anzeige
 :Channel output
 Kanal Ausgabe
+:Clock
+Uhr
 :Complex
 Komplex
 :Configure
 Konfigurieren
 :Contrast
 Kontrast
+:Control
+Regelung
 :Copy To
-Kopiere zu
+Kopie nach
 :Copy To...
-Kopieren...
+Kopie...
 :Critical battery level detected.\nSettings have been saved.\nAny future configuration settings\nwill NOT be saved.\n\nChange batteries now!
 Kritischer Akkustand erkannt.\nEinstellungen wurden gespeichert.\nAlle nachträglichen Einstellungen\nwerden NICHT gespeichert.\n\nAkku umgehend wechseln!
 :Curve
 Kurve
 :Cyclic1
-Zyklisch1
+Zykl1
 :Cyclic2
-Zyklisch2
+Zykl2
 :Cyclic3
-Zyklisch3
->:D/R & Exp
->:D/R&Exp -AIL
->:D/R&Exp -ELE
->:D/R&Exp -RUD
+Zykl3
+:D/R & Exp
+D/R & Exp
+:D/R&Exp -AIL
+D/R&Exp -QR
+:D/R&Exp -ELE
+D/R&Exp -HR
+:D/R&Exp -RUD
+D/R&Exp -SR
 :DR
 DR
+:Datalog
+Datenprotokoll
+:Date
+Datum
+:Date / Time
+Datum / Zeit
+:Date format
+Datumsformat
+:Date:
+Datum:
+:Day
+Tag
 :Deadband
 Totzone
 :Default
 Standard
+:Delete
+Lösche
 :Delta PW
 Delta PW
 :Deviation FW version:
 Deviation FW Version:
 :Dimmer target
-Dimmer target
+Dimmer Ziel
 :Dimmer time
-Dimmer time
+Dimmzeit
 :Dn
 Dn
->:Do you really want\nto reset the\n permanent timer %d?
+:Do you really want\nto reset the\n permanent timer %d?
+Soll der permanente\nTimer %d zurück-\ngesetzt werden?
 :Down
 Runter
 :ELE
-HOE
+HR
 :ELE DR
-HOE DR
+HR DR
 :ELE Inv
-HOE Inv
+HR Inv
+|devo8:ELE Inv
+Richtung Höhenruder
 :ELE Mix
-HOE Mix
+HR Mix
+|devo8:ELE Mix
+Mischanteil Höhenruder
 :EXPO %d
 EXPO %d
->:Enabled
+:Edit
+Bearbeiten
+:Enable
+Aktiv
+:Enabled
+Aktiv
 :Enter
 Eingabe
 :Exit
 EXT
 :Expo&DR
 Expo&DR
->:FMODE
+:Extend
+Erweitert
+:FMODE
+FMODE
+>:Fades
 :Fahren
+Fahren
+|devo8:Fahren
 Fahrenheit
 :Fail-safe
-Ausfallschutz
+Fail-safe
 :File
 Modell
 :Fixed
 Fest
 :Fixed ID
 Feste ID
->:Fly mode
+:Fly mode
+Flugmodus
 :Foot
 Fuß
 :Frame Size
@@ -212,30 +284,52 @@ Rahmen Größe
 FAHRW
 :GPS
 GPS
->:Gear
+:GPS Alt.
+GPS Höhe
+:GPS Coords
+GPS Koord.
+:GPS Speed
+GPS Geschw.
+|devo8:GPS Speed
+GPS Geschwindigkeit
+:GPS Time
+GPS Zeit
 :Generic settings
+Allgemeine Einstell.
+|devo8:Generic settings
 Allgemeine Einstellungen
->:Gyro sense
+:Gyro sense
+Kreiselempf.
+|devo8:Gyro sense
+Kreiselempfindlichkeit
 >:H
+>:H-trim
 >:HOLD
 :Heli
 Heli
->:Heli/Standard GUI
+:Heli/Standard GUI
+Heli, Standard GUI
 :Helicopter
 Helikopter
 :High-Rate
 Hoch
->:Hold position
+:Hold position
+Halteposition
+>:Holds
+:Hour
+Stunde
 :Icon
 Bild
-:Icon
-Bild
->:Idle Up 1
->:Idle Up 2
+:Idle Up 1
+Leerl. 1
+:Idle Up 2
+Leerl. 2
+:Input
+Einga.
+|devo8:Input
+Eingabe
 :Input monitor
 Eingaben Anzeige
-:Input
-Eingabe
 :Insert
 Einfügen
 :Inverted
@@ -252,31 +346,42 @@ LINKS_V
 Sprache
 :Latitude
 Breite
+:Layout: Long-Press ENT
+Entw.: Langer Druck ENT
+|devo8:Layout: Long-Press ENT
+Entwurf: Langer Druck ENT
 :Left
 Links
 :Length
 Länge
 :Linked
-Verknüpft
+verkn.
+|devo8:Linked
+verknüpft
 :Load
 Laden
 :Load...
 Laden...
 :Longitude
 Länge
+>:Loss
 :Low Battery
 Akku schwach
 :Low-Rate
 Niedrig
 >:M
->:MIX
+:MIX
+MIX
 :Main menu
 Hauptmenü
 :Main page
 Startseite
 :Main page config
+Startseitenkonfig.
+|devo8:Main page config
 Startseitenkonfiguration
->:Manual
+:Manual
+manuell
 :Max Limit
 Max Limit
 :Menu
@@ -289,61 +394,88 @@ Mittel
 Min Limit
 :Min/Max
 Min/Max
+:Minute
+Minute
 :Mixer
-Mixer
->:Mixer GUI
+Mischer
+:Mixer GUI
+Mischer GUI
+|devo8:Mixer GUI
+Mischeroberfläche
 :Mixers
 Mixers
->:Mode
+:Mode
+Mode
 :Mode %d
 Mode %d
+:Model
+Modell
 :Model menu
 Modell Menü
 :Model name
 Modellname
->:Model needs reset\nfor standard mixer
->:Model needs to be reset\nin order to switch to the standard mixer
+:Model needs reset\nfor standard mixer
+Modell wird rückge-\nsetzt für Std. Mixer
+:Model needs to be reset\nin order to switch to the standard mixer
+Modell muss zurückgesetzt werden,\num den Standard Mixer zu nutzen
 :Model setup
-Modell Einstellungen
+Modelleinstellungen
 :Model type
 Modelltyp
+:Momentary
+Taster
+:Month
+Monat
 :Move Down
 Nach unten
 :Move Up
 Nach oben
 :Move sticks and knobs\nto max & min positions\nthen press ENT
-Bewege die Knüppel und Hebel\nin die max & min Positionen\nDann drücke ENT
+Bewege Knüppel und\nHebel in die Max & Min\nPositionen\nDann drücke ENT
 :Mux
 Mux
 :Neg
 -
 :New
 Neu
-:No Bars
-Keine
+:No
+Nein
 :No Trim
-Keine
-:No Trims
-Keine
+Kein Trim
 :None
-Nichts
+keine
 :Normal
 Normal
 :Notch PW
 Notch PW
+:Num Channels
+Anz. Kanäle
 :Off
 Aus
 :Offset
-Ausgleich
+Versatz
 :Ok
 Ok
 :On
 Ein
+:On/Off
+Ein/Aus
 >:PIT
 >:PIT Mix
+>:PPM
+:PPM In
+PPM Kanäle
+|devo8:PPM In
+PPM Eingangskanäle
+>:PPM%d
+:PPMIn Cfg (Extend)
+PPMIn Konf. (Erweitert)
 :Page
 Seite
->:Pitch curves
+:Page Config
+Seitenkonfiguration
+:Pitch curves
+Nick-Kurven
 :Plane
 Flugzeug
 :Point
@@ -356,107 +488,150 @@ Punkt
 :Pos/Neg
 +/-
 >:Position %d
->:Power-down alert
+:Power On alarm
+Einschaltalarm
+:Power-down alert
+Abschaltalarm
+:Prealert interval
+Voralarm-Intervall
 :Prealert intvl
-Prealert intvl
+Voralarm intvl
 :Prealert time
-Prealert time
+Voralarmzeit
 :Press 'Ent' to turn USB Filesystem
-'ENT' schaltet das USB Filesystem
+ENT schaltet das USB Filesystem
 :Press ENT to change
 Drücke ENT zum Ändern
 :Press ENT to copy to
-Drücke ENT zum Kopieren
+Drücke ENT zum Kopier.
 :Press ENT to load
 Drücke ENT zum Laden
 :Press ENT to turn \nUSB drive
 ENT schaltet \ndas USB Laufwerk
-:Preview: Long-Press ENT
-Vorschau: Lange ENT drücken
 :Protocol
 Protokoll
->:PwrDn alert
+:PwrDn alert
+Absch.-Alarm
+:PwrOn alarm
+Einsch.-Alarm
 :RIGHT_H
 RECHTS_H
 :RIGHT_V
 RECHTS_V
 :RPM
 UPM
-:RPM
-UPM
+:RTC Time
+Uhrzeit
 :RUD
-RUD
+SR
 :RUD DR
-RUD DR
+SR DR
+>:Rate
 :Re-Init
 Neu binden
+:Real Time Clock
+Echtzeituhr
 :Remove
 Löschen
 :Reset
-Reset
->:Reset Permanent Timer?
->:Reset sw
->:Reverse
+Rücksetz
+|devo8:Reset
+Rücksetzen
+:Reset Permanent Timer?
+Permanenten Timer zurücksetzen?
+:Reset sw
+auf Null
+|devo8:Reset sw
+auf Null mit
 :Reverse
-Umkehr
+Servoumk.
+|devo8:Reverse
+Servoumkehr
 :Reversed
 Umgekehrt
 :Revert
-Zurücknehmen
+Ursprung
 :Right
 Rechts
 :Safe Val
-Sicherer Wert
+Sich. Wert
 :Safety
 Sicherheit
-:Safety
-Sicherheit
+>:Sample Rate
 :Save
-Kopieren
+Sichrn
+|devo8:Save
+Sichern
+:Scale
+Skalierung
 :Scale%s
-Skalierung%s
->:Scale
+Skalier.%s
+|devo8:Scale%s
+%sSkalierung
 :Scanner
 Scanner
+:Second
+Sekunde
+:Select
+Auswahl
 >:Servo
+:Set
+Setzen
+:Set date
+Setze Datum
+:Set permanent timer
+Setze Dauertimer
+:Set time
+Setze Zeit
+:Set to
+Setze auf
+:Set:
+Setzen:
 :Simple
-Nichts
+Einfach
 :Simple 4 Channel
 Einfach 4 Kanäle
+:Small-box
+Box klein
+:Smooth
+Glätten
 :Speed
-Geschw
-:Speed
+Geschwind.
+|devo8:Speed
 Geschwindigkeit
 :Src
 Quelle
-:Src
-Quelle
 >:Standard
->:Standard Mixer
+:Standard Mixer
+Standard Mischer
 :Start
 Start
 :Step
-Schritt
+Stufe
+:Stick
+Knüppel
 :Stick input
 Knüppel Eingabe
 :Stick mode
-Knüppel Mode
+Knüppelmode
 :Sticks
 Knüppel
->:Sub-trim
->:Subtrim
 :Subtrim
-Untertrimmung
->:Swash
-:SwashType
+Servomitte
+:Swash
 Taumelscheibe
->:Switch assignment
+:SwashType
+T.-Typ
+|devo8:SwashType
+Taumelscheibentyp
+:Switch
+Schalter
+:Switch assignment
+Schalterzuordnung
 :Switch1
 Hebel1
 :Switch2
 Hebel2
-:Switch
-Hebel
 :Symmetric
 Symmetrie
 :THR
@@ -495,26 +670,33 @@ TelemV
 :Telemetry
 Telemetrie
 :Telemetry config
-Telemetrie Einstellung
+Telemetriekonfig.
+|devo8:Telemetry config
+Telemetriekonfiguration
 :Telemetry monitor
 Telemetrie Anzeige
 :Telemetry settings
-Telemetrie Einstellungen
-:Temp
-Temp
+Telemetrieeinstellung.
+|devo8:Telemetry settings
+Telemetrieeinstellungen
 :Temp
 Temp
 :Temperature
-Temp
+Temperatur
+:Template
+Vorlage
 :Template..
 Vorlage...
-:Test
-Testen
->:Thr hold
->:Throttle curves
->:Throttle hold
+:Thr hold
+Gas halt.
+:Throttle curves
+Gaskurven
+:Throttle hold
+Gas halten
 :Time
 Zeit
+:Time format
+Zeitformat
 :Timer
 Timer
 :Timer settings
@@ -523,10 +705,12 @@ Timer Einstellungen
 Timer%d
 :Timers
 Timer
+:Timeup interval
+Nachalarm-Intervall
 :Timeup intvl
-Timeup intvl
-:Toggle%d
-Hebel%d
+Nachalarm-Intrvl
+:Toggle
+Hebel
 :Touch Calibrate
 Touchscreen kalibrieren
 :Touch Test
@@ -539,11 +723,18 @@ Tippe auf Ziel %d
 Antippen zum Sperren
 :Touch to Unlock
 Antippen zum Entsperren
+:Trainer Cfg (Channel)
+Lehrer/Schüler (Kanal)
+:Trainer Cfg (Stick)
+Lehrer/Sch. (Knüppel)
+:Trainer Sw
+Lehr. Schalt
 :Transmitter config
 Sender Einstellungen
 :Transmitter menu
 Sender Menü
->:Travel adjust
+:Travel adjust
+Wegbegrenzung
 :Trim
 Trimmung
 :Trim +
@@ -552,8 +743,8 @@ Trim +
 Trim -
 :Trim Step
 Schritt
-:Trims
-Trimmung
+:Trimbar
+Trimmbalken
 :Trims
 Trimm
 :Turn Off
@@ -561,15 +752,20 @@ Ausschalten
 :Turn On
 Einschalten
 :Tx power
+Sendeleist.
+|devo8:Tx power
 Sendeleistung
+:Type
+Typ
 :USB
 USB
->:USB Filesystem is currently
+:USB Filesystem is currently 
+Das USB-Dateisystem ist aktuell 
 :Unknown
 Unbekannt
 :Up
 Hoch
->:Value
+>:V-trim
 :Value
 Wert
 :Vibration
@@ -578,18 +774,27 @@ Vibration
 Virt
 :Volt
 Volt
-:Volt
-Volt
+:Welcome
+Willkommen
+:Year
+Jahr
+:Yes
+Ja
 :Zero/Max
 Null/Max
 :\n%d seconds left
-\n%d sekunden nach links
+\n%d Sekunden verbleibend
 :\n\nBinding will end in %d seconds...
 \n\nBindevorgang endet in %d Sekunden...
+:actual value
+jetziger Wert
 :add
 +
+>:cntdn-prop
 :countdown
 Countdown
+:delay
+verzög.
 :is not supported
 wird nicht unterstützt
 :is turned off
@@ -599,11 +804,17 @@ max
 :min
 min
 :mult
-*
->:permanent
+mult
+:permanent
+dauerhaft
 :replace
 ersetzen
+:resulting value
+Ergebnis
+>:stop-prop
 :stopwatch
 Stoppuhr
-<:Über Deviation
->:Advanced
+:value to add or set
+zu addieren / setzen
+:value to set
+zu setzender Wert

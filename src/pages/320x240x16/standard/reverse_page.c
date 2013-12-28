@@ -18,9 +18,11 @@
 #include "gui/gui.h"
 #include "config/model.h"
 #include "standard.h"
+
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_reverse_page.c"
 
-#define gui (&gui_objs.u.stdchan)
+static struct stdchan_obj * const gui = &gui_objs.u.stdchan;
 
 static void toggle_reverse_cb(guiObject_t *obj, void *data)
 {
@@ -60,3 +62,4 @@ void PAGE_ReverseInit(int page)
     GUI_CreateScrollbar(&gui->scrollbar, LCD_WIDTH-16, 32, LCD_HEIGHT-32, mp->max_scroll+1, NULL, STDMIX_ScrollCB, show_page);
     show_page(page);
 }
+#endif //HAS_STANDARD_GUI

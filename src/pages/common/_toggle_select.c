@@ -17,16 +17,32 @@ static const struct LabelDesc outline;
 static void show_iconsel_page(int idx);
 static void tglico_select_cb(guiObject_t *obj, s8 press_type, const void *data);
 
-static const char * const toggle_files[4] = {
-    "media/toggle0.bmp",
-    "media/toggle1.bmp",
-    "media/toggle2.bmp",
-    "media/toggle3.bmp",
-};
+#ifdef _DEVO12_TARGET_H_
+    static char * toggle_files[4] = {
+#else
+    static const char * const toggle_files[4] = {
+#endif
+        "media/toggle0.bmp",
+        "media/toggle1.bmp",
+        "media/toggle2.bmp",
+        "media/toggle3.bmp",
+    };
 
 static u32 _get_icon_info()
 {
-    static u32 count = 0;
+    static u32 count = 0; //This gets called from the main page where 'tp' isn't defined
+    #ifdef _DEVO12_TARGET_H_
+        static u8 checked;
+        if(!checked) {
+            FILE *fh;
+            fh = fopen(toggle_files[3], "r");
+            if(!fh)
+                toggle_files[3] = "mymedia/toggle3.bmp";
+            else
+                fclose(fh);
+            checked = 1;
+        }
+    #endif
     if(count == 0) {
         for(int i = 0; i < 4; i++) {
             u16 w, h;
@@ -61,8 +77,8 @@ void TGLICO_Select(guiObject_t *obj, const void *data)
     (void)obj;
     if(Model.pagecfg2.elem[(long)data].src)
     {
-        tp.tglidx = (long)data;
-        memcpy(tp.tglicons, Model.pagecfg2.elem[tp.tglidx].extra, sizeof(tp.tglicons));
+        tp->tglidx = (long)data;
+        memcpy(tp->tglicons, Model.pagecfg2.elem[tp->tglidx].extra, sizeof(tp->tglicons));
         show_iconsel_page(0);
     }
 }
@@ -81,7 +97,7 @@ void tglico_reset_cb(guiObject_t *obj, s8 press_type, const void *data)
     (void)obj;
     if (press_type == -1) {
         u32 pos = (long)data;
-        Model.pagecfg2.elem[tp.tglidx].extra[pos] = 0;
+        Model.pagecfg2.elem[tp->tglidx].extra[pos] = 0;
         show_iconsel_page(pos);
     }
 }

@@ -18,7 +18,7 @@
 #include "gui/gui.h"
 #include "config/model.h"
 
-#if DATALOG_ENABLED
+#if HAS_DATALOG
 #include "../common/_datalog_page.c"
 static u8 seltype;
 enum {
@@ -35,7 +35,7 @@ static void checkbut_press_cb(struct guiObject *obj, const void *data)
     long idx = (long)data;
     if (DATALOG_IsEnabled())
         return;
-    dlog.source[DATALOG_BYTE(idx)] ^= (1 << DATALOG_POS(idx));
+    dlog->source[DATALOG_BYTE(idx)] ^= (1 << DATALOG_POS(idx));
     GUI_Redraw(obj);
 }
 
@@ -43,7 +43,7 @@ static const char *checkbut_txt_cb(struct guiObject *obj, const void *data)
 {
     (void)obj;
     long idx = (long)data;
-    if (dlog.source[DATALOG_BYTE(idx)] & (1 << DATALOG_POS(idx)))
+    if (dlog->source[DATALOG_BYTE(idx)] & (1 << DATALOG_POS(idx)))
        return _tr("On");
     return _tr("Off");
 }
@@ -54,7 +54,7 @@ static void select_press_cb(struct guiObject *obj, const void *data)
     (void)data;
     if (DATALOG_IsEnabled())
         return;
-    memset(&dlog.source, seltype ? 0xff : 0, sizeof(dlog.source));
+    memset(&dlog->source, seltype ? 0xff : 0, sizeof(dlog->source));
     DATALOG_UpdateState();
     for (int i = 0; i < 4; i++) {
         if(OBJ_IS_USED(&gui->col2[i].but))
@@ -126,14 +126,14 @@ static const char *remaining_str_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    sprintf(str, _tr("%d bytes left"), DATALOG_Remaining());
-    return str;
+    snprintf(tempstring, sizeof(tempstring), _tr("%d bytes left"), DATALOG_Remaining());
+    return tempstring;
 }
 
 void PAGE_DatalogInit(int page)
 {
     (void)page;
-    memset(gui, 0, sizeof(gui));
+    memset(gui, 0, sizeof(*gui));
     seltype = 0;
     PAGE_ShowHeader("");
     GUI_CreateLabelBox(&gui->remaining, 0, 0,
@@ -141,4 +141,4 @@ void PAGE_DatalogInit(int page)
     GUI_CreateScrollable(&gui->scrollable, 0, ITEM_HEIGHT + 1, LCD_WIDTH, LCD_HEIGHT - ITEM_HEIGHT -1,
                          ITEM_SPACE, DL_SOURCE + DLOG_LAST, row_cb, getobj_cb, NULL, NULL);
 }
-#endif //DATLOG_ENABLED
+#endif //HAS_DATLOG

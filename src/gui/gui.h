@@ -29,6 +29,10 @@ enum TextSelectType {
     TEXTSELECT_64,
     TEXTSELECT_96,
     TEXTSELECT_DEVO10, // indication for textsel specically in devo10
+// only used for RTC config in Devo12
+#if HAS_RTC
+    TEXTSELECT_VERT_64, // TEXTSELECT_64 with arrows above and beyond instead of sideways
+#endif
 };
 
 enum KeyboardType {
@@ -447,6 +451,7 @@ void GUI_TextSelectEnablePress(guiTextSelect_t *obj, u8 enable);
 void GUI_TextSelectEnable(guiTextSelect_t *obj, u8 enable);
 u8 GUI_IsTextSelectEnabled(struct guiObject *obj);
 void GUI_ChangeImage(guiImage_t *obj, const char *file, u16 x_off, u16 y_off);
+void GUI_ReplaceImage(guiImage_t *obj, const char *file, u16 x_off, u16 y_off);
 
 // logical view, only available in text-based LCD, such as devo10
 struct viewObject {

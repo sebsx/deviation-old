@@ -14,10 +14,11 @@
  */
 
 static struct model_page * const mp = &pagemem.u.model_page;
-#define gui (&gui_objs.u.modelload)
+static struct modelload_obj * const gui = &gui_objs.u.modelload;
 
 static void _show_buttons(int loadsave);
 static void _show_list(int loadsave, u8 num_models);
+
 static int ini_handle_icon(void* user, const char* section, const char* name, const char* value)
 {
     (void)user;
@@ -34,7 +35,7 @@ static int ini_handle_name(void* user, const char* section, const char* name, co
 {
     long idx = (long)user;
     if(section[0] == '\0' && (strcasecmp(name, MODEL_NAME) == 0 || strcasecmp(name, MODEL_TEMPLATE) == 0)) {
-        sprintf(mp->tmpstr, "%d: %s", abs(idx), idx < 0 ? _tr(value) : value);
+        snprintf(tempstring, sizeof(tempstring), "%d: %s", abs(idx), idx < 0 ? _tr(value) : value);
         return -1;
     }
     return 1;
@@ -67,19 +68,23 @@ static void select_cb(guiObject_t *obj, u16 sel, void *data)
             FS_CloseDir();
         }
     } else {
-        sprintf(mp->tmpstr, "models/model%d.ini", mp->selected);
+        sprintf(tempstring, "models/model%d.ini", mp->selected);
         mp->modeltype = 0;
         mp->iconstr[0] = 0;
-        ini_parse(mp->tmpstr, ini_handle_icon, NULL);
-        if (mp->iconstr[0])
-            ico = mp->iconstr;
-        else
-            ico = CONFIG_GetIcon(mp->modeltype);
+        ini_parse(tempstring, ini_handle_icon, NULL);
+        if (mp->selected == CONFIG_GetCurrentModel() && Model.icon[0])
+            ico = Model.icon;
+        else {
+            if (mp->iconstr[0])
+                ico = mp->iconstr;
+            else
+                ico = CONFIG_GetIcon(mp->modeltype);
+        }
     }
-    GUI_ChangeImage(&gui->image, ico, 0, 0);
+    GUI_ReplaceImage(&gui->image, ico, 0, 0);
 }
 
-int get_idx_filename(const char *dir, const char *ext, int idx, const char *prefix)
+int get_idx_filename(char *result, const char *dir, const char *ext, int idx, const char *prefix)
 {
     if (! FS_OpenDir(dir))
         return 0;
@@ -90,7 +95,7 @@ int get_idx_filename(const char *dir, const char *ext, int idx, const char *pref
         if (type == 1 && strncasecmp(filename + strlen(filename) - 4, ext, 4) == 0) {
             count++;
             if (idx + 1 == count) {
-                sprintf(mp->tmpstr, "%s%s", prefix, filename);
+                sprintf(result, "%s%s", prefix, filename);
                 FS_CloseDir();
                 return 1;
             }
@@ -104,25 +109,29 @@ static const char *string_cb(u8 idx, void *data)
     (void)data;
     FILE *fh;
     if ((long)data == LOAD_TEMPLATE) { //Template
-        if (! get_idx_filename("template", ".ini", idx, "template/"))
+        if (! get_idx_filename(tempstring, "template", ".ini", idx, "template/"))
             return _tr("Unknown");
     } else if ((long)data == LOAD_ICON) { //Icon
         if (idx == 0)
             return _tr("Default");
-        if (! get_idx_filename("modelico", ".bmp", idx-1, ""))
+        if (! get_idx_filename(tempstring, "modelico", ".bmp", idx-1, ""))
             return _tr("Unknown");
-        return mp->tmpstr;
+        return tempstring;
     } else if ((long)data == LOAD_LAYOUT) {
         if (idx >= mp->file_state)
-            sprintf(mp->tmpstr, "models/model%d.ini", idx + 1 - mp->file_state);
+            sprintf(tempstring, "models/model%d.ini", idx + 1 - mp->file_state);
         else
-            if (! get_idx_filename("layout", ".ini", idx, "layout/"))
+            if (! get_idx_filename(tempstring, "layout", ".ini", idx, "layout/"))
                 return _tr("Unknown");
     } else {
-        sprintf(mp->tmpstr, "models/model%d.ini", idx + 1);
+        if (idx + 1 == CONFIG_GetCurrentModel()) {
+            sprintf(tempstring, "%d: %s%s", idx + 1, Model.name, CONFIG_IsModelChanged() ? " (unsaved)" : "");
+            return tempstring;
+        }
+        sprintf(tempstring, "models/model%d.ini", idx + 1);
     }
-    fh = fopen(mp->tmpstr, "r");
-    sprintf(mp->tmpstr, "%d: NONE", idx + 1);
+    fh = fopen(tempstring, "r");
+    sprintf(tempstring, "%d: NONE", idx + 1);
     if (fh) {
         long user = idx + 1;
         if ((long)data == LOAD_TEMPLATE)
@@ -131,31 +140,34 @@ static const char *string_cb(u8 idx, void *data)
         fclose(fh);
     }
     if ((long)data == LOAD_LAYOUT && idx >= mp->file_state)
-        strcat(mp->tmpstr + strlen(mp->tmpstr), "(M)");
-    return mp->tmpstr;
+        strcat(tempstring + strlen(tempstring), "(M)");
+    return tempstring;
 }
+
 static void okcancel_cb(guiObject_t *obj, const void *data)
 {
     int msg = (long)data;
     (void)obj;
     if (msg == LOAD_MODEL + 1) {
         /* Load Model */
-        CONFIG_SaveModelIfNeeded();
-        PROTOCOL_DeInit();
-        CONFIG_ReadModel(mp->selected);
-        CONFIG_SaveTxIfNeeded();  //Save here to ensure in case of crash we restart on the right model
-        /* Need to recaclulate channels to see if we're in a safe state */
-        MIXER_Init();
-        MIXER_CalcChannels();
-        PROTOCOL_Init(0);
+        if (mp->selected != CONFIG_GetCurrentModel()) { // don't do that if model didn't change
+            CONFIG_SaveModelIfNeeded();
+            PROTOCOL_DeInit();
+            CONFIG_ReadModel(mp->selected);
+            CONFIG_SaveTxIfNeeded();  //Save here to ensure in case of crash we restart on the right model
+            /* Need to recalculate channels to see if we're in a safe state */
+            MIXER_Init();
+            MIXER_CalcChannels();
+            PROTOCOL_Init(0);
+        }
     } else if (msg == SAVE_MODEL + 1) {
         /* Save Model */
         CONFIG_WriteModel(mp->selected);
         CONFIG_ReadModel(mp->selected);  //Reload the model after saving to switch (for future saves)
     } else if (msg == LOAD_TEMPLATE + 1) {
         /* Load Template */
-        get_idx_filename("template", ".ini", mp->selected-1, "");
-        CONFIG_ReadTemplate(mp->tmpstr);
+        get_idx_filename(tempstring, "template", ".ini", mp->selected-1, "");
+        CONFIG_ReadTemplate(tempstring);
     } else if (msg == LOAD_ICON + 1) {
         if (mp->selected == 1)
             Model.icon[0] = 0;
@@ -164,11 +176,11 @@ static void okcancel_cb(guiObject_t *obj, const void *data)
     } else if (msg == LOAD_LAYOUT + 1) {
         /* Load Layout */
         if (mp->selected > mp->file_state) {
-            sprintf(mp->tmpstr, "models/model%d.ini", mp->selected - mp->file_state);
+            sprintf(tempstring, "models/model%d.ini", mp->selected - mp->file_state);
         } else {
-            get_idx_filename("layout", ".ini", mp->selected-1, "layout/");
+            get_idx_filename(tempstring, "layout", ".ini", mp->selected-1, "layout/");
         }
-        CONFIG_ReadLayout(mp->tmpstr);
+        CONFIG_ReadLayout(tempstring);
     }
     PAGE_SetModal(0);
     PAGE_RemoveAllObjects();
@@ -185,8 +197,8 @@ int model_count()
 {
     int num_models;
     for (num_models = 1; num_models <= 100; num_models++) {
-        sprintf(mp->tmpstr, "models/model%d.ini", num_models);
-        FILE *fh = fopen(mp->tmpstr, "r");
+        sprintf(tempstring, "models/model%d.ini", num_models);
+        FILE *fh = fopen(tempstring, "r");
         if (! fh)
             break;
         fclose(fh);

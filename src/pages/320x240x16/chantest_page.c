@@ -149,28 +149,26 @@ void PAGE_ChantestModal(void(*return_page)(int page), int page)
 
 static void show_button_page()
 {
-    #define X_STEP ((LCD_WIDTH - 20) / 3)
-    int reorder[NUM_TX_BUTTONS] = {
-            0, 2, 17,    // L-trims in left column, R -trims middle, control keys right
-            1, 3, 15,
-            4, 6, 14,
-            5, 7, 16,
-            8, 10, 13,
-            9, 11, 12,
+    // show elements where they are located on the real tx
+    enum {
+        OFFSET_X    = ((LCD_WIDTH - 320) / 2), // center on Devo12-screen
+        OFFSET_Y    = ((LCD_HEIGHT - 240) / 2),
     };
-    int i;
+    enum {X = 0, Y = 1};
+    const int label_pos[NUM_TX_BUTTONS][2] = CHANTEST_BUTTON_PLACEMENT;
     cp->is_locked = 3;
-    int y = 64;
-    GUI_CreateLabelBox(&gui->lock, 10, 40, LCD_WIDTH-20, 20, &NARROW_FONT, lockstr_cb, NULL, NULL);
-    for (i = 0; i < NUM_TX_BUTTONS; i++) {
-        GUI_CreateLabelBox(&gui->value[reorder[i]],
-                10 + X_STEP * (i % 3), y, 16, 16,
+    GUI_CreateLabelBox(&gui->lock, OFFSET_X, 34, 320, 20, &NARROW_FONT, lockstr_cb, NULL, NULL);
+    for (int i = 0; i < NUM_TX_BUTTONS; i++) {
+        GUI_CreateLabelBox(&gui->value[i],
+                OFFSET_X + (label_pos[i][X] > 0 ? label_pos[i][X] + 50 : -label_pos[i][X] -20),    // >0? box at left side of label, otherwise right
+                OFFSET_Y + label_pos[i][Y] - 2,                                          // -2 to center box and label
+                16, 16,
                 &SMALLBOX_FONT, NULL, NULL, (void *)"");
-        GUI_CreateLabelBox(&gui->chan[reorder[i]],
-                30 + X_STEP * (i % 3), y+2, 0, 0,
-                &DEFAULT_FONT, button_str_cb, NULL, (void *)(long)reorder[i]);
-        if ((i % 3) == 2)
-            y += (LCD_HEIGHT - 64) / 6;
+        GUI_CreateLabelBox(&gui->chan[i],
+                OFFSET_X + abs(label_pos[i][X]),                                         // no differencing for the label
+                OFFSET_Y + label_pos[i][Y],
+                0, 0,
+                &DEFAULT_FONT, button_str_cb, NULL, (void *)(long)i);
     }
 }
 

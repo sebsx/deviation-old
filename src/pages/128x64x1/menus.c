@@ -18,7 +18,8 @@
 #include "config/model.h"
 #include "config/tx.h"
 
-#define gui (&gui_objs.u.menu)
+static struct menu_obj * const gui = &gui_objs.u.menu;
+
 struct menu_pages {
     enum PageID id;
     const char *name;
@@ -35,10 +36,10 @@ struct menu_pages menus[] = {
     {PAGEID_USB,      NULL, MENUTYPE_MAINMENU, 0, MIXER_ALL, 0},
     {PAGEID_ABOUT,    NULL, MENUTYPE_MAINMENU, 1, MIXER_ALL, PREVIOUS_ITEM},
     // sub menu items 1
-    {PAGEID_MIXER,    NULL, MENUTYPE_SUBMENU,  0, MIXER_ADVANCED, 0},
     {PAGEID_MODEL,    NULL, MENUTYPE_SUBMENU,  0, MIXER_ALL, PREVIOUS_ITEM},
+    {PAGEID_MIXER,    NULL, MENUTYPE_SUBMENU,  0, MIXER_ADVANCED, 0},
 
-#ifndef NO_STANDARD_GUI
+#if HAS_STANDARD_GUI
     {PAGEID_REVERSE,  NULL, MENUTYPE_SUBMENU,  0, MIXER_STANDARD, PREVIOUS_ITEM},
     {PAGEID_DREXP,    NULL, MENUTYPE_SUBMENU,  0, MIXER_STANDARD, PREVIOUS_ITEM},
     {PAGEID_SUBTRIM,  NULL, MENUTYPE_SUBMENU,  0, MIXER_STANDARD, PREVIOUS_ITEM},
@@ -53,20 +54,24 @@ struct menu_pages menus[] = {
 #endif
 
     {PAGEID_TIMER,    NULL, MENUTYPE_SUBMENU,  0, MIXER_ALL,PREVIOUS_ITEM},
+#if HAS_TELEMETRY
     {PAGEID_TELEMCFG, NULL, MENUTYPE_SUBMENU,  0, MIXER_ALL, PREVIOUS_ITEM},
+#endif
     {PAGEID_TRIM,     NULL, MENUTYPE_SUBMENU,  0, MIXER_ADVANCED, PREVIOUS_ITEM},
-#if DATALOG_ENABLED
+#if HAS_DATALOG
     {PAGEID_DATALOG,  NULL, MENUTYPE_SUBMENU,  0, MIXER_ALL, PREVIOUS_ITEM},
 #endif
     {PAGEID_MAINCFG,  NULL, MENUTYPE_SUBMENU,  0, MIXER_ALL, PREVIOUS_ITEM},
     // sub menu item 2
     {PAGEID_TXCFG,    NULL, MENUTYPE_SUBMENU,  1, MIXER_ALL, PREVIOUS_ITEM},
     {PAGEID_CHANMON,  NULL, MENUTYPE_SUBMENU,  1, MIXER_ALL, PREVIOUS_ITEM},
+#if HAS_TELEMETRY
     {PAGEID_TELEMMON, NULL, MENUTYPE_SUBMENU,  1, MIXER_ALL, PREVIOUS_ITEM},
+#endif
 };
 
 static struct menu_page * const mp = &pagemem.u.menu_page;
-#define VIEW_ID 0
+static const int VIEW_ID = 0;
 static u16 current_selected[3] = {0, 0, 0};  // 0 is used for main menu, 1& 2 are used for sub menu
 static u8 menu_type_flag;   // don't put these items into pagemem, which shared the same union struct with other pages and might be changed
 
@@ -161,8 +166,8 @@ const char *idx_string_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     u8 idx = (long)data;
-    sprintf(mp->tmpstr, "%d.", idx);
-    return mp->tmpstr;
+    sprintf(tempstring, "%d.", idx);
+    return tempstring;
 }
 
 static u8 action_cb(u32 button, u8 flags, void *data)

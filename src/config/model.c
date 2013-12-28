@@ -233,9 +233,10 @@ static int handle_proto_opts(struct Model *m, const char* key, const char* value
     while(*popts) {
         if(mapstrcasecmp(*popts, key) == 0) {
             popts++;
-            int start = atoi(popts[0]);
-            int end = atoi(popts[1]);
-            if(popts[2] == 0 && (start != 0 || end != 0)) {
+            int start = exact_atoi(popts[0]);
+            int end = exact_atoi(popts[1]);
+            int is_num = ((start != 0 || end != 0) && (popts[2] == 0 || (popts[3] == 0 && exact_atoi(popts[2]) != 0))) ? 1 : 0;
+            if(is_num) {
                 m->proto_opts[idx] = atoi(value);
                 return 1;
             }
@@ -530,6 +531,7 @@ static int ini_handler(void* user, const char* section, const char* name, const 
                 if (MATCH_VALUE(RADIO_PROTOCOL_VAL[i])) {
                     m->protocol = i;
                     PROTOCOL_Load(1);
+                    TELEMETRY_SetTypeByProtocol(m->protocol);
                     return 1;
                 }
             }
@@ -896,7 +898,7 @@ static int ini_handler(void* user, const char* section, const char* name, const 
             return 1;
         }
     }
-#if DATALOG_ENABLED
+#if HAS_DATALOG
     if (MATCH_SECTION(SECTION_DATALOG)) {
         if (MATCH_KEY(DATALOG_SWITCH)) {
             m->datalog.enable = get_source(section, value);
@@ -918,7 +920,7 @@ static int ini_handler(void* user, const char* section, const char* name, const 
         }
         return 1;
     }
-#endif //DATALOG_ENABLED
+#endif //HAS_DATALOG
     if (MATCH_START(section, SECTION_SAFETY)) {
         int found = 0;
         u8 src;
@@ -1042,9 +1044,10 @@ static void write_proto_opts(FILE *fh, struct Model *m)
     int idx = 0;
     fprintf(fh, "[%s]\n", SECTION_PROTO_OPTS);
     while(*opts) {
-        int start = atoi(opts[1]);
-        int end = atoi(opts[2]);
-        if (opts[3] == 0 && (start != 0 || end != 0)) {
+        int start = exact_atoi(opts[1]);
+        int end = exact_atoi(opts[2]);
+        int is_num = ((start != 0 || end != 0) && (opts[3] == 0 || (opts[4] == 0 && exact_atoi(opts[3]) != 0))) ? 1 : 0;
+        if (is_num) {
             fprintf(fh, "%s=%d\n",*opts, m->proto_opts[idx]);
         } else {
             fprintf(fh, "%s=%s\n",*opts, opts[m->proto_opts[idx]+1]);
@@ -1222,7 +1225,7 @@ u8 CONFIG_WriteModel(u8 model_num) {
             fprintf(fh, "%s=%d\n", TELEM_ABOVE, (m->telem_flags & (1 << idx)) ? 1 : 0);
         fprintf(fh, "%s=%d\n", TELEM_VALUE, m->telem_alarm_val[idx]);
     }
-#if DATALOG_ENABLED
+#if HAS_DATALOG
     fprintf(fh, "[%s]\n", SECTION_DATALOG);
     fprintf(fh, "%s=%s\n", DATALOG_SWITCH, INPUT_SourceNameReal(file, m->datalog.enable));
     fprintf(fh, "%s=%s\n", DATALOG_RATE, DATALOG_RateString(m->datalog.rate));
@@ -1230,7 +1233,7 @@ u8 CONFIG_WriteModel(u8 model_num) {
         if(m->datalog.source[DATALOG_BYTE(idx)] & (1 << DATALOG_POS(idx)))
             fprintf(fh, "%s=%s\n", DATALOG_SOURCE, DATALOG_Source(file, idx));
     }
-#endif //DATALOG_ENABLED
+#endif //HAS_DATALOG
     fprintf(fh, "[%s]\n", SECTION_SAFETY);
     for(i = 0; i < NUM_SOURCES + 1; i++) {
         if (WRITE_FULL_MODEL || m->safety[i]) {
@@ -1249,7 +1252,7 @@ u8 CONFIG_WriteModel(u8 model_num) {
         switch(type) {
             case ELEM_SMALLBOX:
             case ELEM_BIGBOX:
-                fprintf(fh, "%s=%d,%d,%s\n", elename, x, y, GetBoxSource(file, src));
+                fprintf(fh, "%s=%d,%d,%s\n", elename, x, y, GetBoxSourceReal(file, src));
                 break;
             case ELEM_BAR:
                 src += NUM_INPUTS;
@@ -1266,7 +1269,7 @@ u8 CONFIG_WriteModel(u8 model_num) {
             case ELEM_VTRIM:
                 fprintf(fh, "%s=%d,%d,%d\n", elename, x, y, src);
                 break;
-            case ELEM_MODELICO:
+            default:
                 fprintf(fh, "%s=%d,%d\n", elename, x, y);
                 break;
         }
@@ -1346,11 +1349,14 @@ u8 CONFIG_ReadModel(u8 model_num) {
     return 1;
 }
 
-u8 CONFIG_SaveModelIfNeeded() {
+u8 CONFIG_IsModelChanged() {
     u32 newCrc = Crc(&Model, sizeof(Model));
-    if (crc32 == newCrc)
-        return 0;
-    CONFIG_WriteModel(Transmitter.current_model);
+    return (crc32 != newCrc);
+}
+
+u8 CONFIG_SaveModelIfNeeded() {
+    if (CONFIG_IsModelChanged())
+        CONFIG_WriteModel(Transmitter.current_model);
     return 1;
 }
 

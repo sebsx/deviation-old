@@ -96,12 +96,15 @@ void PROTOCOL_Load(int no_dlg)
     if(*loaded_protocol == Model.protocol)
         return;
     char file[25];
-    #define PROTODEF(proto, module, map, cmd, name) case proto: sprintf(file,"protocol/%s.mod", name); break;
+    strcpy(file, "protocol/");
+    #define PROTODEF(proto, module, map, cmd, name) case proto: strcat(file,name); break;
     switch(Model.protocol) {
         #include "protocol.h"
         default: *loaded_protocol = 0; return;
     }
     #undef PROTODEF
+    file[17] = '\0'; //truncate filename to 8 characters
+    strcat(file, ".mod");
     FILE *fh;
     //We close the current font because on the dveo8 we reuse
     //the font filehandle to read the protocol.
@@ -109,6 +112,7 @@ void PROTOCOL_Load(int no_dlg)
     //protocol while an ini file is open, and we don't want to
     //waste the RAM for an extra filehandle
     u8 old_font = LCD_SetFont(0);
+    finit(&FontFAT, ""); //In case no fonts are loaded yet
     fh = fopen2(&FontFAT, file, "r");
     //printf("Loading %s: %08lx\n", file, fh);
     if(! fh) {

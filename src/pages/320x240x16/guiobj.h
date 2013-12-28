@@ -32,7 +32,7 @@ struct lang_obj {
 };
 
 #define NUM_SYMBOL_COLS ((LCD_WIDTH-24) / 40)
-#define NUM_SYMBOL_ROWS ((LCD_HEIGHT-80) / 40)
+#define NUM_SYMBOL_ROWS ((LCD_HEIGHT-(80-(40-31))) / 40)    //allows one row more to show (no gap for last row needed)
 #define NUM_SYMBOL_ELEMS (NUM_SYMBOL_COLS * NUM_SYMBOL_ROWS)
 struct toggle_obj {
     guiButton_t  okbutton;
@@ -73,7 +73,7 @@ struct mainlayout_obj {
     guiLabel_t elem[NUM_ELEMS];
 };
 
-struct mainpage_objs {
+struct mainpage_obj {
     guiButton_t optico;
     guiButton_t modelico;
     guiLabel_t name;
@@ -93,7 +93,7 @@ struct mainpage_objs {
 };
 
 #define DATALOG_NUM_SCROLLABLE (LCD_HEIGHT == 240 ? 7 : 8)
-struct datalog_objs {
+struct datalog_obj {
     guiLabel_t enlbl;
     guiTextSelect_t en;
     guiLabel_t freqlbl;
@@ -110,7 +110,7 @@ struct datalog_objs {
     guiScrollable_t scrollable;
 };
 
-struct modelcfg_objs {
+struct modelcfg_obj {
     guiLabel_t title;
     guiLabel_t swashlbl;
     guiTextSelect_t swash;
@@ -134,13 +134,13 @@ struct modelcfg_objs {
     guiTextSelect_t ppmmap[MAX_PPM_IN_CHANNELS];
 };
 
-struct modelload_objs {
+struct modelload_obj {
     guiButton_t ok;
     guiListbox_t list;
     guiImage_t image;
 };
 
-struct modelpage_objs {
+struct modelpage_obj {
     guiLabel_t filelbl;
     guiTextSelect_t file;
     guiLabel_t guilbl;
@@ -211,6 +211,7 @@ struct timer_obj {
     guiLabel_t startlbl[NUM_TIMERS];
     guiLabel_t resetpermlbl[NUM_TIMERS];
     guiButton_t resetperm[NUM_TIMERS];
+    guiButton_t setperm[NUM_TIMERS];
     guiLabel_t timelbl[NUM_TIMERS];
     guiLabel_t timevallbl[NUM_TIMERS];
     guiLabel_t datelbl[NUM_TIMERS];
@@ -218,6 +219,15 @@ struct timer_obj {
     guiLabel_t setlbl[NUM_TIMERS];
     guiButton_t set[NUM_TIMERS];
     guiTextSelect_t start[NUM_TIMERS];
+};
+
+struct settimer_obj {
+    guiLabel_t      headerlbl;
+    guiLabel_t      secondlbl, minutelbl, hourlbl;
+    guiTextSelect_t secondsel, minutesel, hoursel;
+    guiLabel_t      oldlbl, addlbl, newlbl;
+    guiLabel_t      oldvalue, addvalue, newvalue;
+    guiButton_t     addbtn, setbtn;
 };
 
 #define NUM_TRIM_ROWS (LCD_HEIGHT == 240 ? 7 : 8)
@@ -249,7 +259,12 @@ struct trimedit_obj {
 struct tx_obj {
     guiScrollbar_t scrollbar;
     union {
-        struct {
+#if LCD_WIDTH != 480
+        struct tx_obj_g1
+#else
+        struct tx_obj_g3
+#endif
+        {
              guiLabel_t head1_1;
              guiLabel_t langlbl;
              guiButton_t lang;
@@ -266,7 +281,7 @@ struct tx_obj {
 #endif
 #if LCD_WIDTH != 480
         } g1;
-        struct {
+        struct tx_obj_g2 {
 #endif
              guiLabel_t head2_1;
              guiLabel_t buzzlbl;
@@ -288,7 +303,7 @@ struct tx_obj {
              guiTextSelect_t dimtgt;
 #if LCD_WIDTH != 480
         } g2;
-        struct {
+        struct tx_obj_g3 {
 #endif
              guiLabel_t head3_1;
              guiLabel_t prealertlbl;
@@ -320,27 +335,25 @@ struct usb_obj {
 };    
 
 struct rtc_obj {
-    guiLabel_t title;
-    guiLabel_t displaylbl;
-    guiLabel_t secondlbl;
-    guiLabel_t minutelbl;
-    guiLabel_t hourlbl;
-    guiLabel_t daylbl;
-    guiLabel_t monthlbl;
-    guiLabel_t yearlbl;
-    guiTextSelect_t display;
-    guiTextSelect_t second;
-    guiTextSelect_t minute;
-    guiTextSelect_t hour;
-    guiTextSelect_t day;
-    guiTextSelect_t month;
-    guiTextSelect_t year;
-    guiLabel_t secondvalue;
-    guiLabel_t minutevalue;
-    guiLabel_t hourvalue;
-    guiLabel_t dayvalue;
-    guiLabel_t monthvalue;
-    guiLabel_t yearvalue;
+    guiLabel_t      title;
+    // time / date format
+    guiLabel_t      timelbl;
+    guiLabel_t      datelbl;
+    guiTextSelect_t timeformat;
+    guiTextSelect_t dateformat;
+    // array for second ... year
+    guiLabel_t      label[6];
+    guiTextSelect_t select[6];
+    // label for displaying time / date
+    guiLabel_t      actlbl;
+    guiLabel_t      acttime;
+    guiLabel_t      actdate;
+    guiLabel_t      newlbl;
+    guiLabel_t      newtime;
+    guiLabel_t      newdate;
+    // buttons for setting time and date
+    guiButton_t     settime;
+    guiButton_t     setdate;
 };
 
 /****Advanced ****/
@@ -400,7 +413,7 @@ struct advmixcfg_obj {
     //guiBarGraph_t bar;
     //guiXYGraph_t graph;
     union {
-        struct {
+        struct advmixcfg_obj_g1 {
             guiLabel_t srclbl;
             guiTextSelect_t src;
             guiLabel_t curvelbl;
@@ -411,7 +424,7 @@ struct advmixcfg_obj {
             guiLabel_t offsetlbl;
             guiTextSelect_t offset;
         } g1;
-        struct {
+        struct advmixcfg_obj_g2 {
             guiLabel_t srclbl;
             guiLabel_t sw1lbl;
             guiLabel_t sw2lbl;
@@ -429,7 +442,7 @@ struct advmixcfg_obj {
             guiXYGraph_t graphhi;
             guiXYGraph_t graph[2];
         } g2;
-        struct {
+        struct advmixcfg_obj_g3 {
             guiLabel_t nummixlbl;
             guiTextSelect_t nummix;
             guiLabel_t pagelbl;
@@ -543,18 +556,19 @@ struct gui_objs {
         struct lang_obj lang;
         struct toggle_obj toggle;
         struct mainlayout_obj mainlayout;
-        struct mainpage_objs mainpage;
-        struct datalog_objs  datalog;
-        struct modelcfg_objs modelcfg;
-        struct modelload_objs modelload;
-        struct modelpage_objs modelpage;
+        struct mainpage_obj mainpage;
+        struct datalog_obj  datalog;
+        struct modelcfg_obj modelcfg;
+        struct modelload_obj modelload;
+        struct modelpage_obj modelpage;
         struct reorder_obj reorder;
-#ifdef ENABLE_SCANNER
+#if HAS_SCANNER
         struct scanner_obj scanner;
 #endif
         struct telemcfg_obj telemcfg;
         struct telemtest_obj telemtest1;
         struct timer_obj timer;
+        struct settimer_obj settimer;
         struct trim_obj trim;
         struct trimedit_obj trimedit;
         struct tx_obj tx;

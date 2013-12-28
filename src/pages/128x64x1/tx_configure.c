@@ -20,10 +20,10 @@
 #include "config/model.h"
 #include "autodimmer.h"
 
-#define MIN_BATTERY_ALARM_STEP 10
+static const int MIN_BATTERY_ALARM_STEP = 10;
 #include "../common/_tx_configure.c"
 
-#define gui (&gui_objs.u.tx)
+static struct tx_obj * const gui = &gui_objs.u.tx;
 
 static u8 _action_cb(u32 button, u8 flags, void *data);
 static const char *_contrast_select_cb(guiObject_t *obj, int dir, void *data);
@@ -64,7 +64,7 @@ static int row_cb(int absrow, int relrow, int y, void *data)
     void *tgl = NULL;
     void *value = NULL;
     void *but_str = NULL;
-    #define X 68
+    const int X = 68;
     u8 x = X;
 
     switch(absrow) {
@@ -199,8 +199,8 @@ static const char *_contrast_select_cb(guiObject_t *obj, int dir, void *data)
     }
     if (Transmitter.contrast == 0)
         return _tr("Off");
-    sprintf(cp->tmpstr, "%d", Transmitter.contrast);
-    return cp->tmpstr;
+    sprintf(tempstring, "%d", Transmitter.contrast);
+    return tempstring;
 }
 
 static const char *_vibration_state_cb(guiObject_t *obj, int dir, void *data)

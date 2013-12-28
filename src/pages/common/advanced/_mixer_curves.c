@@ -13,8 +13,9 @@
  along with Deviation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define gui (&gui_objs.u.advcurve)
-static struct curve_edit * const edit = &pagemem.u.mixer_page.edit;
+static struct advcurve_obj * const gui  = &gui_objs.u.advcurve;
+static struct curve_edit   * const edit = &pagemem.u.mixer_page.edit;
+
 static void okcancel_cb(guiObject_t *obj, const void *data);
 static const char *set_curvename_cb(guiObject_t *obj, int dir, void *data);
 static const char *set_pointnum_cb(guiObject_t *obj, int dir, void *data);
@@ -28,6 +29,8 @@ s16 show_curve_cb(s16 xval, void *data)
     (void)data;
     s16 oldpoint;
     s16 yval;
+    if (edit->reverse)
+        xval = -xval; 
     if (edit->pointnum < 0) {
         oldpoint = edit->curve.points[1];
         edit->curve.points[1] = edit->curve.points[0];
@@ -54,7 +57,7 @@ static const char *set_curvename_cb(guiObject_t *obj, int dir, void *data)
             GUI_Redraw(&gui->point);
         }
     }
-    return CURVE_GetName(pagemem.u.mixer_page.tmpstr, curve);
+    return CURVE_GetName(tempstring, curve);
 }
 static void okcancel_cb(guiObject_t *obj, const void *data)
 {
@@ -77,9 +80,8 @@ static const char *set_value_cb(guiObject_t *obj, int dir, void *data)
     s8 old_pointval = curve->points[pointnum];
     if(CURVE_TYPE(curve) == CURVE_DEADBAND) {
         curve->points[pointnum] = (s8)GUI_TextSelectHelper((u8)curve->points[pointnum], 0, 255, dir, 1, 5, NULL);
-        ret = pagemem.u.mixer_page.tmpstr;
-        sprintf(pagemem.u.mixer_page.tmpstr, "%d.%d", (u8)curve->points[pointnum] / 10, (u8)curve->points[pointnum] % 10);
-        ret = pagemem.u.mixer_page.tmpstr;
+        sprintf(tempstring, "%d.%d", (u8)curve->points[pointnum] / 10, (u8)curve->points[pointnum] % 10);
+        ret = tempstring;
     } else {
         ret = PAGEMIXER_SetNumberCB(obj, dir, &curve->points[pointnum]);
     }
@@ -161,7 +163,25 @@ static u8 touch_cb(s16 x, s16 y, void *data)
     (void)data;
     (void)x;
     u8 pointnum = edit->pointnum < 0 ? 0 : edit->pointnum;
-    edit->curve.points[pointnum] = (CURVE_TYPE(&edit->curve) < CURVE_EXPO) ? RANGE_TO_PCT(x) : RANGE_TO_PCT(y);
+    if (CURVE_TYPE(&edit->curve) < CURVE_EXPO) {
+        edit->curve.points[pointnum] = RANGE_TO_PCT(x);
+    } else {
+        if (CURVE_TYPE(&edit->curve) >= CURVE_3POINT) {
+            u8 maxpt = (CURVE_TYPE(&edit->curve) - CURVE_3POINT) * 2 + 2;
+            if (edit->reverse)
+                x = -x;
+            x -= CHAN_MIN_VALUE;
+            int delta = (CHAN_MAX_VALUE - CHAN_MIN_VALUE) / maxpt;
+            int point = (x + delta / 2) / delta;
+            if (point != pointnum) {
+                edit->pointnum = point;
+printf("Setting point from %d -> %d\n", edit->pointnum, point);
+                GUI_Redraw(&gui->point);
+            }
+            pointnum = point;
+        }
+        edit->curve.points[pointnum] = RANGE_TO_PCT(y);
+    }
     GUI_Redraw(&gui->value);
     return 1;
 }

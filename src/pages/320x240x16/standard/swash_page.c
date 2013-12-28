@@ -21,18 +21,19 @@
 #include "standard.h"
 #include "mixer_standard.h"
 
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_swash_page.c"
-
-#define gui (&gui_objs.u.stdswash)
 
 void PAGE_SwashInit(int page)
 {
     (void)page;
+    enum {
+        COL1 = (10 + ((LCD_WIDTH - 320) / 2)),
+        COL2 = (150 + ((LCD_WIDTH - 320) / 2)),
+        ROW_SPACE = 30,
+    };
     PAGE_ShowHeader_ExitOnly(PAGE_GetName(PAGEID_SWASH), MODELMENU_Show);
     get_swash();
-    #define COL1 (10 + ((LCD_WIDTH - 320) / 2))
-    #define COL2 (150 + ((LCD_WIDTH - 320) / 2))
-    #define ROW_SPACE 30
     /* Row 1 */
     int row = 40 + ((LCD_HEIGHT - 240) / 2);
     GUI_CreateLabelBox(&gui->typelbl, COL1, row, 0, 16, &DEFAULT_FONT, NULL, NULL, _tr("SwashType"));
@@ -55,4 +56,4 @@ void PAGE_SwashInit(int page)
 
     update_swashmixes();
 }
-
+#endif //HAS_STANDARD_GUI

@@ -34,6 +34,9 @@ struct telem_layout {
     u8 source;
 };
 
+static const int TELEM_OFFSET_X = ((LCD_WIDTH-320)/2);
+static const int TELEM_OFFSET_Y = ((LCD_HEIGHT-240)/2);
+
 const struct telem_layout devo8_layout[] = {
           {{10, 40, 40, 16}, {60, 40, 40, 16}, TELEM_DEVO_TEMP1},
           {{10, 60, 40, 16}, {60, 60, 40, 16}, TELEM_DEVO_TEMP2},
@@ -44,11 +47,11 @@ const struct telem_layout devo8_layout[] = {
           {{110, 80, 40, 16}, {155, 80, 40, 16}, TELEM_DEVO_VOLT3},
           {{210, 40, 40, 16}, {255, 40, 40, 16}, TELEM_DEVO_RPM1},
           {{210, 60, 40, 16}, {255, 60, 40, 16}, TELEM_DEVO_RPM2},
-          {{20, 140, 60, 16}, {100, 140, 200, 16}, TELEM_GPS_LAT},
-          {{20, 160, 60, 16}, {100, 160, 200, 16}, TELEM_GPS_LONG},
-          {{20, 180, 60, 16}, {100, 180, 200, 16}, TELEM_GPS_ALT},
-          {{20, 200, 60, 16}, {100, 200, 200, 16}, TELEM_GPS_SPEED},
-          {{20, 220, 60, 16}, {100, 220, 200, 16}, TELEM_GPS_TIME},
+          {{10, 140, 60, 16}, {100, 140, 200, 16}, TELEM_GPS_LAT},
+          {{10, 160, 60, 16}, {100, 160, 200, 16}, TELEM_GPS_LONG},
+          {{10, 180, 60, 16}, {100, 180, 200, 16}, TELEM_GPS_ALT},
+          {{10, 200, 60, 16}, {100, 200, 200, 16}, TELEM_GPS_SPEED},
+          {{10, 220, 60, 16}, {100, 220, 200, 16}, TELEM_GPS_TIME},
           {{0, 0, 0, 0}, {0, 0, 0, 0}, 0},
 };
 const struct telem_layout dsm_layout[] = {
@@ -73,16 +76,16 @@ static void show_page(const struct telem_layout *layout)
 {
     int i = 0;
     for(const struct telem_layout *ptr = layout; ptr->source; ptr++) {
-        GUI_CreateLabelBox(&gui->label[i], ptr->label.x, ptr->label.y,
+        GUI_CreateLabelBox(&gui->label[i], ptr->label.x + TELEM_OFFSET_X, ptr->label.y + TELEM_OFFSET_Y,
                            ptr->label.width, ptr->label.height, &TELEM_TXT_FONT,
                            label_cb, NULL, (void *)(long)ptr->source);
-        GUI_CreateLabelBox(&gui->value[i], ptr->value.x, ptr->value.y,
+        GUI_CreateLabelBox(&gui->value[i], ptr->value.x + TELEM_OFFSET_X, ptr->value.y + TELEM_OFFSET_Y,
                            ptr->value.width, ptr->value.height, &TELEM_ERR_FONT,
                            telem_cb, NULL, (void *)(long)ptr->source);
         i++;
     }
-    tp.telem = Telemetry;
-    //memset(tp.telem.time, 0, sizeof(tp.telem.time));
+    tp->telem = Telemetry;
+    //memset(tp->telem.time, 0, sizeof(tp->telem.time));
 }
 
 void PAGE_TelemtestInit(int page)
@@ -91,7 +94,7 @@ void PAGE_TelemtestInit(int page)
     PAGE_SetModal(0);
     PAGE_ShowHeader(PAGE_GetName(PAGEID_TELEMMON));
     if (telem_state_check() == 0) {
-        GUI_CreateLabelBox(&gui->msg, 20, 80, 280, 100, &NARROW_FONT, NULL, NULL, tp.str);
+        GUI_CreateLabelBox(&gui->msg, 20, 80, 280, 100, &NARROW_FONT, NULL, NULL, tempstring);
         return;
     }
     show_page(TELEMETRY_Type() == TELEM_DEVO ? devo8_layout : dsm_layout);
@@ -100,13 +103,13 @@ void PAGE_TelemtestInit(int page)
 void PAGE_TelemtestModal(void(*return_page)(int page), int page)
 {
     PAGE_SetModal(1);
-    tp.return_page = return_page;
-    tp.return_val = page;
+    tp->return_page = return_page;
+    tp->return_val = page;
     PAGE_RemoveAllObjects();
 
     PAGE_ShowHeader_ExitOnly(PAGE_GetName(PAGEID_TELEMMON), okcancel_cb);
     if (telem_state_check() == 0) {
-        GUI_CreateLabelBox(&gui->msg, 20, 80, 280, 100, &NARROW_FONT, NULL, NULL, tp.str);
+        GUI_CreateLabelBox(&gui->msg, 20, 80, 280, 100, &NARROW_FONT, NULL, NULL, tempstring);
         return;
     }
 
@@ -117,7 +120,7 @@ void PAGE_TelemtestEvent() {
     const struct telem_layout *ptr = TELEMETRY_Type() == TELEM_DEVO ? devo8_layout : dsm_layout;
     for (int i = 0; ptr->source; ptr++, i++) {
         long cur_val = _TELEMETRY_GetValue(&cur_telem, ptr->source);
-        long last_val = _TELEMETRY_GetValue(&tp.telem, ptr->source);
+        long last_val = _TELEMETRY_GetValue(&tp->telem, ptr->source);
         struct LabelDesc *font;
         font = &TELEM_FONT;
         if (cur_val != last_val) {
@@ -127,5 +130,5 @@ void PAGE_TelemtestEvent() {
         }
         GUI_SetLabelDesc(&gui->value[i], font);
     }
-    tp.telem = cur_telem;
+    tp->telem = cur_telem;
 }

@@ -51,16 +51,17 @@ static const char *swashmix_val_cb(guiObject_t *obj, int dir, void *data)
     (void)data;
     int i = (long)data;
     Model.swashmix[i] = GUI_TextSelectHelper(Model.swashmix[i], 0, 100, dir, 1, 5, NULL);
-    sprintf(mp->tmpstr, "%d", (int)Model.swashmix[i]);
-    return mp->tmpstr;
+    snprintf(tempstring, sizeof(tempstring), "%d", (int)Model.swashmix[i]);
+    return tempstring;
 }
 
 static const char *proto_opt_cb(guiObject_t *obj, int dir, void *data)
 {
     (void)obj;
     long idx = (long)data;
-    u8 count = 0;
-    u8 pos = 0;
+    unsigned count = 0;
+    unsigned pos = 0;
+    unsigned step = 0;
     u8 changed;
     int i, start, end;
     for(i = 0; i < idx; i++) {
@@ -70,24 +71,30 @@ static const char *proto_opt_cb(guiObject_t *obj, int dir, void *data)
     }
     while(proto_strs[pos+1+count])
         count++;
-    start = atoi(proto_strs[pos+1]);
-    end = atoi(proto_strs[pos+2]);
-    if (count == 2 && (start != 0 || end != 0)) {
+    start = exact_atoi(proto_strs[pos+1]);
+    end   = exact_atoi(proto_strs[pos+2]);
+    if(count == 3)
+        step = exact_atoi(proto_strs[pos+3]);
+    if ((start != 0 || end != 0) && (count == 2 || (count == 3 && step != 0))) {
         int s1 = 1, s2 = 1;
-        if (start < -200 || end > 200) {
-            s1 = 10;
-            s2 = 50;
+        if (step) {
+            s1 = step & 0xffff;
+            s2 = (step >> 16) & 0xffff;
+            if(s2 == 0)
+                s2 = s1;
+            if(s1 == 0)
+                s1 = 1;
         }
         Model.proto_opts[idx] = GUI_TextSelectHelper(Model.proto_opts[idx], start, end, dir, s1, s2, &changed);
-        sprintf(mp->tmpstr, "%d", Model.proto_opts[idx]);
+        sprintf(tempstring, "%d", Model.proto_opts[idx]);
 
     } else {
         Model.proto_opts[idx] = GUI_TextSelectHelper(Model.proto_opts[idx], 0, count-1, dir, 1, 1, &changed);
-        sprintf(mp->tmpstr, "%s", _tr(proto_strs[pos+Model.proto_opts[idx]+1]));
+        snprintf(tempstring, sizeof(tempstring), "%s", _tr(proto_strs[pos+Model.proto_opts[idx]+1]));
     }
     if (changed)
         PROTOCOL_SetOptions();  // for devo, it needs to do protocol init as the telemerty state is changed
-    return mp->tmpstr;
+    return tempstring;
 }
 
 /* Functions for the ppm-in capability */
@@ -102,7 +109,7 @@ const char *set_source_cb(guiObject_t *obj, int dir, void *data)
     if (changed) {
         *(u8 *)data = source;
     }
-    return INPUT_SourceName(mp->tmpstr, source);
+    return INPUT_SourceName(tempstring, source);
 }
 
 void sourceselect_cb(guiObject_t *obj, void *data)
@@ -122,13 +129,13 @@ const char *set_chmap_cb(guiObject_t *obj, int dir, void *data)
         Model.ppm_map[idx] = GUI_TextSelectHelper(Model.ppm_map[idx], -1, Model.num_channels-1, dir, 1, 1, NULL);
         if (Model.ppm_map[idx] < 0)
             return _tr("None");
-        sprintf(mp->tmpstr, _tr("Ch%d"), Model.ppm_map[idx]+1);
+        snprintf(tempstring, sizeof(tempstring), _tr("Ch%d"), Model.ppm_map[idx]+1);
     } else {
         int newval = GUI_TextSelectHelper(Model.ppm_map[idx], 0, NUM_INPUTS, dir, 1, 1, NULL);
         Model.ppm_map[idx] = INPUT_GetAbbrevSource(Model.ppm_map[idx], newval, dir);
-        INPUT_SourceNameAbbrevSwitch(mp->tmpstr, Model.ppm_map[idx]);
+        INPUT_SourceNameAbbrevSwitch(tempstring, Model.ppm_map[idx]);
     }
-    return mp->tmpstr;
+    return tempstring;
 }
 
 const char *set_train_cb(guiObject_t *obj, int dir, void *data)
@@ -168,14 +175,14 @@ const char *set_train_cb(guiObject_t *obj, int dir, void *data)
            *ptr = value;
         }
     }
-    sprintf(mp->tmpstr, "%d", value);
-    return mp->tmpstr;
+    sprintf(tempstring, "%d", value);
+    return tempstring;
 }
 
 const char *input_chname_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     int idx = (long)data;
-    sprintf(mp->tmpstr, _tr("PPM%d"), idx+1);
-    return mp->tmpstr;
+    snprintf(tempstring, sizeof(tempstring), _tr("PPM%d"), idx+1);
+    return tempstring;
 }

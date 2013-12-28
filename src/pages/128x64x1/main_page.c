@@ -21,27 +21,30 @@
 #include "config/tx.h"
 #include "telemetry.h"
 
-#define VTRIM_W       4
-#define VTRIM_H      49
-#define HTRIM_W      49
-#define HTRIM_H       4
-#define MODEL_ICO_W  52
-#define MODEL_ICO_H  36
-#define BOX_W        48
-#define SMALLBOX_H    9
-#define BIGBOX_H      9
-
-#define ELEM_BIGBOX ELEM_SMALLBOX
-#define ELEM_BAR
+enum {
+     VTRIM_W      =  4,
+     VTRIM_H      = 49,
+     HTRIM_W      = 49,
+     HTRIM_H      =  4,
+     MODEL_ICO_W  = 52,
+     MODEL_ICO_H  = 36,
+     BOX_W        = 48,
+     SMALLBOX_H   =  9,
+     BIGBOX_H     = 14,
+     GRAPH_W      = (VTRIM_W),
+     GRAPH_H      = (VTRIM_H / 2),
+     BATTERY_W    = 26,
+     BATTERY_H    = 6,
+     TXPOWER_W    = 26,
+     TXPOWER_H    = 6,
+};
 
 #define press_icon_cb NULL
 #define press_box_cb NULL
 
 #include "../common/_main_page.c"
 
-static const char *_power_to_string();
-
-#define BATTERY_SCAN_MSEC 2000 // refresh battery for every 2sec to avoid its label blinking
+static const int BATTERY_SCAN_MSEC = 2000; // refresh battery for every 2sec to avoid its label blinking
 static u32 next_scan=0;
 
 /*
@@ -68,27 +71,23 @@ void PAGE_MainInit(int page)
     show_elements();
     //Battery
     mp->battery = PWR_ReadVoltage();
-    GUI_CreateLabelBox(&gui->battery, 88 ,1, 40, 7, &TINY_FONT,  voltage_cb, NULL, NULL);
-    //TxPower
-    GUI_CreateLabelBox(&gui->power, 88, 12,  //54,1,
-            40, 8,&TINY_FONT, _power_to_string, NULL, NULL);
 }
 
-static void _check_voltage()
+static void _check_voltage(guiLabel_t *obj)
 {
     if (CLOCK_getms() > next_scan)  {  // don't need to check battery too frequently, to avoid blink of the battery label
         next_scan = CLOCK_getms() + BATTERY_SCAN_MSEC;
         s16 batt = PWR_ReadVoltage();
         if (batt < Transmitter.batt_alarm) {
-            enum LabelType oldStyle = TINY_FONT.style;  // bug fix
-            TINY_FONT.style = LABEL_BLINK;
-            GUI_SetLabelDesc(&gui->battery, &TINY_FONT);
-            GUI_Redraw(&gui->battery);
-            TINY_FONT.style = oldStyle;
+            enum LabelType oldStyle = MICRO_FONT.style;  // bug fix
+            MICRO_FONT.style = LABEL_BLINK;
+            GUI_SetLabelDesc(obj, &TINY_FONT);
+            GUI_Redraw(obj);
+            MICRO_FONT.style = oldStyle;
         }
         if (batt / 10 != mp->battery / 10 && batt / 10 != mp->battery / 10 + 1) {
             mp->battery = batt;
-            GUI_Redraw(&gui->battery);
+            GUI_Redraw(obj);
         }
     }
 }
@@ -107,26 +106,10 @@ static u8 _action_cb(u32 button, u8 flags, void *data)
 	for ( i=0; i< NUM_TIMERS; i++) 
             TIMER_StartStop(i);
     } else if ((flags & BUTTON_PRESS) && CHAN_ButtonIsPressed(button, BUT_LEFT)) {
-	for ( i=0; i< NUM_TIMERS; i++)
-	    TIMER_Reset(i);
+        for ( i=0; i< NUM_TIMERS; i++)
+            TIMER_Reset(i);
     } else if (! PAGE_QuickPage(button, flags, data)) {
         MIXER_UpdateTrim(button, flags, data);
     }
     return 1;
-}
-
-/**
- * Below are defined in the common.h
- *  TXPOWER_100uW,  // -10db
- *  TXPOWER_300uW, // -5db
- *  TXPOWER_1mW, //0db
- *  TXPOWER_3mW, // 5db
- *  TXPOWER_10mW, // 10db
- *  TXPOWER_30mW, // 15db
- *  TXPOWER_100mW, // 20db
- *  TXPOWER_150mW, // 22db
- */
-static const char *_power_to_string()
-{
-    return RADIO_TX_POWER_VAL[Model.tx_power];
 }

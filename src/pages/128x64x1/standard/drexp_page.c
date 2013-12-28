@@ -20,14 +20,16 @@
 #include "mixer.h"
 #include "mixer_standard.h"
 #include "standard.h"
+
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_drexp_page.c"
 
 static u8 _action_cb(u32 button, u8 flags, void *data);
 
 //static u16 current_selected = 0;
 guiObject_t *scroll_bar;
-#define RIGHT_VIEW_HEIGHT 60
-#define RIGHT_VIEW_ID 1
+static const int RIGHT_VIEW_HEIGHT = 60;
+static const int RIGHT_VIEW_ID  = 1;
 
 enum {
     ITEM_NORMAL,
@@ -112,3 +114,13 @@ static u8 _action_cb(u32 button, u8 flags, void *data)
     }
     return 1;
 }
+
+void PAGE_DrExpCurvesEvent()
+{
+    if (OBJ_IS_USED(&gui->graph)) {
+        if(MIXER_GetCachedInputs(mp->raw, CHAN_MAX_VALUE / 100)) { // +/-1%
+            GUI_Redraw(&gui->graph);
+        }
+    }
+}
+#endif //HAS_STANDARD_GUI

@@ -18,14 +18,17 @@
 #include "gui/gui.h"
 #include "config/model.h"
 #include "standard.h"
+
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_throhold_page.c"
 static u8 _action_cb(u32 button, u8 flags, void *data);
 
 static s8 current_selected = 0;
 void PAGE_ThroHoldInit(int page)
 {
-    if (page < 0 && current_selected > 0) // enter this page from childen page , so we need to get its previous mp->current_selected item
-        page = current_selected;
+    (void)page;
+    //if (page < 0 && current_selected > 0) // enter this page from childen page , so we need to get its previous mp->current_selected item
+    //    page = current_selected;
     PAGE_SetActionCB(_action_cb);
     PAGE_SetModal(0);
     PAGE_RemoveAllObjects();
@@ -60,3 +63,4 @@ static u8 _action_cb(u32 button, u8 flags, void *data)
     }
     return 1;
 }
+#endif //HAS_STANDARD_GUI

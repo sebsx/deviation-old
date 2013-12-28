@@ -5,10 +5,10 @@
 Количество каналов
 :%d bytes left
 осталось %d байт
-:%s is %d%%, safe value = %d%%\n
-%s = %d%%, безопасное значение = %d%%\n
-:%s is %d%%,\nsafe value = %d%%
-%s = %d%%,\nбезопасное значение = %d%%
+: is %d%%, safe value = %d%%\n
+ = %d%%, безопасное значение = %d%%\n
+: is %d%%,\nsafe value = %d%%
+ = %d%%,\nбезопасное значение = %d%%
 :1 sec
 1 сек
 :1-to-1
@@ -17,12 +17,8 @@
 10 сек
 :11 Point
 11 точек
-:12 hour
-12 часов
 :13 Point
 13 точек
-:24 hour
-24 часа
 :3 Point
 3 точки
 :30 sec
@@ -83,6 +79,8 @@ AUX7
 Самолет
 :Alarm
 Сигнал
+:Alarm interval
+Интервал
 :Alarm intvl
 Интервал
 :All
@@ -91,18 +89,16 @@ AUX7
 Высота
 :Auto
 Авто
-:Aux2
-Aux2
 :Backlight
 Подсветка
 :Bad/missing\nprotocol modules!
 Ошибочные/отсутствующие\nмодули протоколов!
+:Bar
+Полоса
 :Bargraph
 Полоса
 :Batt alarm
 Сигнал бат.
-|devo8:Batt alarm
-Сигнал батареи
 :Battery alarm
 Сигнал батареи
 :Battery too low,\ncan't save!
@@ -207,14 +203,14 @@ Aux2
 ДР&Экспо РНапр
 :DR
 ДР
-:Data log
-Журнал
 :Datalog
 Журнал
 :Date
 Дата
 :Date / Time
 Дата / Время
+:Date format
+Формат даты
 :Date:
 Дата:
 :Day
@@ -233,8 +229,6 @@ Aux2
 Гашение до
 :Dimmer time
 Время гашения
-:Display
-Формат
 :Dn
 Вниз
 :Do you really want\nto reset the\n permanent timer %d?
@@ -273,6 +267,8 @@ Aux2
 ПРеж
 |devo8:FMODE
 ПРежим
+:Fades
+Затух.
 :Fahren
 F°
 |devo8:Fahren
@@ -307,8 +303,6 @@ GPS коорд.
 GPS скорость
 :GPS Time
 GPS время
-:Gear
-Шасси
 :Generic settings
 Основные настройки
 :Gyro sense
@@ -333,6 +327,8 @@ HOLD
 Высокий расход
 :Hold position
 Положение
+:Holds
+Удерж.
 :Hour
 Часы
 :Icon
@@ -379,6 +375,8 @@ L
 Загрузка...
 :Longitude
 Долгота
+:Loss
+Потери
 :Low Battery
 Батарея разряжена
 :Low-Rate
@@ -443,6 +441,8 @@ M
 Модель
 :Model type
 Тип модели
+:Momentary
+Кнопка
 :Month
 Месяц
 :Move Down
@@ -450,7 +450,7 @@ M
 :Move Up
 Вверх
 :Move sticks and knobs\nto max & min positions\nthen press ENT
-Переместите стики и ручки\nв максимум и минимум,\nзатем нажмите ENT
+Cместите стики и ручки\nв максимум и минимум,\nзатем нажмите ENT
 :Mux
 Мульт
 :Neg
@@ -479,6 +479,8 @@ M
 ОK
 :On
 Вкл
+:On/Off
+Вкл/Выкл
 :PIT
 Шаг
 :PIT Mix
@@ -517,10 +519,10 @@ PPM-Вход (расширенный)
 Сигнал вкл.
 :Power-down alert
 Сигнал выкл.
+:Prealert interval
+Интервалы перед
 :Prealert intvl
 Интерв. перед
-|devo8:Prealert intvl
-Интервалы перед
 :Prealert time
 Вр. до сигнала
 |devo8:Prealert time
@@ -613,6 +615,16 @@ RPM
 серво
 :Set
 Установить
+:Set date
+Установить
+:Set permanent timer
+Интегральный таймер
+|devo8:Set permanent timer
+Установка интегрального таймера
+:Set time
+Установить
+:Set to
+Установить
 :Set:
 Установить:
 :Simple
@@ -643,8 +655,6 @@ RPM
 Режим стиков
 :Sticks
 Стики
-:Sub-trim
-Субтриммер
 :Subtrim
 Субтриммер
 :Swash
@@ -723,6 +733,8 @@ RPM
 Удержание газа
 :Time
 Время
+:Time format
+Формат времени
 :Timer
 Таймер
 :Timer settings
@@ -731,14 +743,12 @@ RPM
 Таймер%d
 :Timers
 Таймеры
+:Timeup interval
+Интервалы после
 :Timeup intvl
 Интерв. после
-|devo8:Timeup intvl
-Интервалы после
 :Toggle
-Переключ.
-|devo8:Toggle
-Переключатель
+Тумблер
 :Touch Calibrate
 Калибровка экрана
 :Touch Test
@@ -821,6 +831,8 @@ USB
 \n%d секунд до конца
 :\n\nBinding will end in %d seconds...
 \n\nПривязка завершится через %d секунд...
+:actual value
+Актуальное значение
 :add
 добавить
 :cntdn-prop
@@ -843,7 +855,13 @@ USB
 интеграл
 :replace
 заменить
+:resulting value
+Результат
 :stop-prop
 сек. проп
 :stopwatch
 секундомер
+:value to add or set
+Значение установки
+:value to set
+Установка

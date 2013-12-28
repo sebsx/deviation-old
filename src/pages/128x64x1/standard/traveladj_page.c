@@ -18,9 +18,11 @@
 #include "gui/gui.h"
 #include "config/model.h"
 #include "standard.h"
+#if HAS_STANDARD_GUI
 #include "../../common/standard/_traveladj_page.c"
 
-#define gui (&gui_objs.u.stdtravel)
+static struct stdtravel_obj * const gui = &gui_objs.u.stdtravel;
+
 static u8 _action_cb(u32 button, u8 flags, void *data);
 
 static u16 current_selected = 0;
@@ -50,8 +52,9 @@ static int row_cb(int absrow, int relrow, int y, void *data)
 
 void PAGE_TravelAdjInit(int page)
 {
-    if (page < 0 && current_selected > 0) // enter this page from childen page , so we need to get its previous mp->current_selected item
-        page = current_selected;
+    (void)page;
+    //if (page < 0 && current_selected > 0) // enter this page from childen page , so we need to get its previous mp->current_selected item
+    //    page = current_selected;
     PAGE_SetActionCB(_action_cb);
     PAGE_SetModal(0);
     PAGE_RemoveAllObjects();
@@ -86,3 +89,4 @@ void PAGE_TravelAdjExit()
 {
     current_selected = GUI_ScrollableGetObjRowOffset(&gui->scrollable, GUI_GetSelected());
 }
+#endif //HAS_STANDARD_GUI

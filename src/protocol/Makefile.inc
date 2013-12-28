@@ -14,6 +14,9 @@ PROTO_MODULES += $(ODIR)/protocol/wk2401.mod
 #PROTO_MODULES += $(ODIR)/protocol/frsky-2.mod
 PROTO_MODULES += $(ODIR)/protocol/skyartec.mod
 PROTO_MODULES += $(ODIR)/protocol/v202.mod
+PROTO_MODULES += $(ODIR)/protocol/slt.mod
+PROTO_MODULES += $(ODIR)/protocol/usbhid.mod
+PROTO_MODULES += $(ODIR)/protocol/hisky.mod
 ALL += $(PROTO_MODULES)
 else #BUILD_TARGET
 $(ODIR)/protocol/devo.mod : $(ODIR)/devo.bin
@@ -70,6 +73,18 @@ $(ODIR)/protocol/wk2401.mod : $(ODIR)/wk2x01.bin
 
 $(ODIR)/protocol/v202.mod : $(ODIR)/v202_nrf24l01.bin
 	@echo Building 'v202' module
+	/bin/mkdir -p $(ODIR)/protocol/ 2>/dev/null; /bin/cp $< $@
+
+$(ODIR)/protocol/slt.mod : $(ODIR)/slt_nrf24l01.bin
+	@echo Building 'tacticsl' module
+	/bin/mkdir -p $(ODIR)/protocol/ 2>/dev/null; /bin/cp $< $@
+
+$(ODIR)/protocol/usbhid.mod : $(ODIR)/usbhid.bin
+	@echo Building 'usbhid' module
+	/bin/mkdir -p $(ODIR)/protocol/ 2>/dev/null; /bin/cp $< $@
+
+$(ODIR)/protocol/hisky.mod : $(ODIR)/hisky_nrf24l01.bin
+	@echo Building 'hisky' module
 	/bin/mkdir -p $(ODIR)/protocol/ 2>/dev/null; /bin/cp $< $@
 
 endif #BUILD_TARGET

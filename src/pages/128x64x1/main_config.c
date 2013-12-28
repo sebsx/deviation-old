@@ -19,10 +19,10 @@
 #include "config/model.h"
 #include "telemetry.h"
 
-#define lp pagemem.u.layout_page
-#define pc Model.pagecfg2
-#define gui (&gui_objs.u.mainconfig)
-#define HEADER_Y 10
+static struct layout_page    * const lp  = &pagemem.u.layout_page;
+static struct PageCfg2       * const pc  = &Model.pagecfg2;
+static struct mainconfig_obj * const gui = &gui_objs.u.mainconfig;
+static const int HEADER_Y = 10;
 
 #include "../common/_main_config.c"
 
@@ -33,7 +33,7 @@ static u8 _action_cb(u32 button, u8 flags, void *data);
 void PAGE_MainLayoutInit(int page)
 {
     (void)page;
-    memset(&lp, 0, sizeof(lp));
+    memset(lp, 0, sizeof(*lp));
     show_config();
 }
 void PAGE_MainLayoutEvent()
@@ -73,7 +73,7 @@ static const char *cfglabel_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     int i = (long)data;
-    int type = ELEM_TYPE(pc.elem[i]);
+    int type = ELEM_TYPE(pc->elem[i]);
     int idx = elem_abs_to_rel(i);
     const char *str;
     switch(type) {
@@ -81,20 +81,22 @@ static const char *cfglabel_cb(guiObject_t *obj, const void *data)
     case ELEM_HTRIM:
         str = _tr("Trimbar");
         break; 
+    case ELEM_BIGBOX:
     case ELEM_SMALLBOX:
         str = _tr("Box");
+        break;
+    case ELEM_BAR:
+        str = _tr("Bar");
         break;
     case ELEM_TOGGLE:
         str = _tr("Toggle");
         break;
-    case ELEM_MODELICO:
-        str = _tr("Model");
-        break;
     default:
-        str = "";
+        str = GetElemName(type);
+        break;
     }
-    sprintf(lp.tmp,"%s%d", str, idx+1);
-    return lp.tmp;
+    sprintf(tempstring,"%s%d", str, idx+1);
+    return tempstring;
 }
 
 static void switchicon_press_cb(guiObject_t *obj, const void *data)
@@ -114,13 +116,13 @@ void newelem_press_cb(guiObject_t *obj, const void *data)
 static const char *dlgts1_cb(guiObject_t *obj, int dir, void *data)
 {
     int idx = (long)data;
-    if (pc.elem[idx].src == 0 && dir < 0)
-        pc.elem[idx].src = -1;
-    if ((s8)pc.elem[idx].src == -1 && dir > 0) {
-        pc.elem[idx].src = 0;
+    if (pc->elem[idx].src == 0 && dir < 0)
+        pc->elem[idx].src = -1;
+    if ((s8)pc->elem[idx].src == -1 && dir > 0) {
+        pc->elem[idx].src = 0;
         dir = 0;
     }
-    if ((s8)pc.elem[idx].src < 0) {
+    if ((s8)pc->elem[idx].src < 0) {
         GUI_TextSelectEnablePress((guiTextSelect_t *)obj, 1);
         return _tr("Delete");
     }
@@ -135,7 +137,7 @@ static int row_cb(int absrow, int relrow, int y, void *data)
     int y_ts = y;
     //show elements in order
     int row = -1;
-#if ENABLE_LAYOUT_EDIT
+#if HAS_LAYOUT_EDITOR
     if (absrow == num_elems + NUM_QUICKPAGES) {
         GUI_CreateTextSelectPlate(&gui->value[relrow], 0, y_ts,
                  LCD_WIDTH-x-4, ITEM_HEIGHT, &DEFAULT_FONT, NULL, newelem_cb, NULL);
@@ -161,8 +163,6 @@ static int row_cb(int absrow, int relrow, int y, void *data)
         long nxt = -1;
         long item = -1;
         while((nxt = MAINPAGE_FindNextElem(type, nxt+1)) >= 0) {
-            if(ELEM_TYPE(pc.elem[nxt]) == ELEM_BIGBOX)  //because FindNextElem maps elements
-                continue;
             item = nxt;
             row++;
             if(row == absrow)
@@ -186,20 +186,20 @@ void show_config()
 {
     PAGE_MainLayoutExit();
     GUI_RemoveAllObjects();
-#if ENABLE_LAYOUT_EDIT
+#if HAS_LAYOUT_EDITOR
     PAGE_ShowHeader(_tr("Layout: Long-Press ENT"));
 #endif
     PAGE_SetActionCB(_action_cb);
-    memset(gui, 0, sizeof(struct mainconfig_obj));
+    memset(gui, 0, sizeof(*gui));
     long count = 0;
     for (count = 0; count < NUM_ELEMS; count++) {
-        if (! ELEM_USED(pc.elem[count]))
+        if (! ELEM_USED(pc->elem[count]))
             break;
     }
-#if ENABLE_LAYOUT_EDIT
-    #define ADD_LOAD 2
+#if HAS_LAYOUT_EDITOR
+    static const int ADD_LOAD = 2;
 # else
-    #define ADD_LOAD 1
+    static const int ADD_LOAD = 1;
 #endif
     GUI_CreateScrollable(&gui->scrollable, 0, ITEM_HEIGHT + 1, LCD_WIDTH, LCD_HEIGHT - ITEM_HEIGHT -1,
                      ITEM_SPACE, count+NUM_QUICKPAGES + ADD_LOAD, row_cb, getobj_cb, size_cb, (void *)count);
@@ -212,10 +212,10 @@ static u8 _action_cb(u32 button, u8 flags, void *data)
     if ((flags & BUTTON_PRESS) || (flags & BUTTON_LONGPRESS)) {
         if (CHAN_ButtonIsPressed(button, BUT_EXIT))
             PAGE_ChangeByID(PAGEID_MENU, PREVIOUS_ITEM);
-#if ENABLE_LAYOUT_EDIT
+#if HAS_LAYOUT_EDITOR
         else if (CHAN_ButtonIsPressed(button, BUT_ENTER) &&(flags & BUTTON_LONGPRESS))
             show_layout();
-#endif //ENABLE_LAYOUT_EDIT
+#endif //HAS_LAYOUT_EDITOR
         else {
             // only one callback can handle a button press, so we don't handle BUT_ENTER here, let it handled by press cb
             return 0;

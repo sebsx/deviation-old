@@ -20,16 +20,17 @@
 #include "config/model.h"
 
 
-#define gui (&gui_objs.u.tx)
-#define gui3 (&gui_objs.u.tx.u.g3)
+static struct tx_obj    * const gui  = &gui_objs.u.tx;
+static struct tx_obj_g3 * const gui3 = &gui_objs.u.tx.u.g3;
 #if LCD_WIDTH != 480
-    #define gui1 (&gui_objs.u.tx.u.g1)
-    #define gui2 (&gui_objs.u.tx.u.g2)
+    static struct tx_obj_g1 * const gui1 = &gui_objs.u.tx.u.g1;
+    static struct tx_obj_g2 * const gui2 = &gui_objs.u.tx.u.g2;
 #else
-    #define gui1 gui3
-    #define gui2 gui3
+    static struct tx_obj_g3 * const gui1 = &gui_objs.u.tx.u.g3;
+    static struct tx_obj_g3 * const gui2 = &gui_objs.u.tx.u.g3;
 #endif
-#define MIN_BATTERY_ALARM_STEP 50
+
+static const int MIN_BATTERY_ALARM_STEP  = 50;
 
 u8 page_num;
 guiObject_t *firstObj;
@@ -43,11 +44,30 @@ void PAGE_ChangeByName(const char *pageName, u8 menuPage)
     (void)menuPage;
 }
 #include "../common/_tx_configure.c"
-#if LCD_WIDTH != 480
-    #define MAX_PAGE 2
-#else
-    #define MAX_PAGE 0
-#endif
+enum {
+    MAX_PAGE = (LCD_WIDTH == 480) ? 0 : 2,
+    COL1 = 16,
+    COL2 = (COL1+106),
+    #if LCD_WIDTH == 480
+        COL3         = (LCD_WIDTH-16-106-96), // border + label + button
+        COL4         = (LCD_WIDTH-16-96),    // border + button
+        BUTTON_WIDE  = BUTTON_96x16,
+        BUTTON_TEST  = BUTTON_48x16,
+        BUTTON_TOUCH = BUTTON_TEST,
+        COL2TEST     = (COL2+48),
+        ADDSPACE     = 0,
+        ADDROW       = 0,
+    #else
+        COL3         = COL1,
+        COL4         = COL2,
+        BUTTON_WIDE  = BUTTON_96,
+        BUTTON_TEST  = BUTTON_48,
+        BUTTON_TOUCH = BUTTON_WIDE,
+        COL2TEST     = (COL2+100),
+        ADDSPACE     = 15,
+        ADDROW       = 6,
+    #endif
+};
 static void _show_page();
 
 static int scroll_cb(guiObject_t *parent, u8 pos, s8 direction, void *data)
@@ -73,27 +93,6 @@ static void _show_page()
         GUI_RemoveHierObjects(firstObj);
         firstObj = NULL;
     }
-    #define COL1 16
-    #define COL2 (COL1+106)
-    #if LCD_WIDTH == 480
-        #define COL3         (LCD_WIDTH-16-106-96) // border + label + button
-        #define COL4         (LCD_WIDTH-16-96)    // border + button
-        #define BUTTON_WIDE  BUTTON_96x16
-        #define BUTTON_TEST  BUTTON_48x16
-        #define BUTTON_TOUCH BUTTON_TEST
-        #define COL2TEST     (COL2+48)
-        #define ADDSPACE     0
-        #define ADDROW       0
-    #else
-        #define COL3         COL1
-        #define COL4         COL2
-        #define BUTTON_WIDE  BUTTON_96
-        #define BUTTON_TEST  BUTTON_48
-        #define BUTTON_TOUCH BUTTON_WIDE
-        #define COL2TEST     (COL2+100)
-        #define ADDSPACE     15
-        #define ADDROW       6
-    #endif
     guiObject_t *obj;
     u8 space = 19;
     int row = 40;
@@ -142,7 +141,7 @@ static void _show_page()
         GUI_CreateTextSelect(&gui2->battalrm, col2, row, TEXTSELECT_96, NULL, batalarm_select_cb, NULL);
         row += space;
         if (row+12 >= LCD_HEIGHT) { row = 40; col1 = COL3; col2 = COL4; }
-        GUI_CreateLabelBox(&gui2->battalrmintvllbl, col1, row, 0, 0, &DEFAULT_FONT, NULL, NULL, _tr("Alarm intvl"));
+        GUI_CreateLabelBox(&gui2->battalrmintvllbl, col1, row, 0, 0, &DEFAULT_FONT, NULL, NULL, _tr("Alarm interval"));
         GUI_CreateTextSelect(&gui2->battalrmintvl, col2, row, TEXTSELECT_96, NULL, batalarmwarn_select_cb, NULL);
         row += space;
         if (row+12 >= LCD_HEIGHT) { row = 40; col1 = COL3; col2 = COL4; }
@@ -180,12 +179,12 @@ static void _show_page()
         GUI_CreateTextSelect(&gui3->prealert, col2, row, TEXTSELECT_96,NULL, prealert_time_cb, (void *)0L);
         row += space;
         if (row+8 >= LCD_HEIGHT) { row = 40; col1 = COL3; col2 = COL4; }
-        GUI_CreateLabelBox(&gui3->preintvllbl, col1, row, 0, 0, &DEFAULT_FONT, NULL, NULL, _tr("Prealert intvl"));
+        GUI_CreateLabelBox(&gui3->preintvllbl, col1, row, 0, 0, &DEFAULT_FONT, NULL, NULL, _tr("Prealert interval"));
         GUI_CreateTextSelect(&gui3->preintvl, col2, row, TEXTSELECT_96, NULL, timer_interval_cb,
                 &Transmitter.countdown_timer_settings.prealert_interval);
         row += space;
         if (row+8 >= LCD_HEIGHT) { row = 40; col1 = COL3; col2 = COL4; }
-        GUI_CreateLabelBox(&gui3->timeuplbl, col1, row, 0, 0, &DEFAULT_FONT, NULL, NULL,_tr("Timeup intvl"));
+        GUI_CreateLabelBox(&gui3->timeuplbl, col1, row, 0, 0, &DEFAULT_FONT, NULL, NULL,_tr("Timeup interval"));
         GUI_CreateTextSelect(&gui3->timeup, col2, row, TEXTSELECT_96, NULL, timer_interval_cb,
                 &Transmitter.countdown_timer_settings.timeup_interval);
         row += space + 8;
@@ -235,16 +234,16 @@ const char *show_msg_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    sprintf(cp->tmpstr, _tr("Touch target %d"), cp->state < 3 ? 1 : 2);
-    return cp->tmpstr;
+    snprintf(tempstring, sizeof(tempstring), _tr("Touch target %d"), cp->state < 3 ? 1 : 2);
+    return tempstring;
 }
 
 const char *coords_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    sprintf(cp->tmpstr, "%d*%d-%d-%d", cp->coords.x, cp->coords.y, cp->coords.z1, cp->coords.z2);
-    return cp->tmpstr;
+    snprintf(tempstring, sizeof(tempstring), "%d*%d-%d-%d", cp->coords.x, cp->coords.y, cp->coords.z1, cp->coords.z2);
+    return tempstring;
 }
 
 static void init_touch_calib()

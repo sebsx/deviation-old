@@ -89,36 +89,52 @@ s32 _TELEMETRY_GetValue(struct Telemetry *t, int idx)
 const char * TELEMETRY_GetValueStrByValue(char *str, u8 telem, s32 value)
 {
     int h, m, s, ss;
+    char letter = ' ';
+    int unit = 0;    // rBE-OPT: Optimizing string usage, saves some bytes
     switch(telem) {
         case TELEM_GPS_LONG:
+            // allowed values: +/-180° = +/- 180*60*60*1000; W if value<0, E if value>=0; -180° = 180°
+            if (value < 0) {
+                letter = 'W';
+                value = -value;
+            } else
+                letter = 'E';
             h = value / 1000 / 60 / 60;
             m = (value - h * 1000 * 60 * 60) / 1000 / 60;
             s = (value - h * 1000 * 60 * 60 - m * 1000 * 60) / 1000;
             ss = value % 1000;
-            sprintf(str, "%03d %02d %02d.%03d", h, m, s, ss);
+            sprintf(str, "%c %3d° %02d' %02d.%03d\"", letter, h, m, s, ss);
             break;
         case TELEM_GPS_LAT:
+            // allowed values: +/-90° = +/- 90*60*60*1000; S if value<0, N if value>=0
+            if (value < 0) {
+                letter = 'S';
+                value = -value;
+            } else
+                letter = 'N';
             h = value / 1000 / 60 / 60;
             m = (value - h * 1000 * 60 * 60) / 1000 / 60;
             s = (value - h * 1000 * 60 * 60 - m * 1000 * 60) / 1000;
             ss = value % 1000;
-            sprintf(str, "%03d %02d %02d.%03d", h, m, s, ss);
+            sprintf(str, "%c %3d° %02d' %02d.%03d\"", letter, h, m, s, ss);
             break;
         case TELEM_GPS_ALT:
             if (Transmitter.telem & TELEMUNIT_FEET) {
                 value = value * 328 / 100;
-                sprintf(str, "%d.%03dft", (int)value / 1000, (int)value % 1000);
-            } else {
-                sprintf(str, "%d.%03dm", (int)value / 1000, (int)value % 1000);
+                if (value < 0) {
+                    letter = '-';
+                    value =-value;
+                }
+                unit = 1;
             }
+            sprintf(str, "%c%d.%03d%s", letter, (int)value / 1000, (int)value % 1000, unit ? "ft" : "m");
             break;
         case TELEM_GPS_SPEED:
             if (Transmitter.telem & TELEMUNIT_FEET) {
                 value = value * 2237 / 1000;
-                sprintf(str, "%d.%02dmph", (int)value / 1000, (int)(value / 10) % 100);
-            } else {
-                sprintf(str, "%d.%03dm/s", (int)value / 1000, (int)value % 1000);
+                unit = 1;
             }
+            sprintf(str, "%d.%03d%s", (int)value / 1000, (int)value % 1000, unit ? "mph" : "m/s");
             break;
         case TELEM_GPS_TIME:
         {
@@ -128,7 +144,7 @@ const char * TELEMETRY_GetValueStrByValue(char *str, u8 telem, s32 value)
             int hour = ((u32)Telemetry.gps.time >> 12) & 0x1F;
             int min = ((u32)Telemetry.gps.time >> 6) & 0x3F;
             int sec = ((u32)Telemetry.gps.time >> 0) & 0x3F;
-            sprintf(str, "%02d:%02d:%02d %04d-%02d-%02d",
+            sprintf(str, "%2d:%02d:%02d %4d-%02d-%02d",
                     hour, min, sec, year, month, day);
             break;
         }
@@ -177,13 +193,22 @@ s32 TELEMETRY_GetMaxValue(u8 telem)
 
 void TELEMETRY_SetUpdated(int telem)
 {
-    Telemetry.updated[telem/8] |= telem % 8;
+    Telemetry.updated[telem/8] |= (1 << telem % 8);
 }
 
 int TELEMETRY_Type()
 {
     return (Telemetry.capabilities & CAP_DSM) ? TELEM_DSM : TELEM_DEVO;
 }
+
+void TELEMETRY_SetTypeByProtocol(enum Protocols protocol)
+{
+    if (protocol == PROTOCOL_DSM2 || protocol == PROTOCOL_DSMX)
+        TELEMETRY_SetType(TELEM_DSM);
+    else
+        TELEMETRY_SetType(TELEM_DEVO);
+}
+
 void TELEMETRY_SetType(int type)
 {
     if (type == TELEM_DSM)

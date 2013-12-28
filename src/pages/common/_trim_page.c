@@ -28,7 +28,7 @@ const char *trimsource_name_cb(guiObject_t *obj, const void *data)
     (void)obj;
     u8 i = (long)data;
     struct Trim *trim = MIXER_GetAllTrims();
-    return INPUT_SourceName(tp->tmpstr, MIXER_MapChannel(trim[i].src));
+    return INPUT_SourceName(tempstring, MIXER_MapChannel(trim[i].src));
 }
 
 static const char *set_source_cb(guiObject_t *obj, int dir, void *data)
@@ -36,7 +36,7 @@ static const char *set_source_cb(guiObject_t *obj, int dir, void *data)
     (void) obj;
     u8 *source = (u8 *)data;
     *source = GUI_TextSelectHelper(MIXER_SRC(*source), 0, NUM_SOURCES, dir, 1, 1, NULL);
-    return INPUT_SourceName(tp->tmpstr, MIXER_MapChannel(*source));
+    return INPUT_SourceName(tempstring, MIXER_MapChannel(*source));
 }
 
 static const char *set_switch_cb(guiObject_t *obj, int dir, void *data)
@@ -54,7 +54,7 @@ static const char *set_switch_cb(guiObject_t *obj, int dir, void *data)
         val = newval;
         *source = val;
     }
-    return INPUT_SourceNameAbbrevSwitch(tp->tmpstr, *source);
+    return INPUT_SourceNameAbbrevSwitch(tempstring, *source);
 }
 
 const char *set_trim_cb(guiObject_t *obj, int dir, void *data)
@@ -70,8 +70,11 @@ const char *set_trim_cb(guiObject_t *obj, int dir, void *data)
 static const char *set_trimstep_cb(guiObject_t *obj, int dir, void *data)
 {
     (void)obj;
-    int i = (long)data;
-    u8 *value = &Model.trims[i].step;
+    //data == pointer | index;
+    //pointer: 0x000 = Model.trims[index].step
+    //pointer: 0x100 = tp->trim.step
+    int i = ((long)data)& 0xff;
+    u8 *value = ((long)data >> 8) ? &tp->trim.step : &Model.trims[i].step;
     //place switches before 0.1 on the spinbox
     u8 v = ((int)*value + TRIM_SWITCH_TYPES - 1) % (190 + TRIM_SWITCH_TYPES);
     v = GUI_TextSelectHelper(v, 0, 190 + TRIM_SWITCH_TYPES - 1, dir, 1, 5, NULL);
@@ -83,18 +86,18 @@ static const char *set_trimstep_cb(guiObject_t *obj, int dir, void *data)
     int hide_trim = 0;
     int hide_switch = 0;
     if (*value == TRIM_MOMENTARY) {
-        strcpy(tp->tmpstr, _tr("Momentary"));
+        strcpy(tempstring, _tr("Momentary"));
         hide_trim = 1; hide_switch = 1;
     } else if (*value == TRIM_TOGGLE) {
-        strcpy(tp->tmpstr, _tr("Toggle"));
+        strcpy(tempstring, _tr("Toggle"));
         hide_trim = 1; hide_switch = 1;
     } else if (*value == TRIM_ONOFF) {
-        strcpy(tp->tmpstr, _tr("On/Off"));
+        strcpy(tempstring, _tr("On/Off"));
         hide_switch = 1;
     } else if (*value < 100) {
-        sprintf(tp->tmpstr, "%d.%d", *value / 10, *value % 10);
+        sprintf(tempstring, "%d.%d", *value / 10, *value % 10);
     } else {
-        sprintf(tp->tmpstr, "%d", *value - 90);
+        sprintf(tempstring, "%d", *value - 90);
     }
     if (negtrimObj) {
         if (negtrimObj->Type == TextSelect)
@@ -104,7 +107,7 @@ static const char *set_trimstep_cb(guiObject_t *obj, int dir, void *data)
     }
     if (switchObj)
         GUI_TextSelectEnable((guiTextSelect_t *)switchObj, ! hide_switch);
-    return tp->tmpstr;
+    return tempstring;
 }
 
 static void okcancel_cb(guiObject_t *obj, const void *data)

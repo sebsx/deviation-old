@@ -13,9 +13,9 @@
  along with Deviation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static struct main_page * const mp = &pagemem.u.main_page;
-#define gui (&gui_objs.u.mainpage)
-#define pc Model.pagecfg2
+static struct main_page    * const mp  = &pagemem.u.main_page;
+static struct mainpage_obj * const gui = &gui_objs.u.mainpage;
+static struct PageCfg2     * const pc  = &Model.pagecfg2;
 const char *show_box_cb(guiObject_t *obj, const void *data);
 const char *voltage_cb(guiObject_t *obj, const void *data);
 static s16 trim_cb(void * data);
@@ -23,9 +23,25 @@ static s16 bar_cb(void * data);
 void press_icon2_cb(guiObject_t *obj, const void *data);
 static u8 _action_cb(u32 button, u8 flags, void *data);
 static s32 get_boxval(u8 idx);
-static void _check_voltage();
+static void _check_voltage(guiLabel_t *obj);
 
 struct ImageMap TGLICO_GetImage(int idx);
+
+/**
+ * Below are defined in the common.h
+ *  TXPOWER_100uW,  // -10db
+ *  TXPOWER_300uW, // -5db
+ *  TXPOWER_1mW, //0db
+ *  TXPOWER_3mW, // 5db
+ *  TXPOWER_10mW, // 10db
+ *  TXPOWER_30mW, // 15db
+ *  TXPOWER_100mW, // 20db
+ *  TXPOWER_150mW, // 22db
+ */
+static const char *_power_to_string()
+{
+    return RADIO_TX_POWER_VAL[Model.tx_power];
+}
 
 struct LabelDesc *get_box_font(u8 idx, u8 neg)
 {
@@ -55,39 +71,52 @@ const char *show_box_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     u8 idx = (long)data;
+    #if HAS_RTC
+        if (idx <= NUM_RTC) {
+            u32 time = RTC_GetValue();
+            idx == 1 ? RTC_GetTimeFormatted(tempstring, time) : RTC_GetDateFormatted(tempstring, time);
+            return tempstring;
+        }
+    #endif
+    if (idx - NUM_RTC <= NUM_TIMERS) {
+        TIMER_SetString(tempstring, TIMER_GetValue(idx - NUM_RTC - 1));
+    } else if(idx - NUM_RTC - NUM_TIMERS <= NUM_TELEM) {
+        TELEMETRY_GetValueStr(tempstring, idx - NUM_RTC - NUM_TIMERS);
+    } else {
+        sprintf(tempstring, "%3d%%", RANGE_TO_PCT(MIXER_GetChannel(idx - (NUM_RTC + NUM_TIMERS + NUM_TELEM + 1), APPLY_SAFETY | APPLY_SCALAR)));
+    }
+    return tempstring;
+}
+
 #if HAS_RTC
+const char *show_bigbox_cb(guiObject_t *obj, const void *data)
+{
+    u8 idx = (long)data;
     if (idx <= NUM_RTC) {
         u32 time = RTC_GetValue();
-        idx == 1 ? RTC_GetTimeString(mp->tmpstr, time) : RTC_GetDateString(mp->tmpstr, time);
-        return mp->tmpstr;
+        idx == 1 ? RTC_GetTimeFormattedBigbox(tempstring, time) : RTC_GetDateFormattedBigbox(tempstring, time);
+        return tempstring;
     }
-#endif
-    if (idx - NUM_RTC <= NUM_TIMERS) {
-        TIMER_SetString(mp->tmpstr, TIMER_GetValue(idx - NUM_RTC - 1));
-    } else if(idx - NUM_RTC - NUM_TIMERS <= NUM_TELEM) {
-        TELEMETRY_GetValueStr(mp->tmpstr, idx - NUM_RTC - NUM_TIMERS);
-    } else {
-        sprintf(mp->tmpstr, "%3d%%", RANGE_TO_PCT(MIXER_GetChannel(idx - (NUM_RTC + NUM_TIMERS + NUM_TELEM + 1), APPLY_SAFETY | APPLY_SCALAR)));
-    }
-    return mp->tmpstr;
+    return show_box_cb(obj, data);
 }
+#endif
 
 const char *voltage_cb(guiObject_t *obj, const void *data) {
     (void)obj;
     (void)data;
     if (mp->battery > 1000)  // bug fix: any value lower than 1v means the DMA reading is not ready
-        sprintf(mp->tmpstr, "%2d.%02dV", mp->battery / 1000, (mp->battery % 1000) / 10);
+        sprintf(tempstring, "%2d.%02dV", mp->battery / 1000, (mp->battery % 1000) / 10);
     else
-        mp->tmpstr[0] = 0;
-    return mp->tmpstr;
+        tempstring[0] = 0;
+    return tempstring;
 }
 
 #if HAS_RTC
 static const char *time_cb(guiObject_t *obj, const void *data) {
     (void)obj;
     (void)data;
-    RTC_GetTimeStringShort(mp->tmpstr, RTC_GetValue());
-    return mp->tmpstr;
+    RTC_GetTimeStringShort(tempstring, RTC_GetValue());
+    return tempstring;
 }
 #endif
 
@@ -108,19 +137,21 @@ void PAGE_MainEvent()
 {
     int i;
     if (PAGE_GetModal()) {
+#if HAS_TELEMETRY
         if(pagemem.modal_page == 2) {
             PAGE_TelemtestEvent();
         }
+#endif
         return;
     }
     volatile s16 *raw = MIXER_GetInputs();
     for(i = 0; i < NUM_ELEMS; i++) {
-        if (! ELEM_USED(pc.elem[i]))
+        if (! ELEM_USED(pc->elem[i]))
             break;
         if (! OBJ_IS_USED(&gui->elem[i]))
             continue;
-        int src = pc.elem[i].src;
-        int type = ELEM_TYPE(pc.elem[i]);
+        int src = pc->elem[i].src;
+        int type = ELEM_TYPE(pc->elem[i]);
         switch(type) {
             case ELEM_VTRIM:
             case ELEM_HTRIM:
@@ -133,9 +164,7 @@ void PAGE_MainEvent()
                 break;
             }
             case ELEM_SMALLBOX:
-#ifndef ELEM_BIGBOX
             case ELEM_BIGBOX:
-#endif
             {
                 s32 val = get_boxval(src);
 #if HAS_RTC
@@ -173,7 +202,6 @@ void PAGE_MainEvent()
                 }
                 break;
             }
-#ifndef ELEM_BAR
             case ELEM_BAR:
             {
                 s16 chan = MIXER_GetChannel(src-1, APPLY_SAFETY);
@@ -183,7 +211,6 @@ void PAGE_MainEvent()
                 }
                 break;
             }
-#endif
             case ELEM_TOGGLE:
             {
                 src = MIXER_SRC(src);
@@ -191,20 +218,22 @@ void PAGE_MainEvent()
                 (void)img.x_off;
                 (void)img.y_off;
                 img.file = NULL;
-                if (src > INP_HAS_CALIBRATION && src < INP_LAST) {
-                    //switch
-                    for (int j = 0; j < 3; j++) {
-                        // Assume switch 0/1/2 are in order
-                        if(ELEM_ICO(pc.elem[i], j) && raw[src+j] > 0) {
-                            img = TGLICO_GetImage(ELEM_ICO(pc.elem[i], j));
-                            break;
+                if(src) {
+                    if (src > INP_HAS_CALIBRATION && src < INP_LAST) {
+                        //switch
+                        for (int j = 0; j < 3; j++) {
+                            // Assume switch 0/1/2 are in order
+                            if(ELEM_ICO(pc->elem[i], j) && raw[src+j] > 0) {
+                                img = TGLICO_GetImage(ELEM_ICO(pc->elem[i], j));
+                                break;
+                            }
                         }
-                    }
-                } else {
-                    //Non switch
-                    int sw = raw[src] > 0 ? 1 : 0;
-                    if (ELEM_ICO(pc.elem[i], sw)) {
-                        img = TGLICO_GetImage(ELEM_ICO(pc.elem[i], sw));
+                    } else {
+                        //Non switch
+                        int sw = raw[src] > 0 ? 1 : 0;
+                        if (ELEM_ICO(pc->elem[i], sw)) {
+                            img = TGLICO_GetImage(ELEM_ICO(pc->elem[i], sw));
+                        }
                     }
                 }
                 if (img.file) {
@@ -215,9 +244,13 @@ void PAGE_MainEvent()
                 }
             }
             break;
+            case ELEM_BATTERY:
+                _check_voltage(&gui->elem[i].box);
+                break;
         }
     }
-    _check_voltage();
+    if(HAS_TOUCH)  //FIXME: Hack to let 320x240 GUI continue to work
+        _check_voltage(NULL);
 #if HAS_RTC
     if(Display.flags & SHOW_TIME) {
         u32 time = RTC_GetValue() / 60;
@@ -232,33 +265,40 @@ void GetElementSize(unsigned type, u16 *w, u16 *h)
 {
     const u8 width[ELEM_LAST] = {
         [ELEM_SMALLBOX] = BOX_W,
-#ifndef ELEM_BIGBOX
         [ELEM_BIGBOX]   = BOX_W,
-#endif
         [ELEM_TOGGLE]   = TOGGLEICON_WIDTH,
-#ifndef ELEM_BAR
         [ELEM_BAR]      = GRAPH_W,
-#endif
         [ELEM_VTRIM]    = VTRIM_W,
         [ELEM_HTRIM]    = HTRIM_W,
         [ELEM_MODELICO] = MODEL_ICO_W,
+        [ELEM_BATTERY]  = BATTERY_W,
+        [ELEM_TXPOWER]  = TXPOWER_W,
     };
     const u8 height[ELEM_LAST] = {
         [ELEM_SMALLBOX] = SMALLBOX_H,
-#ifndef ELEM_BIGBOX
         [ELEM_BIGBOX]   = BIGBOX_H,
-#endif
         [ELEM_TOGGLE]   = TOGGLEICON_HEIGHT,
-#ifndef ELEM_BAR
         [ELEM_BAR]      = GRAPH_H,
-#endif
         [ELEM_VTRIM]    = VTRIM_H,
         [ELEM_HTRIM]    = HTRIM_H,
         [ELEM_MODELICO] = MODEL_ICO_H,
+        [ELEM_BATTERY]  = BATTERY_H,
+        [ELEM_TXPOWER]  = TXPOWER_H,
     };
-    *w = width[type];
-    *h = height[type];
+    if (type == ELEM_MODELICO && Model.icon[0])
+    	LCD_ImageDimensions(Model.icon, w, h);
+    else {
+		*w = width[type];
+		*h = height[type];
+    }
 }
+
+void AdjustIconSize(u16 *x, u16 *y, u16 *h, u16 *w)
+{
+    if (*y + *h > LCD_HEIGHT) *h = LCD_HEIGHT - *y;
+    if (*x + *w> LCD_WIDTH)   *w = LCD_WIDTH - *x;
+}
+
 int GetWidgetLoc(struct elem *elem, u16 *x, u16 *y, u16 *w, u16 *h)
 {
     *y = ELEM_Y(*elem);
@@ -269,15 +309,15 @@ int GetWidgetLoc(struct elem *elem, u16 *x, u16 *y, u16 *w, u16 *h)
         return 0;
     *x = ELEM_X(*elem);
     GetElementSize(type, w, h);
+    if (type == ELEM_MODELICO)
+        AdjustIconSize(x, y, h, w);
     return 1;
 }
 
 unsigned map_type(int type)
 {
     switch(type) {
-#ifndef ELEM_BIGBOX
         case ELEM_BIGBOX: return ELEM_SMALLBOX;
-#endif
         case ELEM_HTRIM: return ELEM_VTRIM;
         default: return type;
     }
@@ -286,9 +326,9 @@ int MAINPAGE_FindNextElem(unsigned type, int idx)
 {
     type = map_type(type);
     for(int i = idx; i < NUM_ELEMS; i++) {
-        if(! ELEM_USED(pc.elem[i]))
+        if(! ELEM_USED(pc->elem[i]))
             break;
-        if (map_type(ELEM_TYPE(pc.elem[i])) == type)
+        if (map_type(ELEM_TYPE(pc->elem[i])) == type)
             return i;
     }
     return -1;
@@ -298,9 +338,9 @@ void show_elements()
 {
     u16 x, y, w, h;
     for (int i = 0; i < NUM_ELEMS; i++) {
-        if (! GetWidgetLoc(&pc.elem[i], &x, &y, &w, &h))
+        if (! GetWidgetLoc(&pc->elem[i], &x, &y, &w, &h))
             break;
-        int type = ELEM_TYPE(pc.elem[i]);
+        int type = ELEM_TYPE(pc->elem[i]);
         switch(type) {
             case ELEM_MODELICO:
                 GUI_CreateImageOffset(&gui->elem[i].img, x, y, w, h, 0, 0, CONFIG_GetCurrentIcon(), press_icon_cb, (void *)1);
@@ -308,7 +348,7 @@ void show_elements()
             case ELEM_VTRIM:
             case ELEM_HTRIM:
             {
-                int src = pc.elem[i].src;
+                int src = pc->elem[i].src;
                 if (src == 0)
                     continue;
                 mp->elem[i] = *(MIXER_GetTrim(src-1));
@@ -317,11 +357,9 @@ void show_elements()
                 break;
             }
             case ELEM_SMALLBOX:
-#ifndef ELEM_BIGBOX
             case ELEM_BIGBOX:
-#endif
             {
-                int src = pc.elem[i].src;
+                int src = pc->elem[i].src;
                 if (src == 0)
                     continue;
                 mp->elem[i] = get_boxval(src);
@@ -334,14 +372,17 @@ void show_elements()
                            ));
                 GUI_CreateLabelBox(&gui->elem[i].box, x, y, w, h,
                             get_box_font(type == ELEM_BIGBOX ? 0 : 2, font),
-                            show_box_cb, press_box_cb,
+#if HAS_RTC
+                            type == ELEM_BIGBOX ? show_bigbox_cb :
+#endif
+                            show_box_cb,
+                            press_box_cb,
                             (void *)((long)src));
                 break;
             }
-#ifndef ELEM_BAR
             case ELEM_BAR:
             {
-                int src = pc.elem[i].src;
+                int src = pc->elem[i].src;
                 if (src == 0)
                     continue;
                 mp->elem[i] = MIXER_GetChannel(src-1, APPLY_SAFETY);
@@ -349,14 +390,19 @@ void show_elements()
                            bar_cb, (void *)((long)src));
                 break;
             }
-#endif
             case ELEM_TOGGLE:
             {
-                struct ImageMap img = TGLICO_GetImage(ELEM_ICO(pc.elem[i], 0)); //We'll set this properly down below
+                struct ImageMap img = TGLICO_GetImage(ELEM_ICO(pc->elem[i], 0)); //We'll set this properly down below
                 GUI_CreateImageOffset(&gui->elem[i].img, x, y, w, h,
                                   img.x_off, img.y_off, img.file, NULL, NULL);
                 break;
             }
+            case ELEM_BATTERY:
+                GUI_CreateLabelBox(&gui->elem[i].box, x, y, w, h, &MICRO_FONT,  voltage_cb, NULL, NULL);
+                break; 
+            case ELEM_TXPOWER:
+                GUI_CreateLabelBox(&gui->elem[i].box, x, y, w, h, &MICRO_FONT,  _power_to_string, NULL, NULL);
+                break; 
         }
     }
 }

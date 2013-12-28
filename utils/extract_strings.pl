@@ -6,15 +6,21 @@ use Getopt::Long;
 my $update;
 my $lang;
 my $target;
+my $objdir;
 my $count;
 my @targets = ("320x240x16", "128x64x1");
 my %targetmap = (
     devo8 => "320x240x16",
+    devo12 => "480x272x16",
     devo10 => "128x64x1",
     devo7e => undef,
+    x9d => "128x64x1",
+);
+my %alt_targets = (
+    devo12 => ["devo8"],
 );
 
-GetOptions("update" => \$update, "language=s" => \$lang, "target=s" => \$target, "count" => \$count);
+GetOptions("update" => \$update, "language=s" => \$lang, "target=s" => \$target, "count" => \$count, "objdir=s" => \$objdir);
 if($target && ! exists $targetmap{$target}) {
     my @t = keys(%targetmap);
     print "Target must be one of: @t\n";
@@ -57,15 +63,64 @@ if($str) {
     }
 }
 #Filter out any files that are not used by the specified target
-if($target) {
-    foreach my $f (keys %filemap) {
-        if(grep {$_ ne $targetmap{$target} && $f =~ /$_/} @targets) {
-            delete $filemap{$f};
+#if($target) {
+#    foreach my $f (keys %filemap) {
+#        if(grep {$_ ne $targetmap{$target} && $f =~ /$_/} @targets) {
+#            delete $filemap{$f};
+#        }
+#    }
+#}
+#build string list
+my @out;
+#Filter out any strings that do not appear in any obj files
+if($objdir) {
+    my %allstr;
+    my @files = glob("$objdir/*.o");
+    foreach my $file (@files) {
+        #Parse all strings from the object files and add to the allstr hash
+        my @od = `objdump -s $file`;
+        my $str = "";
+        my $state = 0;
+        foreach(@od) {
+            my $orig = $_;
+            if(/section \.ro?data/) {
+                $str = "";
+                $state = 1;
+                next;
+            } elsif(/^Contents/ && ! /\.ro?data/) {
+                $str = "";
+                $state = 0;
+            } elsif($state) {
+                #Strip off everything but hex data
+                s/^\s+\S+\s//;
+                s/\s\s.*//;
+                s/ //g;
+                while(/(\S\S)/g) {
+                    #Iterate over each ascii character
+                    if($1 eq "00") {
+                        #NULL termination
+                        if($str) {
+                            $str =~ s/\n/\\n/g;  #Convert <CR> to \n
+                            $allstr{$str} = 1;
+                            $str = "";
+                        }
+                    } else {
+                        $str .= chr(hex($1));
+                    }
+                }
+            }
         }
     }
+    foreach (values %filemap) {
+        if($allstr{$_}) {
+            push @out, $_;
+        } else {
+            #print STDERR "Ignoring unused string '$_'\n";
+        }
+    }
+} else {
+    @out = values(%filemap);
 }
-#build string list
-my@out = values(%filemap);
 #append template names
 foreach (`head -n 1 filesystem/common/template/*.ini`) {
     chomp;
@@ -129,6 +184,13 @@ foreach my $file (@files) {
         open $fh, ">", $outf;
         print $fh $name;
         $targetstr{$target} ||= {};
+        if($alt_targets{$target}) {
+            #Hierarchically try to find best string
+            foreach(@{ $alt_targets{$target} }) {
+                $targetstr{$_} ||= {};
+                %strings = (%strings, %{$targetstr{$_}});
+            }
+        }
         %strings = (%strings, %{$targetstr{$target}});
         foreach (sort keys %strings) {
             if(! $unused{$_} && defined($strings{$_})) {

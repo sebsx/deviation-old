@@ -20,9 +20,9 @@
 #include "config/model.h"
 #include "telemetry.h"
 
-#define lp pagemem.u.layout_page
-#define gui (&gui_objs.u.mainlayout)
-#define pc Model.pagecfg2
+static struct mainlayout_obj * const gui = &gui_objs.u.mainlayout;
+static struct layout_page    * const lp  = &pagemem.u.layout_page;
+static struct PageCfg2       * const pc  = &Model.pagecfg2;
 
 static void draw_elements();
 static const char *newelem_cb(guiObject_t *obj, int dir, void *data);
@@ -42,15 +42,36 @@ static void dlgbut_cb(struct guiObject *obj, const void *data);
 struct buttonAction action;
 u8 cfg_elem_type;
 
-#define HEADER_Y 32
+static const int HEADER_Y = 32;
 
 #include "../common/_main_layout.c"
 #include "../common/_main_config.c"
 
+enum {
+    ADD_DIALOG_W = 288,
+    ADD_DIALOG_H = 220,
+    ADD_DIALOG_X = (LCD_WIDTH - ADD_DIALOG_W) / 2,
+    ADD_DIALOG_Y = ((LCD_HEIGHT - ADD_DIALOG_H) / 2),
+    ADD_LBL_X    = (ADD_DIALOG_X + 10),
+    ADD_TS_X     = (ADD_DIALOG_X + ADD_DIALOG_W / 2  - 128 / 2),
+    ADD_BUT_X    = (ADD_DIALOG_X + ADD_DIALOG_W / 2  - 96 / 2),
+    ADD_ADDBUT_X = (ADD_DIALOG_X + ADD_DIALOG_W - 64 -5),
+    ADD_MENU_X   = (ADD_DIALOG_X + ADD_DIALOG_W - 224 -5),
+};
+//#if (ADD_ADDBUT_X < ADD_TS_X + 128)
+//    #error "Overlapped buttons"
+//#endif
+enum {
+    LAYDLG_X_SPACE = 10,
+    LAYDLG_MIN_WIDTH = (2*LAYDLG_X_SPACE + 15 + 100 + 64 +20+10), //space + # + spinbox + button + scrollbar
+    LAYDLG_SCROLLABLE_X = LAYDLG_X_SPACE,
+    LAYDLG_X = (LCD_WIDTH - LAYDLG_MIN_WIDTH) / 2,
+    LAYDLG_Y = (32 + LAYDLG_Y_SPACE),
+};
 void PAGE_MainLayoutInit(int page)
 {
      (void)page;
-    memset(&lp, 0, sizeof(lp));
+    memset(lp, 0, sizeof(*lp));
     PAGE_SetModal(0);
     BUTTON_RegisterCallback(&action,
           CHAN_ButtonMask(BUT_ENTER)
@@ -61,13 +82,15 @@ void PAGE_MainLayoutInit(int page)
           | CHAN_ButtonMask(BUT_UP)
           | CHAN_ButtonMask(BUT_DOWN),
           BUTTON_PRESS | BUTTON_LONGPRESS | BUTTON_PRIORITY, _action_cb, NULL);
+#if HAS_STANDARD_GUI
      if (Model.mixer_mode == MIXER_STANDARD)
          PAGE_ShowHeader_ExitOnly(NULL, MODELMENU_Show);
      else
+#endif
          PAGE_ShowHeader(NULL);
-    lp.long_press = 0;
-    lp.newelem = 0;
-    lp.selected_x = 0;
+    lp->long_press = 0;
+    lp->newelem = 0;
+    lp->selected_x = 0;
     const u16 color[5] = {
         RGB888_to_RGB565(0xaa, 0x44, 0x44),
         RGB888_to_RGB565(0x44, 0xaa, 0x44),
@@ -83,14 +106,14 @@ void PAGE_MainLayoutInit(int page)
             .outline_color = 0,
             .style = LABEL_FILL};
     gui->desc[1].font = TINY_FONT.font; //Special case for trims
-    GUI_CreateIcon(&gui->newelem, 32, 0, &icons[ICON_PLUS], add_dlg_cb, NULL);
-    GUI_CreateIcon(&gui->editelem, 64, 0, &icons[ICON_OPTIONS], cfg_cb, NULL);
+    GUI_CreateIcon(&gui->newelem, 32, 0, &icons[ICON_LAYOUT_ADD], add_dlg_cb, NULL);
+    GUI_CreateIcon(&gui->editelem, 64, 0, &icons[ICON_LAYOUT_CFG], cfg_cb, NULL);
     GUI_SetHidden((guiObject_t *)&gui->editelem, 1);
     //GUI_CreateTextSelect(&gui->newelem, 36, 12, TEXTSELECT_96, newelem_press_cb, newelem_cb, NULL);
-    GUI_CreateLabel(&gui->xlbl, 80+18, 10, NULL, TITLE_FONT, "X");
-    GUI_CreateTextSelect(&gui->x, 88+18, 10, TEXTSELECT_64, NULL, xpos_cb, NULL);
-    GUI_CreateLabel(&gui->ylbl, 164+16, 10, NULL, TITLE_FONT, "Y");
-    GUI_CreateTextSelect(&gui->y, 172+16, 10, TEXTSELECT_64, NULL, ypos_cb, NULL);
+    GUI_CreateLabel(&gui->xlbl, 80+18, 9, NULL, TITLE_FONT, "X");
+    GUI_CreateTextSelect(&gui->x, 88+18, 8, TEXTSELECT_64, NULL, xpos_cb, NULL);
+    GUI_CreateLabel(&gui->ylbl, 164+16, 9, NULL, TITLE_FONT, "Y");
+    GUI_CreateTextSelect(&gui->y, 172+16, 8, TEXTSELECT_64, NULL, ypos_cb, NULL);
 
     GUI_SelectionNotify(notify_cb);
     draw_elements();
@@ -107,13 +130,13 @@ void PAGE_MainLayoutRestoreDialog(int idx)
 {
     GUI_RemoveAllObjects();
     PAGE_MainLayoutInit(0);
-    lp.selected_for_move = idx;
+    lp->selected_for_move = idx;
     show_config();
 }
 
 void set_selected_for_move(int idx)
 {
-    lp.selected_for_move = idx;
+    lp->selected_for_move = idx;
     int state = idx >= 0 ? 1 : 0;
     GUI_SetHidden((guiObject_t *)&gui->editelem, !state);
     GUI_TextSelectEnable(&gui->x, state);
@@ -125,29 +148,29 @@ const char *xpos_cb(guiObject_t *obj, int dir, void *data)
 {
     (void)obj;
     (void)data;
-    if (lp.selected_for_move >= 0) {
-        int x = GUI_TextSelectHelper(lp.selected_x, 0, LCD_WIDTH-lp.selected_w, dir, 1, 10, NULL);
-        if (x != lp.selected_x) {
-            lp.selected_x = x;
+    if (lp->selected_for_move >= 0) {
+        int x = GUI_TextSelectHelper(lp->selected_x, 0, LCD_WIDTH-lp->selected_w, dir, 1, 10, NULL);
+        if (x != lp->selected_x) {
+            lp->selected_x = x;
             move_elem();
         }
     }
-    sprintf(lp.tmp, "%d", lp.selected_x);
-    return lp.tmp;
+    sprintf(tempstring, "%d", lp->selected_x);
+    return tempstring;
 }
 const char *ypos_cb(guiObject_t *obj, int dir, void *data)
 {
     (void)obj;
     (void)data;
-    if (lp.selected_for_move >= 0) {
-        int y = GUI_TextSelectHelper(lp.selected_y, HEADER_Y, LCD_HEIGHT-lp.selected_h, dir, 1, 10, NULL);
-        if (y != lp.selected_y) {
-            lp.selected_y = y;
+    if (lp->selected_for_move >= 0) {
+        int y = GUI_TextSelectHelper(lp->selected_y, HEADER_Y, LCD_HEIGHT-lp->selected_h, dir, 1, 10, NULL);
+        if (y != lp->selected_y) {
+            lp->selected_y = y;
             move_elem();
         }
     }
-    sprintf(lp.tmp, "%d", lp.selected_y);
-    return lp.tmp;
+    sprintf(tempstring, "%d", lp->selected_y);
+    return tempstring;
 }
 
 void select_for_move(guiLabel_t *obj)
@@ -155,16 +178,16 @@ void select_for_move(guiLabel_t *obj)
     GUI_SetSelected((guiObject_t *)obj);
     notify_cb((guiObject_t *)obj);
     int idx = guielem_idx((guiObject_t *)obj);
-    if (lp.selected_for_move == idx)
+    if (lp->selected_for_move == idx)
         return;
-    if (lp.selected_for_move >= 0) {
-        gui->elem[lp.selected_for_move].desc.font_color ^= 0xffff;
-        gui->elem[lp.selected_for_move].desc.fill_color ^= 0xffff;
-        GUI_Redraw((guiObject_t *)&gui->elem[lp.selected_for_move]);
+    if (lp->selected_for_move >= 0) {
+        gui->elem[lp->selected_for_move].desc.font_color ^= 0xffff;
+        gui->elem[lp->selected_for_move].desc.fill_color ^= 0xffff;
+        GUI_Redraw((guiObject_t *)&gui->elem[lp->selected_for_move]);
     }
     set_selected_for_move(idx);
-    gui->elem[lp.selected_for_move].desc.font_color ^= 0xffff;
-    gui->elem[lp.selected_for_move].desc.fill_color ^= 0xffff;
+    gui->elem[lp->selected_for_move].desc.font_color ^= 0xffff;
+    gui->elem[lp->selected_for_move].desc.fill_color ^= 0xffff;
 }
 
 void newelem_press_cb(guiObject_t *obj, const void *data)
@@ -182,24 +205,12 @@ static void dialog_ok_cb(u8 state, void * data)
 {
     (void)state;
     (void)data;
-    guiObject_t *obj = (guiObject_t *)&gui->elem[lp.selected_for_move];
+    guiObject_t *obj = (guiObject_t *)&gui->elem[lp->selected_for_move];
     draw_elements();
     if(obj && OBJ_IS_USED(obj))
         select_for_move((guiLabel_t *)obj);
 }
 
-#define ADD_DIALOG_W 288
-#define ADD_DIALOG_H 220
-#define ADD_DIALOG_X (LCD_WIDTH - ADD_DIALOG_W) / 2
-#define ADD_DIALOG_Y ((LCD_HEIGHT - ADD_DIALOG_H) / 2)
-#define ADD_LBL_X    (ADD_DIALOG_X + 10)
-#define ADD_TS_X     (ADD_DIALOG_X + ADD_DIALOG_W / 2  - 128 / 2)
-#define ADD_BUT_X    (ADD_DIALOG_X + ADD_DIALOG_W / 2  - 96 / 2)
-#define ADD_ADDBUT_X (ADD_DIALOG_X + ADD_DIALOG_W - 64 -5)
-#define ADD_MENU_X   (ADD_DIALOG_X + ADD_DIALOG_W - 224 -5)
-#if (ADD_ADDBUT_X < ADD_TS_X + 128)
-    #error "Overlapped buttons"
-#endif
 static void add_dlg_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
@@ -266,11 +277,6 @@ static void toggle_press_cb(guiObject_t *obj, const void *data)
     TGLICO_Select(obj, data);
 }
 
-#define LAYDLG_X_SPACE 10
-#define LAYDLG_X (LCD_WIDTH - LAYDLG_MIN_WIDTH) / 2
-#define LAYDLG_Y (32 + LAYDLG_Y_SPACE)
-#define LAYDLG_MIN_WIDTH (2*LAYDLG_X_SPACE + 15 + 100 + 64 +20+10) //space + # + spinbox + button + scrollbar
-#define LAYDLG_SCROLLABLE_X LAYDLG_X_SPACE
 static int row_cb(int absrow, int relrow, int y, void *data)
 {
     int type = (long)data;
@@ -286,7 +292,7 @@ static int row_cb(int absrow, int relrow, int y, void *data)
         GUI_CreateTextSelect(&gui->dlgts[relrow], X + 15, y, TEXTSELECT_96, NULL, dlgts_cb, (void *)elemidx);
         if (type == ELEM_TOGGLE) {
             GUI_CreateButton(&gui->dlgbut2[relrow], del_x, y, BUTTON_64x16, dlgbut_str_cb, 0, toggle_press_cb, (void *)elemidx);
-            del_x = X + 15 + 168;
+            //del_x = X + 15 + 168;
             num_objs++;
         }
     }
@@ -308,9 +314,9 @@ void show_config()
     long type;
     if (OBJ_IS_USED(&gui->dialog))
         GUI_RemoveHierObjects((guiObject_t *)&gui->dialog);
-    if(lp.selected_for_move >= 0) {
-        type = ELEM_TYPE(pc.elem[lp.selected_for_move]);
-        row_idx = elem_abs_to_rel(lp.selected_for_move);
+    if(lp->selected_for_move >= 0) {
+        type = ELEM_TYPE(pc->elem[lp->selected_for_move]);
+        row_idx = elem_abs_to_rel(lp->selected_for_move);
         count = elem_get_count(type);
     }
     if (! count) {
@@ -336,12 +342,12 @@ static u8 _action_cb(u32 button, u8 flags, void *data)
 {
     (void)data;
 
-    if(! GUI_GetSelected() || lp.selected_for_move < 0 || GUI_IsModal())
+    if(! GUI_GetSelected() || lp->selected_for_move < 0 || GUI_IsModal())
         return 0;
     if(CHAN_ButtonIsPressed(button, BUT_EXIT)) {
-        gui->elem[lp.selected_for_move].desc.font_color ^= 0xffff;
-        gui->elem[lp.selected_for_move].desc.fill_color ^= 0xffff;
-        GUI_Redraw((guiObject_t *)&gui->elem[lp.selected_for_move]);
+        gui->elem[lp->selected_for_move].desc.font_color ^= 0xffff;
+        gui->elem[lp->selected_for_move].desc.fill_color ^= 0xffff;
+        GUI_Redraw((guiObject_t *)&gui->elem[lp->selected_for_move]);
         set_selected_for_move(-1);
         return 1;
     }
