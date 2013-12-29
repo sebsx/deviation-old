@@ -1,0 +1,697 @@
+Română
+:# Channels
+Canale
+>:%d bytes left
+: is %d%%, safe value = %d%%\n
+ = %d%%, valoare de siguranță = %d%%\n
+: is %d%%,\nsafe value = %d%%
+ = %d%%,\nvaloare de siguranță = %d%%\n
+>:1 sec
+:1-to-1
+1 la 1
+>:10 sec
+:11 Point
+11 puncte
+:13 Point
+13 puncte
+:3 Point
+3 puncte
+>:30 sec
+:4Ch w/ Dual-Rates
+4CH + D/R
+:5 Point
+5 puncte
+>:5 sec
+:5+1
+5+1
+:6+1
+6+1
+>:60 sec
+:6Ch Airplane
+6CH avion
+:6Ch Helicopter
+6CH, elicopter
+:7 Point
+7 puncte
+:9 Point
+9 puncte
+:ABSVAL
+VAL ABS
+:AIL
+AIL
+:AIL DR
+AIL DR
+:AIL Inv
+AIL Inv.
+:AIL Mix
+AIL Mix
+:AUX2
+AUX2
+:AUX3
+AUX3
+:AUX4
+AUX4
+:AUX5
+AUX5
+:AUX6
+AUX6
+:AUX7
+AUX7
+:About Deviation
+Despre Deviation
+>:Add
+:Advanced
+Avansat
+:Airplane
+Avion
+:Alarm
+Alarmă
+:Alarm interval
+Int. alarmă
+:Alarm intvl
+Int. alarmă
+>:All
+:Altitude
+Altitudine
+:Auto
+Auto
+:Backlight
+Iluminare
+:Bad/missing\nprotocol modules!
+Module protocol\nlipsă sau corupte!
+>:Bar
+>:Bargraph
+:Batt alarm
+Alarmă bat.
+:Battery alarm
+Alarmă baterie
+:Battery too low,\ncan't save!
+Nivel baterie scăzut,\nnu pot salva!
+>:Big-box
+:Bind
+Bind
+:Binding
+Conectare
+:Binding is in progress...\nMake sure model is on!\n\nPressing OK will NOT cancel binding procedure\nbut will allow full control of Tx.
+Conectare în progres\nAsigurați-vă că modelul este pornit!\n\nApăsând ENT puteți controla telecomanda\nfară a întrerupe procesul de conectare.
+:Binding...\nPress ENT to stop
+Conectare...\nApăsați ENT pentru a opri
+>:Box
+:Button monitor
+Monitor butoane
+:Buzz settings
+Setări sunet
+:Buzz volume
+Volum
+:Buzzer settings
+Setări sunet
+:COL
+Colectiv
+:COL Inv
+Colectiv inv.
+:COL Limit
+COL Limită
+:COL Mix
+COL Mix
+:CYC
+CYC
+:Calibrate
+Calibrare
+:Calibration done.
+Calibrare efectuată.
+:Cancel
+Anulează
+:Celsius
+C°
+:Center PW
+Centru PW
+:Center all \nsticks and knobs\nthen press ENT
+Centrați toate stickuri-le\nși potențiometrele\nși apăsați ENT
+:Ch
+Ch
+>:Ch%d
+:Chan mode
+Mod canale
+:Change
+Modifică
+:Channel
+Canal
+:Channel monitor
+Monitor canale
+:Channel output
+Canale
+>:Clock
+:Complex
+Complex
+:Configure
+Configurează
+:Contrast
+Contrast
+>:Control
+:Copy To
+Copiază
+:Copy To...
+Copiază...
+:Critical battery level detected.\nSettings have been saved.\nAny future configuration settings\nwill NOT be saved.\n\nChange batteries now!
+Nivelul de încărcare al bateriei critic!\nSetările au fost salvate,\norice modificare ulterioară\nNU va mai fi salvată.\n\nÎncărcați sau schimbați bateriile!
+:Curve
+Curbă
+:Cyclic1
+Ciclic1
+:Cyclic2
+Ciclic2
+:Cyclic3
+Ciclic3
+:D/R & Exp
+DR și Expo
+:D/R&Exp -AIL
+D/R&Exp -AIL
+:D/R&Exp -ELE
+D/R&Exp - ELE
+:D/R&Exp -RUD
+D/R&Exp -RUD
+:DR
+DR
+>:Datalog
+>:Date
+>:Date / Time
+>:Date format
+>:Date:
+>:Day
+:Deadband
+Bandă moartă
+:Default
+Default
+>:Delete
+:Delta PW
+Delta PW
+:Deviation FW version:
+Deviation fw. versiune:
+:Dimmer target
+Nivel auto
+:Dimmer time
+Timp auto
+:Dn
+Jos
+>:Do you really want\nto reset the\n permanent timer %d?
+:Down
+Jos
+:ELE
+ELE
+:ELE DR
+ELE DR
+:ELE Inv
+ELE inv.
+:ELE Mix
+ELE Mix
+:EXPO %d
+EXP. %d
+>:Edit
+>:Enable
+>:Enabled
+:Enter
+Enter
+:Exit
+Exit
+:Expo&DR
+Expo+DR
+>:Extend
+:FMODE
+FMODE
+>:Fades
+:Fahren
+F°
+:Fail-safe
+Fail-safe
+:File
+Fișier
+:Fixed
+Fix
+:Fixed ID
+ID Fix
+:Fly mode
+Mod zbor
+:Foot
+Picior
+:Frame Size
+Dim. pachet
+:GEAR
+GEAR
+:GPS
+GPS
+>:GPS Alt.
+>:GPS Coords
+>:GPS Speed
+>:GPS Time
+:Generic settings
+Setări generale
+:Gyro sense
+Sens giro
+:H
+H
+>:H-trim
+:HOLD
+HOLD
+:Heli
+Elic.
+:Heli/Standard GUI
+Elicopter/Std GUI
+:Helicopter
+Elicopter
+:High-Rate
+Pos0
+:Hold position
+Poziție fixă
+>:Holds
+>:Hour
+:Icon
+Icon
+>:Idle Up 1
+>:Idle Up 2
+:Input
+Intrare
+:Input monitor
+Monitor intrări
+:Insert
+Inserare
+:Inverted
+Inversat
+:L
+J
+:LCD settings
+Setări ecran
+:LEFT_H
+STÂNGA_H
+:LEFT_V
+STÂNGA_V
+:LIN
+LIN
+:Language
+Limbă
+:Latitude
+Latitudine
+>:Layout: Long-Press ENT
+:Left
+Stânga
+:Length
+Distanță
+:Linked
+Legat
+:Load
+Încarcă
+:Load...
+Încarcă...
+:Longitude
+Longitudine
+>:Loss
+:Low Battery
+Nivel bat. scăzut
+:Low-Rate
+Pos2
+:M
+M
+:MIX
+MIX
+:Main menu
+Meniu principal
+:Main page
+Pagina principală
+:Main page config
+Ecran principal
+>:Manual
+:Max Limit
+Limită max
+:Menu
+Meniu
+:Meter
+Metru
+:Mid-Rate
+Pos1
+:Min Limit
+Limită min
+:Min/Max
+Min/Max
+>:Minute
+:Mixer
+Configurare mixer
+:Mixer GUI
+GUI mixer
+:Mixers
+Mixere
+:Mode
+Mod
+:Mode %d
+Mod %d
+>:Model
+:Model menu
+Meniu model
+:Model name
+Nume model
+:Model needs reset\nfor standard mixer
+Modelul trebuie să fie\n resetat pentru mixerul standard
+:Model needs to be reset\nin order to switch to the standard mixer
+Modelul va fi resetat pentru\întoarcerea la modul simplu
+:Model setup
+Profil model
+:Model type
+Tip model
+>:Momentary
+>:Month
+:Move Down
+Mișcă în jos
+:Move Up
+Mișcă în sus
+:Move sticks and knobs\nto max & min positions\nthen press ENT
+Mută stick-urile și potențiometrele\nla MAX și MIN\ndupă care apasă ENT
+:Mux
+Mux
+:Neg
+Neg.
+:New
+Now
+>:No
+:No Trim
+nimic
+:None
+nimic
+:Normal
+Normal
+:Notch PW
+Depres. PW
+>:Num Channels
+:Off
+Oprit
+:Offset
+Offset
+:Ok
+Ok
+:On
+Pornit
+>:On/Off
+:PIT
+PIT
+>:PIT Mix
+>:PPM
+>:PPM In
+>:PPM%d
+>:PPMIn Cfg (Extend)
+:Page
+Pagină
+>:Page Config
+:Pitch curves
+Curbe pitch
+:Plane
+Avion
+:Point
+Punct
+:Pos
+Poz.
+:Pos 0
+Pos 0
+:Pos 1
+Pos 1
+:Pos 2
+Pos 2
+:Pos/Neg
+Poz/Neg
+:Position %d
+Poziția %d
+>:Power On alarm
+>:Power-down alert
+:Prealert interval
+Interval
+:Prealert intvl
+Interval
+:Prealert time
+Prealertă
+:Press 'Ent' to turn USB Filesystem
+\nApasă ENT pentru a seta modul USB
+:Press ENT to change
+Apasaă ENT pentru schimbare
+:Press ENT to copy to
+Apasa ENT pentru copiere
+:Press ENT to load
+Apasă ENT pentru incarcare
+:Press ENT to turn \nUSB drive
+Apasă ENT pentru a seta\nmodul USB
+:Protocol
+Protocol
+:PwrDn alert
+Alertă opr.
+>:PwrOn alarm
+:RIGHT_H
+DREAPTA_V
+:RIGHT_V
+DREAPTA_F
+:RPM
+RPM
+>:RTC Time
+:RUD
+RUD
+:RUD DR
+RUD DR
+>:Rate
+:Re-Init
+Re-init
+>:Real Time Clock
+:Remove
+Șterge
+:Reset
+Reset
+>:Reset Permanent Timer?
+:Reset sw
+Sw reset
+:Reverse
+Invers
+:Reversed
+Inversat
+:Revert
+Inversează
+:Right
+Dreapta
+:Safe Val
+Valoare sig.
+:Safety
+Siguranță
+>:Sample Rate
+:Save
+Salv.
+:Scale
+Scara
+:Scale%s
+Scară%s
+:Scanner
+Scaner
+>:Second
+>:Select
+:Servo
+Servo
+>:Set
+>:Set date
+>:Set permanent timer
+>:Set time
+>:Set to
+>:Set:
+:Simple
+Simplu
+:Simple 4 Channel
+Simplu 4 canale
+>:Small-box
+>:Smooth
+:Speed
+Viteză
+:Src
+Sursă
+:Standard
+Standard
+:Standard Mixer
+Mixer standard
+:Start
+Start
+:Step
+Pas
+>:Stick
+:Stick input
+Intrări
+:Stick mode
+Mod
+:Sticks
+Stick-uri
+:Subtrim
+Subtrim
+:Swash
+Platou
+:SwashType
+Tip platou
+:Switch
+Activator
+:Switch assignment
+Asignare act.
+:Switch1
+Act1
+:Switch2
+Act2
+:Symmetric
+Simetric.
+:THR
+THR
+:TRIMLH+
+TRIMSH+
+:TRIMLH-
+TRIMSH-
+:TRIMLV+
+TRIMSV+
+:TRIMLV-
+TRIMSV-
+:TRIMRH+
+TRIMDH+
+:TRIMRH-
+TRIMDH-
+:TRIMRV+
+TRIMDV+
+:TRIMRV-
+TRIMDV-
+:TRIM_L+
+TRIM_S+
+:TRIM_L-
+TRIM_S-
+:TRIM_R+
+TRIM_D+
+:TRIM_R-
+TRIM_D-
+:TRN
+TRN
+:TelemRPM
+TelemRPM
+:TelemT
+TelemT
+:TelemV
+TelemV
+:Telemetry
+Telemetrie
+:Telemetry config
+Telemetrie
+:Telemetry monitor
+Monitor telemetrie
+:Telemetry settings
+Setări telemetrie
+:Temp
+Temp
+:Temperature
+Temperatură
+>:Template
+:Template..
+Șablon...
+:Thr hold
+Thr hold
+:Throttle curves
+Curba putere
+:Throttle hold
+Throttle hold
+:Time
+Timp
+>:Time format
+:Timer
+Timer
+:Timer settings
+Setări crono
+:Timer%d
+Timer%d
+:Timers
+Timere
+:Timeup interval
+Expirare
+:Timeup intvl
+Expirare
+>:Toggle
+:Touch Calibrate
+Calibrare ecran
+:Touch Test
+Test tactil
+:Touch screen
+Ecran tactil
+:Touch target %d
+Atinge punctul %d
+:Touch to Lock
+Apasă pentru a încuia
+:Touch to Unlock
+Apasă pentru a descuia
+>:Trainer Cfg (Channel)
+>:Trainer Cfg (Stick)
+>:Trainer Sw
+:Transmitter config
+Configurare radio
+:Transmitter menu
+Meniu radio
+:Travel adjust
+Ajustare curse
+:Trim
+Trim
+:Trim +
+Trim +
+:Trim -
+Trim -
+:Trim Step
+Pas trim
+>:Trimbar
+:Trims
+Trim-uri
+:Turn Off
+Oprește
+:Turn On
+Pornește
+:Tx power
+Putere tx
+>:Type
+:USB
+USB
+>:USB Filesystem is currently 
+:Unknown
+Necunoscut
+:Up
+Sus
+>:V-trim
+:Value
+Valoare
+:Vibration
+Vibrație
+:Virt
+Virt.
+:Volt
+Volt
+>:Welcome
+>:Year
+>:Yes
+:Zero/Max
+Zero/Max
+:\n%d seconds left
+\n%d secunde stânga
+:\n\nBinding will end in %d seconds...
+\n\nConectarea se va încheia în %d secunde...
+>:actual value
+:add
+aditiv
+>:cntdn-prop
+:countdown
+countdown
+>:delay
+:is not supported
+nu este suportat(ă)
+:is turned off
+este oprit(ă)
+:max
+max
+:min
+min
+:mult
+mult.
+:permanent
+permanent
+:replace
+înloc.
+>:resulting value
+>:stop-prop
+:stopwatch
+crono
+>:value to add or set
+>:value to set
