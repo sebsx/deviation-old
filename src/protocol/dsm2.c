@@ -156,6 +156,7 @@ u8 sop_col;
 u8 data_col;
 u16 state;
 u8 crcidx;
+u8 binding;
 #ifdef USE_FIXED_MFGID
 //static const u8 cyrfmfg_id[6] = {0x5e, 0x28, 0xa3, 0x1b, 0x00, 0x00}; //dx8
 static const u8 cyrfmfg_id[6] = {0xd4, 0x62, 0xd6, 0xad, 0xd3, 0xff}; //dx6i
@@ -199,6 +200,11 @@ static void build_data_packet(u8 upper)
 {
     u8 i;
     const u8 *chmap = ch_map[num_channels - 4];
+    if (binding && PROTOCOL_SticksMoved(0)) {
+        //Don't turn off dialog until sticks are moved
+        PROTOCOL_SetBindState(0);  //Turn off Bind dialog
+        binding = 0;
+    }
     if (Model.protocol == PROTOCOL_DSMX) {
         packet[0] = cyrfmfg_id[2];
         packet[1] = cyrfmfg_id[3] + model;
@@ -210,11 +216,16 @@ static void build_data_packet(u8 upper)
     u16 max = 1 << bits;
     u16 pct_100 = (u32)max * 100 / 150;
     for (i = 0; i < 7; i++) {
+       unsigned idx = chmap[upper * 7 + i];
        s32 value;
        if (chmap[upper*7 + i] == 0xff) {
            value = 0xffff;
        } else {
-           value = (s32)Channels[chmap[upper * 7 + i]] * (pct_100 / 2) / CHAN_MAX_VALUE + (max / 2);
+           if (binding && Model.limits[idx].flags & CH_FAILSAFE_EN) {
+               value = (s32)Model.limits[idx].failsafe * (pct_100 / 2) / 100 + (max / 2);
+           } else {
+               value = (s32)Channels[idx] * (pct_100 / 2) / CHAN_MAX_VALUE + (max / 2);
+           }
            if (value >= max)
                value = max-1;
            else if (value < 0)
@@ -598,7 +609,6 @@ static u16 dsm2_cb()
         chidx = 0;
         crcidx = 0;
         state = DSM2_CH1_WRITE_A;
-        PROTOCOL_SetBindState(0);  //Turn off Bind dialog
         set_sop_data_crc();
         return 10000;
     } else if(state == DSM2_CH1_WRITE_A || state == DSM2_CH1_WRITE_B
@@ -735,8 +745,10 @@ static void initialize(u8 bind)
         state = DSM2_BIND;
         PROTOCOL_SetBindState((BIND_COUNT > 200 ? BIND_COUNT / 2 : 200) * 10); //msecs
         initialize_bind_state();
+        binding = 1;
     } else {
         state = DSM2_CHANSEL;
+        binding = 0;
     }
     CLOCK_StartTimer(10000, dsm2_cb);
 }
