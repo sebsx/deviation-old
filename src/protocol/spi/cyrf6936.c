@@ -32,35 +32,11 @@
 
 #define Delay usleep
 static void  CS_HI() {
-#if HAS_MULTIMOD_SUPPORT
-    if (MODULE_ENABLE[MULTIMOD].port) {
-        //We need to set the multimodule CSN even if we don't use it
-        //for this protocol so that it doesn't interpret commands
-        PROTOSPI_pin_set(MODULE_ENABLE[MULTIMOD]);
-        if(MODULE_ENABLE[CYRF6936].port == SWITCH_ADDRESS) {
-            for(int i = 0; i < 20; i++)
-                _NOP();
-            return;
-        }
-    }
-#endif
-    PROTOSPI_pin_set(MODULE_ENABLE[CYRF6936]);
+    MODULE_CSN(CYRF6936, 1);
 }
 
 static void CS_LO() {
-#if HAS_MULTIMOD_SUPPORT
-    if (MODULE_ENABLE[MULTIMOD].port) {
-        //We need to set the multimodule CSN even if we don't use it
-        //for this protocol so that it doesn't interpret commands
-        PROTOSPI_pin_clear(MODULE_ENABLE[MULTIMOD]);
-        if(MODULE_ENABLE[CYRF6936].port == SWITCH_ADDRESS) {
-            for(int i = 0; i < 20; i++)
-                _NOP();
-            return;
-        }
-    }
-#endif
-    PROTOSPI_pin_clear(MODULE_ENABLE[CYRF6936]);
+    MODULE_CSN(CYRF6936, 0);
 }
 
 void CYRF_WriteRegister(u8 address, u8 data)
@@ -153,15 +129,16 @@ void CYRF_GetMfgData(u8 data[])
 static void AWA24S_SetTxRxMode(enum TXRX_State mode)
 {
     //AWA24S
+    //NOTE: MULTIMOD_SwitchCommand() will setup the pins on the multimod as necessary
     if(mode == TX_EN)
     {
         CYRF_WriteRegister(0x0D,0x40); //disable Rx (assume IRQ is set?)
-        SPI_ConfigSwitch(0x8f, 0x8e);
+        //SPI_ConfigSwitch(0x8f, 0x8e);
     }
     else
     {
         CYRF_WriteRegister(0x0D,0x00); //enable Rx (assume IRQ is set?)
-        SPI_ConfigSwitch(0x0f, 0x0e);
+        //SPI_ConfigSwitch(0x0f, 0x0e);
     }
 }
 
@@ -182,12 +159,16 @@ void CYRF_SetTxRxMode(enum TXRX_State mode)
     //Set the post tx/rx state
     CYRF_WriteRegister(0x0F, mode == TX_EN ? 0x2C : 0x28);
 #if HAS_MULTIMOD_SUPPORT
-    if (MODULE_ENABLE[CYRF6936].port == 0xFFFFFFFF) {
-        if ((MODULE_ENABLE[CYRF6936].pin >> 8) == 0x01) {
+    if(MODULE_ENABLE[MULTIMOD].port && MULTIMOD_SwitchCommand(CYRF6936, mode)) {
+        //We only get here if the UniversalTx is enabled
+        return;
+    }
+    if (MODULE_ENABLE[CYRF6936].port == SWITCH_ADDRESS) {
+        if ((MODULE_ENABLE[CYRF6936].pin >> 8) == CYRF6936_AWA24S) {
             AWA24S_SetTxRxMode(mode);
             return;
         }
-        if ((MODULE_ENABLE[CYRF6936].pin >> 8) == 0x02) {
+        if ((MODULE_ENABLE[CYRF6936].pin >> 8) == CYRF6932_BUYCHINA) {
             BUYCHINA_SetTxRxMode(mode);
             return;
         }

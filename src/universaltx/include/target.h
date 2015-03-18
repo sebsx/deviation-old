@@ -17,9 +17,12 @@ void PWR_Init(void);
 /* PA Control functions */
 void PACTL_Init();
 void PACTL_SetTxRxMode(int mode);
+int PACTL_SetSwitch(int module);
+void PACTL_SetNRF24L01_CE(int state);
 
 /* Protocol functions */
 void SPI_ProtoInit();
+void SPI_ProtoMasterSlaveInit(void(*callback)(u8 *ptr, unsigned length));
 
 void _usleep(u32 usec);
 #define usleep _usleep
@@ -30,4 +33,14 @@ static inline int FS_Mount(void *FAT, const char *drive) {(void)FAT; (void)drive
 
 //Load target-specific include
 #include "target_defs.h"
+
+enum MsecCallback {
+    MEDIUM_PRIORITY,
+    LOW_PRIORITY,
+    LAST_PRIORITY,
+};
+#define NUM_MSEC_CALLBACKS LAST_PRIORITY
+
+#define MEDIUM_PRIORITY_MSEC   5
+#define LOW_PRIORITY_MSEC    100
 #endif

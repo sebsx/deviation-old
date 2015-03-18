@@ -367,10 +367,7 @@ int PROTOCOL_SetSwitch(int module)
 {
     (void)module;
 #if HAS_MULTIMOD_SUPPORT
-    if (! Transmitter.module_enable[MULTIMOD].port)
-        return 0;
-    u8 csn = SPI_ProtoGetPinConfig(module, CSN_PIN);
-    return SPI_ConfigSwitch(0x0f, 0x0f ^ csn);
+    return MULTIMOD_SwitchCommand(module, CHANGE_MODULE);
 #else
     return 0;
 #endif

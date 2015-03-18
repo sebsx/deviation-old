@@ -27,24 +27,40 @@
 struct model Model;
 struct Transmitter Transmitter;
 
+const char UTX_Version[33] = HGVERSION;
+volatile u8 priority_ready;
+
+extern void utx_devo();
+extern void utx_ppm();
+
+//Main routine for bidi-USART
+//Code here uses PPM pin as bidi USART.  This is intended for using the X9D with Deviation
+//Protocol parameters are from the transmitter, but the protocol code itself is via the UniversalTx module
+void utx_uart()
+{
+}
+
+//Main routine for USB control
+//Code here receives commands from USB interface, but is otherwise similar to the USART mode above
+void utx_usb()
+{
+}
+
 int main(void)
 {
     PWR_Init();
+    CLOCK_Init();
     PACTL_Init();
     UART_Initialize();
-    BT_Initialize();
     SPI_ProtoInit();
 
     printf("Power Up\n");
-    printf("NRF24L01: %s\n", NRF24L01_Reset() ? "Found" : "Not found");
     printf("A7105: %s\n", A7105_Reset() ? "Found" : "Not found");
+    printf("NRF24L01: %s\n", NRF24L01_Reset() ? "Found" : "Not found");
     printf("CC2500: %s\n", CC2500_Reset() ? "Found" : "Not found");
     printf("CYRF6936: %s\n", CYRF_Reset() ? "Found" : "Not found");
-    //BT_Test();        
     printf("Done\n");
-    while (1) {
-        BT_HandleInput();
-    }
 
+    TARGET();
     return 0;
 }

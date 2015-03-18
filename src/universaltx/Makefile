@@ -4,7 +4,7 @@ MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 
 # Use VERBOSE=1 to enable verbose make
-TARGET	   = universaltx
+TARGET	   ?= utx_devo
 TYPE      ?= dev
 LIBOPENCM3 = ../libopencm3/lib/libopencm3_stm32f0.a
 
@@ -17,16 +17,20 @@ SRC_C = universaltx.c  \
         utx_pactl.c    \
         utx_power.c    \
         utx_ppmin.c    \
+        utx_protocol.c \
         utx_protospi.c \
         utx_syscalls.c \
-        utx_uart.c
+        utx_clock.c    \
+        utx_err_handler.c \
+        utx_uart.c     \
+        $(TARGET).c
 
 SRC_C    := $(SRC_C) \
             $(wildcard ../protocol/*.c) \
-            $(wildcard ../protocol/spi/*.c) \
+            $(filter-out ../protocol/spi/multimod.c, $(wildcard ../protocol/spi/*.c)) \
             $(wildcard ../target/common/stm32/*.c)
 
-EXCLUDE  := ../protocol/ppmout.c ../protocol/usbhid.c ../protocol/testrf.c ../protocol/protocol.c ../protocol/spi/avr_program.c
+EXCLUDE  := ../protocol/ppmout.c ../protocol/usbhid.c ../protocol/protocol.c ../protocol/spi/avr_program.c
 SRC_C    := $(filter-out $(EXCLUDE),$(SRC_C))
 
 ###############################################
@@ -76,9 +80,10 @@ CFLAGS = -DSTM32F0 -mthumb -mcpu=cortex-m0 -msoft-float \
          -fdata-sections -ffunction-sections -fno-builtin-printf \
          -Wall -Wextra -Werror=undef -std=gnu99 --specs=nano.specs \
          -DHGVERSION="\"${HGVERSION}\"" \
+         -DTARGET=${TARGET} \
          -I../libopencm3/include/ -Iinclude
 
-LFLAGS = --static -nostartfiles -Tuniversaltx.ld -Wl,-Map=universaltx.map \
+LFLAGS = --static -nostartfiles -Tuniversaltx.ld -Wl,-Map=${TARGET}.map \
          -Wl,--gc-sections -L../libopencm3/lib/ -L../libopencm3/lib/stm32/f0/ \
          -lopencm3_stm32f0 -Wl,--start-group -lc -lnosys -Wl,--end-group
 ifeq "$(TYPE)" "dev"

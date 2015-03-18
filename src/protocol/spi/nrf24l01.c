@@ -44,36 +44,13 @@
 static u8 rf_setup;
 
 static void  CS_HI() {
-#if HAS_MULTIMOD_SUPPORT
-    if (MODULE_ENABLE[MULTIMOD].port) {
-        //We need to set the multimodule CSN even if we don't use it
-        //for this protocol so that it doesn't interpret commands
-        PROTOSPI_pin_set(MODULE_ENABLE[MULTIMOD]);
-        if(MODULE_ENABLE[NRF24L01].port == SWITCH_ADDRESS) {
-            for(int i = 0; i < 20; i++)
-                _NOP();
-            return;
-        }
-    }
-#endif
-    PROTOSPI_pin_set(MODULE_ENABLE[NRF24L01]);
+    MODULE_CSN(NRF24L01, 1);
 }
 
 static void CS_LO() {
-#if HAS_MULTIMOD_SUPPORT
-    if (MODULE_ENABLE[MULTIMOD].port) {
-        //We need to set the multimodule CSN even if we don't use it
-        //for this protocol so that it doesn't interpret commands
-        PROTOSPI_pin_clear(MODULE_ENABLE[MULTIMOD]);
-        if(MODULE_ENABLE[NRF24L01].port == SWITCH_ADDRESS) {
-            for(int i = 0; i < 20; i++)
-                _NOP();
-            return;
-        }
-    }
-#endif
-    PROTOSPI_pin_clear(MODULE_ENABLE[NRF24L01]);
+    MODULE_CSN(NRF24L01, 0);
 }
+
 void NRF24L01_Initialize()
 {
     rf_setup = 0x0F;
@@ -220,21 +197,22 @@ u8 NRF24L01_SetPower(u8 power)
     rf_setup = (rf_setup & 0xF9) | ((nrf_power & 0x03) << 1);
     return NRF24L01_WriteReg(NRF24L01_06_RF_SETUP, rf_setup);
 }
+#ifndef CE_lo
 static void CE_lo()
 {
 #if HAS_MULTIMOD_SUPPORT
-    PROTOCOL_SetSwitch(NRF24L01);
+    MULTIMOD_SwitchCommand(NRF24L01, CLEAR_PIN_ENABLE);
 #endif
 }
+#endif
+#ifndef CE_hi
 static void CE_hi()
 {
 #if HAS_MULTIMOD_SUPPORT
-    u8 en = SPI_ProtoGetPinConfig(NRF24L01, ENABLED_PIN);
-    u8 csn = SPI_ProtoGetPinConfig(NRF24L01, CSN_PIN);
-    SPI_ConfigSwitch(en | 0x0f, en | (0x0f ^ csn));
+    MULTIMOD_SwitchCommand(NRF24L01, SET_PIN_ENABLE);
 #endif
 }
-
+#endif
 void NRF24L01_SetTxRxMode(enum TXRX_State mode)
 {
     if(mode == TX_EN) {
@@ -264,6 +242,7 @@ void NRF24L01_SetTxRxMode(enum TXRX_State mode)
         NRF24L01_WriteReg(NRF24L01_00_CONFIG, (1 << NRF24L01_00_EN_CRC)); //PowerDown
         CE_lo();
     }
+    //on the UniversalTx, the NRF directly controls the PA, so no special setting is needed here
 }
 
 int NRF24L01_Reset()
@@ -273,6 +252,7 @@ int NRF24L01_Reset()
     u8 status1 = Strobe(NOP);
     u8 status2 = NRF24L01_ReadReg(0x07);
     NRF24L01_SetTxRxMode(TXRX_OFF);
+    return 1;
     return (status1 == status2 && (status1 & 0x0f) == 0x0e);
 }
 #endif // defined(PROTO_HAS_NRF24L01)
