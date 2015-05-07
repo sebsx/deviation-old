@@ -106,9 +106,11 @@ void PAGE_ShowResetPermTimerDialog(void *guiObject, void *data);
 void PAGE_ShowInvalidModule();
 void PAGE_ShowModuleDialog(const char **missing);
 void PAGE_ShowWarning(const char *title, const char *str);
+void PAGE_ShowTelemetryAlarm();
 const char *PAGE_GetName(int idx);
 int PAGE_GetNumPages();
 int PAGE_GetStartPage();
+int PAGE_GetID();
 
 /* Protocol */
 #define PROTODEF(proto, module, map, init, name) proto,
@@ -194,6 +196,7 @@ u32 rand32(); //LFSR based PRNG
 extern volatile u8 priority_ready;
 void medium_priority_cb();
 void debug_timing(u32 type, int startend); //This is only defined if TIMING_DEBUG is defined
+void DEBUGLOG_Putc(char c);
 /* Battery */
 #define BATTERY_CRITICAL 0x01
 #define BATTERY_LOW      0x02

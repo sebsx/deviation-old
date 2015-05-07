@@ -65,6 +65,9 @@ struct page_group groups[] = {
 #endif
     {2, PAGEID_RANGE},
     {2, PAGEID_USB},
+#if DEBUG_WINDOW_SIZE
+    {2, PAGEID_DEBUGLOG},
+#endif
 #if HAS_STANDARD_GUI
     {0x81, PAGEID_MODELMENU},
 #endif
@@ -222,6 +225,10 @@ unsigned page_change_cb(u32 buttons, unsigned flags, void *data)
 {
     (void)data;
     (void)flags;
+    if (PAGE_GetID() == PAGEID_TELEMMON) {
+        if(CHAN_ButtonIsPressed(buttons, BUT_ENTER) || CHAN_ButtonIsPressed(buttons, BUT_EXIT))
+            TELEMETRY_MuteAlarm();
+    }
     if (ActionCB != NULL)
         return ActionCB(buttons, flags, data);
     if (flags & BUTTON_LONGPRESS) {
@@ -292,6 +299,11 @@ int PAGE_GetStartPage()
 int PAGE_GetNumPages()
 {
     return sizeof(pages) / sizeof(struct page);
+}
+
+int PAGE_GetID()
+{
+    return groups[cur_page].id;
 }
 
 void PAGE_ChangeQuick(int dir)
