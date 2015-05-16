@@ -3,6 +3,9 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <string.h>
+#include <stddef.h>
+
+#include "devofs_io.h"
 enum {
     SECTOR_SIZE     = 4096,
     SECTOR_COUNT    = 16,
@@ -15,16 +18,20 @@ enum {
     SECTORID_DATA  = 0x02,
 };
 
-#define FILE_SIZE(x) ((x).type == FILEOBJ_DIR ? 0 : (((x).size1 << 8) | (x).size2))
+#define FILE_SIZE(x) ((x).type == FILEOBJ_DIR ? 0 : (((x).size1 << 16) | ((x).size2 << 8) | (x).size3))
 #define FILE_ID(x) ((x).size1)
 /* This assumes flash reset = 0x00.  bits are defined to ensure only 1 type can e set before a reset happens */
 enum {
     FILEOBJ_NONE    = 0x00,
     FILEOBJ_FILE    = 0xf7,
+    FILEOBJ_WRITE   = 0xf6, //File is being written (this state will never be written to disk)
     FILEOBJ_DIR     = 0x7f,
     FILEOBJ_DELETED = 0xff,
 };
 static FATFS *_fs;
+
+static int _read(void * buf, int addr, int len);
+static int _get_addr(int addr, int offset);
 
 int _get_next_sector(int sec) {
     return (sec + 1) % SECTOR_COUNT;
@@ -34,12 +41,12 @@ void _write_sector_id(int sector, u8 id) {
     disk_writep_rand(&id, sector, 0, 1);
 }
 
-FRESULT pf_compact()
+FRESULT df_compact()
 {
     u8 buf[BUF_SIZE];
     u8 *buf_ptr;
     struct file_header fh;
-    int read_sec = _fs->start_sector;
+    //printf("Start: %08x %08x %08x %08x\n", _fs->start_sector, _fs->compact_sector, _fs->file_addr, _fs->file_cur_pos);
     int read_addr = _fs->start_sector * SECTOR_SIZE + 1;
     int write_sec = _fs->compact_sector;
     int file_addr = _fs->file_addr;
@@ -105,6 +112,7 @@ FRESULT pf_compact()
     _fs->start_sector = _fs->compact_sector;
     _fs->compact_sector = last_sec;
     _fs->file_addr = file_addr;
+    //printf("End: %08x %08x %08x %08x\n", _fs->start_sector, _fs->compact_sector, _fs->file_addr, _fs->file_cur_pos);
     return FR_OK;
 }
 
@@ -112,20 +120,25 @@ int _read(void * buf, int addr, int len)
 {
     int sector = addr / SECTOR_SIZE;
     int offset = addr % SECTOR_SIZE;
+    u16 actual;
+    int orig_len = len;
     while(len) {
         if (offset + len > SECTOR_SIZE) {
             int bytes = SECTOR_SIZE - offset;
-            disk_readp(buf, sector, offset, bytes);
-            buf += bytes;
-            len -= bytes;
+            disk_readp_cnt(buf, sector, offset, bytes, &actual);
+            buf += actual;
+            len -= actual;
+            if (actual != bytes)
+                break;
             offset = 1;
-            sector++;
+            sector = (sector + 1) % SECTOR_COUNT;
         } else {
-            disk_readp(buf, sector, offset, len);
-            len = 0;
+            disk_readp_cnt(buf, sector, offset, len, &actual);
+            len -= actual;
+            break;
         }
     }
-    return FR_OK;
+    return orig_len - len;
 }
 int _write(const void* buf, int addr, int len)
 {
@@ -138,7 +151,7 @@ int _write(const void* buf, int addr, int len)
             buf += bytes;
             len -= bytes;
             offset = 1;
-            sector++;
+            sector = (sector + 1) % SECTOR_COUNT;
             _write_sector_id(sector, SECTORID_DATA);
             //write sector_id
         } else {
@@ -188,10 +201,9 @@ int _find_start_sector(int *recovery_sector)
     return start[0];
 }
 /* Mount/Unmount a logical drive */
-FRESULT pf_mount (FATFS* fs)
+FRESULT df_mount (FATFS* fs)
 {
     _fs = fs;
-    int recovery_sector;
     fs->file_addr = -1;
     fs->file_cur_pos = -1;
     fs->parent_dir = 0;
@@ -201,9 +213,10 @@ FRESULT pf_mount (FATFS* fs)
         return FR_NO_FILESYSTEM;
     }
     if (fs->compact_sector >= 0) {
-        return pf_compact(fs);
+        return df_compact(fs);
     }
     fs->compact_sector = fs->start_sector == 0 ? SECTOR_COUNT-1 : fs->start_sector-1;
+    return FR_OK;
 }
 
 int _expand_chars(char *dest, const char *src, int len)
@@ -251,10 +264,15 @@ FRESULT _find_file(FATFS *fs, const char *fullname)
    return FR_NO_PATH;
 }
 
-FRESULT pf_opendir (DIR *dir, const char *name)
+FRESULT df_opendir (DIR *dir, const char *name)
 {
     *dir = *_fs;
     dir->file_addr = _fs->start_sector * SECTOR_SIZE + 1; //reset current position
+    dir->parent_dir = 0;
+    if (name[0] == 0 || (name[0] == '/' && name[1] == 0)) {
+        dir->file_cur_pos = -1;
+        return FR_OK;
+    }
     int res = _find_file(dir, name);
     if (res)
         return res;
@@ -266,14 +284,14 @@ FRESULT pf_opendir (DIR *dir, const char *name)
     return FR_NO_FILE;
 }
 
-FRESULT pf_readdir (DIR *dir, FILINFO *fi)
+FRESULT df_readdir (DIR *dir, FILINFO *fi)
 {
     if (dir->file_addr == -1) {
         return FR_NO_FILE;
     }
     if (dir->file_cur_pos == -1) {
         //Start at the beginning
-        dir->file_addr = dir->start_sector + 1;
+        dir->file_addr = dir->start_sector * SECTOR_SIZE + 1; //reset current position
         dir->file_cur_pos = 0;
     } else {
         if (dir->file_header.type == FILEOBJ_NONE)
@@ -284,12 +302,21 @@ FRESULT pf_readdir (DIR *dir, FILINFO *fi)
     while (dir->file_header.type != FILEOBJ_NONE) {
         if (dir->file_header.parent_dir == dir->parent_dir) {
             //Found next object
-            fi->fname[9] = 0;
-            int len = _expand_chars(fi->fname, dir->file_header.name, 8);
-            fi->fname[len++] = '.';
-            _expand_chars(fi->fname+len, dir->file_header.name + 8, 3);
-            fi->fattrib = (dir->file_header.type == FILEOBJ_DIR) ? AM_DIR : 0;
-            fi->fname[12] = 0;
+            char *ptr1 = fi->fname;
+            int  pos = 0;
+            while(pos < 8 && dir->file_header.name[pos]) {
+                *ptr1++ = dir->file_header.name[pos++];
+            }
+            if (dir->file_header.name[8]) {
+                pos = 8;
+                *ptr1++ = '.';
+                while(pos < 11 && dir->file_header.name[pos]) {
+                    *ptr1++ = dir->file_header.name[pos++];
+                }
+            }
+            *ptr1 = 0;
+            fi->fattrib = (dir->file_header.type == FILEOBJ_DIR) ? AM_DIR : AM_FILE;
+            fi->fsize = FILE_SIZE(dir->file_header);
             return FR_OK;
         }
         _get_next_fileobj(dir);
@@ -316,17 +343,34 @@ void _create_empty_file()
     data[0] = FILEOBJ_DELETED;
     disk_writep_rand(data, _fs->file_addr / 4096, _fs->file_addr % 4096, 1);
     _fs->file_addr = _get_next_write_addr();
-    int end_addr = _get_addr(_fs->file_addr, sizeof(struct file_header) + FILE_SIZE(_fs->file_header));
+
+    unsigned cur_size = FILE_SIZE(_fs->file_header);
+    if (cur_size == 0 ) //we need to make sure max_size is non-zero
+        cur_size = 1;
+    unsigned max_size = ((4095 + cur_size) / 4096) * 4096; //round to nearest sector
+    if (max_size - cur_size > sizeof(struct file_header))
+        max_size -= sizeof(struct file_header);
+
+    int end_addr = _get_addr(_fs->file_addr, sizeof(struct file_header) + max_size);
     if (end_addr >= _fs->compact_sector*SECTOR_SIZE) {
         //file won't fit.  need to compact
-        pf_compact();
+        df_compact();
     }
     //duplicate file header to new location
+    //zero file size (we'll write the actual size at close
+    _fs->file_header.size1 = 0; 
+    _fs->file_header.size2 = 0; 
+    _fs->file_header.size3 = 0; 
     _write(&_fs->file_header, _fs->file_addr, sizeof(struct file_header));
+    //place the maximum allocated filesize as a place-holder
+    _fs->file_header.size1 = 0xff & (max_size >> 16);
+    _fs->file_header.size2 = 0xff & (max_size >> 8);
+    _fs->file_header.size3 = 0xff & (max_size);
+    _fs->file_header.type  = FILEOBJ_WRITE;
     _fs->file_cur_pos = 0;
 }
 
-FRESULT pf_open (const char *name, unsigned flags)
+FRESULT df_open (const char *name, unsigned flags)
 {
     char cur_dir[13];
     int i = 0;
@@ -355,7 +399,7 @@ FRESULT pf_open (const char *name, unsigned flags)
         return res;
     if (_fs->file_header.type == FILEOBJ_FILE) {
         _fs->file_cur_pos = 0;
-        if (flags && O_WRONLY) {
+        if (flags & O_CREAT) {
             _create_empty_file();
         }
         return FR_OK;
@@ -363,14 +407,25 @@ FRESULT pf_open (const char *name, unsigned flags)
     return FR_NO_FILE;
 }
 
-FRESULT pf_read (void *buf, u16 requested, u16 *actual)
+FRESULT df_close ()
+{
+    if (_fs->file_header.type == FILEOBJ_WRITE) {
+        _fs->file_header.size1 = 0xff & (_fs->file_cur_pos >> 16);
+        _fs->file_header.size2 = 0xff & (_fs->file_cur_pos >> 8);
+        _fs->file_header.size3 = 0xff & (_fs->file_cur_pos >> 0);
+        _write(&_fs->file_header.size1, _fs->file_addr + offsetof(struct file_header, size1), 3);
+    }
+    _fs->file_cur_pos = -1;
+    return FR_OK;
+}
+
+FRESULT df_read (void *buf, u16 requested, u16 *actual)
 {
     if (requested + _fs->file_cur_pos > FILE_SIZE(_fs->file_header)) {
         requested = FILE_SIZE(_fs->file_header) - _fs->file_cur_pos;
     } 
-    _read(buf, _get_addr(_fs->file_addr, sizeof(struct file_header) + _fs->file_cur_pos), requested);
-    _fs->file_cur_pos += requested;
-    *actual = requested;
+    *actual = _read(buf, _get_addr(_fs->file_addr, sizeof(struct file_header) + _fs->file_cur_pos), requested);
+    _fs->file_cur_pos += *actual;
     return FR_OK;
 }
 
@@ -392,14 +447,14 @@ int _get_addr(int addr, int offset)
     return addr % (SECTOR_COUNT * SECTOR_SIZE); //wrap
 }
 
-FRESULT pf_lseek (u32 pos) {
-    if (pos > FILE_SIZE(_fs->file_header)) {
+FRESULT df_lseek (u32 pos) {
+    if ((int)pos > FILE_SIZE(_fs->file_header)) {
         return FR_DISK_ERR;
     }
     _fs->file_cur_pos = pos;
     return FR_OK;
 }
-FRESULT pf_write (const void *buffer, u16 requested, u16 *written)
+FRESULT df_write (const void *buffer, u16 requested, u16 *written)
 {
     if (requested + _fs->file_cur_pos > FILE_SIZE(_fs->file_header)) {
         requested = FILE_SIZE(_fs->file_header) - _fs->file_cur_pos;
@@ -410,5 +465,10 @@ FRESULT pf_write (const void *buffer, u16 requested, u16 *written)
     return FR_OK;  
 }
 
-FRESULT pf_switchfile (FATFS *);
-FRESULT pf_maximize_file_size();
+FRESULT df_switchfile (FATFS *fs)
+{
+    _fs = fs;
+    return FR_OK;
+}
+
+FRESULT df_maximize_file_size() { return FR_OK; }

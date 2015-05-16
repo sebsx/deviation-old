@@ -49,8 +49,10 @@ void connect_object(struct guiObject *obj)
 
 u8 coords_in_box(struct guiBox *box, struct touch *coords)
 {
-    return(coords->x >= box->x && coords->x <= (box->x + box->width)
-        && coords->y >= box->y && coords->y <= (box->y + box->height));
+    unsigned result = ((coords->x == box->x || (coords->x > box->x && coords->x < box->x + box->width))
+                    && (coords->y == box->y || (coords->y > box->y && coords->y < box->y + box->height)));
+    //printf("(%dx%d)-(%dx%d) <-> (%dx%d) : %d\n", box->x, box->y, box->x + box->width, box->y + box->height, coords->x, coords->y, result);
+    return result;
 }
 
 void GUI_DrawObject(struct guiObject *obj)
@@ -194,6 +196,7 @@ void GUI_DrawScreen(void)
     FullRedraw = 1;
     GUI_DrawObjects();
     FullRedraw = 0;
+    LCD_ForceUpdate();
 }
 
 struct guiObject *GUI_IsModal(void)
@@ -268,6 +271,7 @@ void _GUI_RefreshScreen(struct guiObject *headObj)
 
 void GUI_RefreshScreen() {
     _GUI_RefreshScreen(NULL);
+    LCD_ForceUpdate();
 }
     
 void GUI_TouchRelease()

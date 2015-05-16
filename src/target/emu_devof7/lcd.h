@@ -5,16 +5,13 @@
 #ifndef LCD_H
 #define LCD_H
 
-#define CHAR_WIDTH 12
-#define CHAR_HEIGHT 18
 #define RANGE_TABLE_SIZE 20
-
-struct FAT FontFAT;
 
 struct font_def 
 {
         u8 idx;
         u8 height;          /* Character height for storage        */
+        u8 zoom;
         const u8 *data;
         u16 range[2 * (RANGE_TABLE_SIZE + 1)];  /* Array containing the ranges of supported characters */
 };

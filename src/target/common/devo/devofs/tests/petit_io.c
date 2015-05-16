@@ -18,8 +18,8 @@
 #include <stdio.h>
 #include <string.h>
 
-extern char image_file[1024];
-
+char image_file[1024];
+#define dbgprintf if(0) printf
 /*-----------------------------------------------------------------------*/
 /* Initialize Disk Drive                                                 */
 /*-----------------------------------------------------------------------*/
@@ -45,19 +45,30 @@ DRESULT disk_readp (
 	WORD count			/* Byte count (bit15:destination) */
 )
 {
-	printf("Reading sector: %d, offset: %d size: %d\n", (int)sector, (int)sofs, (int)count);
+	dbgprintf("Reading sector: %d, offset: %d size: %d\n", (int)sector, (int)sofs, (int)count);
 	fseek(fh, sector * 4096 + sofs, SEEK_SET);
-	fread(dest, count, 1, fh);
+	int res = fread(dest, count, 1, fh);
         int max = count > 64 ? 64 : count;
         int i;
         for(i = 0; i < max; i++) {
-            printf("%02x ", dest[i]);
+            dbgprintf("%02x ", dest[i]);
         }
-        printf("\n");
+        dbgprintf("\n");
 
-	return RES_OK;
+	return res == count ? RES_OK : RES_ERROR;
 }
 
+DRESULT disk_readp_cnt (
+	BYTE* dest,			/* Pointer to the destination object */
+	DWORD sector,		/* Sector number (LBA) */
+	WORD sofs,			/* Offset in the sector */
+	WORD count,			/* Byte count (bit15:destination) */
+	WORD *actual
+)
+{
+	*actual = count;
+	return disk_readp(dest, sector, sofs, count);
+}
 
 
 /*-----------------------------------------------------------------------*/
@@ -70,9 +81,16 @@ DRESULT disk_writep_rand (
 	WORD count			/* Byte count (bit15:destination) */
 )
 {
-	printf("Writing sector: %d, offset: %d size: %d\n", (int)sector, (int)sofs, (int)count);
+	dbgprintf("Writing sector: %d, offset: %d size: %d\n", (int)sector, (int)sofs, (int)count);
 	fseek(fh, sector * 4096 + sofs, SEEK_SET);
 	fwrite(src, count, 1, fh);
+        fflush(fh);
+        int max = count > 64 ? 64 : count;
+        int i;
+        for(i = 0; i < max; i++) {
+            dbgprintf("%02x ", src[i]);
+        }
+        dbgprintf("\n");
 	return RES_OK;
 }
 
@@ -108,6 +126,7 @@ DRESULT disk_writep (
 	} else {
 		// Send data to the disk
 		fwrite(buff, sc, 1, fh);
+                fflush(fh);
 	}
 
 	return res;

@@ -54,6 +54,10 @@ void BACKLIGHT_Brightness(unsigned brightness);
 /* Display Functions */
 void LCD_Init();
 void LCD_Contrast(unsigned contrast);
+void LCD_ForceUpdate();
+void LCD_CreateMappedWindow(unsigned val, unsigned x, unsigned y, unsigned w, unsigned h);
+void LCD_SetMappedWindow(unsigned val);
+unsigned LCD_GetMappedWindow();
 
     /* Primitives */
 enum DrawDir {
@@ -62,6 +66,7 @@ enum DrawDir {
 };
 void LCD_DrawPixel(unsigned int color);
 void LCD_DrawPixelXY(unsigned int x, unsigned int y, unsigned int color);
+void LCD_DrawMappedPixelXY(unsigned int x, unsigned int y, unsigned int color);
 void LCD_DrawStart(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, enum DrawDir dir);
 void LCD_DrawStop(void);
 void LCD_ShowVideo(u8 enable);
@@ -169,6 +174,7 @@ int FS_ReadDir(char *path);
 void FS_CloseDir();
 
 void _usleep(u32 usec);
+void _msleep(u32 msec);
 #define usleep _usleep
 
 /* Abstract bootloader access */
@@ -199,6 +205,8 @@ void MCU_InitModules();
 int MCU_SetPin(struct mcu_pin *, const char *name);
 const char *MCU_GetPinName(char *str, struct mcu_pin *);
 void MCU_SerialNumber(u8 *var, int len);
+
+
 #ifdef MODULAR
   #define MODULE_CALLTYPE __attribute__((__long_call__))
 #else

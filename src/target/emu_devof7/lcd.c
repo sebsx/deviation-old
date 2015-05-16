@@ -29,7 +29,6 @@ struct rgb {
 };
 static const struct rgb background = {0x00, 0x00, 0xff};
 static const struct rgb foreground = {0xff, 0xff, 0xff};
-static int logical_lcd_width = LCD_WIDTH*LCD_WIDTH_MULT;
 
 static struct font_def default_font;
 static struct font_def big_font;
@@ -44,23 +43,14 @@ struct font_str cur_str;
  */
 void LCD_DrawPixel(unsigned int color)
 {
-	if (gui.x < LCD_WIDTH*LCD_CHAR_W && gui.y < LCD_HEIGHT*LCD_CHAR_H) {	// both are unsigned, can not be < 0
+	if (gui.x < IMAGE_X && gui.y < IMAGE_Y) {	// both are unsigned, can not be < 0
 		struct rgb c;
-		int row, col;
-		int i, j;
 		// for emulator of devo 10, 0x0 means white while others mean black
 		c = color ? foreground : background; // 0xaa is grey color(not dot)
 
-		//Fill in 4 dots
-		row = ZOOM_Y * gui.y;
-		col = ZOOM_X * gui.x;
-		for (i = 0; i < ZOOM_Y; i++) {
-			for (j = 0; j < ZOOM_X; j++) {
-				gui.image[3*(logical_lcd_width* (row + i) + col + j)]     = c.r;
-				gui.image[3*(logical_lcd_width* (row + i) + col + j) + 1] = c.g;
-				gui.image[3*(logical_lcd_width* (row + i) + col + j) + 2] = c.b;
-			}
-		}
+		gui.image[3*(gui.y*IMAGE_X + gui.x) + 0] = c.r;
+		gui.image[3*(gui.y*IMAGE_X + gui.x) + 1] = c.g;
+		gui.image[3*(gui.y*IMAGE_X + gui.x) + 2] = c.b;
 	}
 	// this must be executed to continue drawing in the next row
     gui.x++;
@@ -120,7 +110,7 @@ void LCD_PrintCharXY(unsigned int x, unsigned int y, u32 c)
 {
     u8 row, col, width;
     c = IA9211_map_char(c);
-    int font_size = cur_str.font.height / CHAR_HEIGHT;
+    int font_size = cur_str.font.zoom;
 
     const u8 *offset = char_offset(c, &width);
     if (! offset || ! width) {
@@ -165,6 +155,7 @@ void close_font()
 void open_font(struct font_def *font, const u8 *data, int fontidx)
 {
     font->height = *data;
+    font->zoom = *data / CHAR_HEIGHT;
     font->idx = fontidx;
     font->data = data;
     int idx = 0;

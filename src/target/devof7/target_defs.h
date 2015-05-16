@@ -6,7 +6,15 @@
 #define TXID 0xF7
 #define VECTOR_TABLE_LOCATION 0x3000 //0x3000
 #define SPIFLASH_SECTOR_OFFSET 0
-#define SPIFLASH_SECTORS 512
+#define SPIFLASH_SECTORS 16
+#define SPIFLASH_AAI_AF 1
+#define USE_DEVOFS 1
+
+#define LCD_WIDTH 24
+#define LCD_HEIGHT 12
+
+#define CHAR_WIDTH 12
+#define CHAR_HEIGHT 18
 
 #if defined BUILDTYPE_DEV && ! defined EMULATOR
 //No room for debug and standard gui
@@ -26,6 +34,7 @@
 #define HAS_LAYOUT_EDITOR   0
 #define HAS_EXTRA_SWITCHES  0
 #define HAS_MULTIMOD_SUPPORT 1
+#define HAS_MAPPED_GFX      0
 
 #define NO_LANGUAGE_SUPPORT 1
 

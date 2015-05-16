@@ -8,14 +8,13 @@
 #define LCD_ALIGN_LEFT      0
 #define LCD_ALIGN_CENTER    1
 #define LCD_ALIGN_RIGHT     2
-#define CHAR_HEIGHT         1
 
 struct FAT FontFAT;
 
 struct font_def 
 {
         u8 idx;
-        u8 height;          /* Character height for storage        */
+        u8 zoom;            /* size relative to a 1x1 character */
 };
 struct font_str {
     struct font_def font;
