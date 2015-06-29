@@ -26,11 +26,12 @@
 #define SWITCH_NONE ((1 << INP_SWA0) | (1 << INP_SWA1) | (1 << INP_SWA2) \
                    | (1 << INP_SWB0) | (1 << INP_SWB1) | (1 << INP_SWB2))
 
-const u8 adc_chan_sel[NUM_ADC_CHANNELS] = {10, 12, 13, 11, 16, 14};
+const u8 adc_chan_sel[NUM_ADC_CHANNELS] = {10, 12, 13, 11, 0, 4, 16, 14};
 extern u32 global_extra_switches;
 void CHAN_Init()
 {
     rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPCEN);
+    rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN);
     ADC_Init();
 
     /* configure channels for analog */
@@ -38,6 +39,9 @@ void CHAN_Init()
     gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO1);
     gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO2);
     gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO3);
+    /* Extra 2 analog channels */
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO0);
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO4);
     /* Enable Voltage measurement */
     gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO4);
 
@@ -55,6 +59,8 @@ s32 CHAN_ReadRawInput(int channel)
     case INP_AILERON:   value = adc_array_raw[1]; break;  // bug fix: right horizon
     case INP_RUDDER: value = adc_array_raw[2]; break;  // bug fix: left horizon
     case INP_ELEVATOR:  value = adc_array_raw[3]; break;  // bug fix: left vertical
+    case INP_AUX4:     value = adc_array_raw[4]; break;
+    case INP_AUX5:     value = adc_array_raw[5]; break;
     case INP_HOLD0:    value = gpio_get(GPIOC, GPIO11); break;
     case INP_HOLD1:    value = ! gpio_get(GPIOC, GPIO11); break;
     case INP_FMOD0:    value = gpio_get(GPIOC, GPIO10); break;

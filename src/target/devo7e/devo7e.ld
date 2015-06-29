@@ -8,8 +8,8 @@ MEMORY
            this makes it easier to run analysis and choose functions to
            reduce.  The 2nd pass will properly check the actual memory usage
          */
-	rom (rx) : ORIGIN = 0x08003000, LENGTH = 128K
-	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 16K
+	rom (rx) : ORIGIN = 0x08003000, LENGTH = 244K
+	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 48K
 }
 _crc_offset = 0x2000; /* CRC is located at 0x08005000 */
 INCLUDE target/common/devo/devo.ld
