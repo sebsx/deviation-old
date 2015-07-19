@@ -253,6 +253,48 @@ int get_button(SDL_Keysym *key)
     return -1;
 }
 
+void close_window()
+{
+    char tmp[256];
+    sprintf(tmp, "%s & %s", _tr("Save"), _tr("Exit"));
+    const SDL_MessageBoxButtonData buttons[] = {
+        { /* .flags, .buttonid, .text */        0, 0, tmp},
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, _tr("Exit") },
+    };
+    const SDL_MessageBoxData messageboxdata = {
+        SDL_MESSAGEBOX_INFORMATION, /* .flags */
+        NULL, /* .window */
+        _tr("Exit"), /* .title */
+        "", /* .message */
+        SDL_arraysize(buttons), /* .numbuttons */
+        buttons, /* .buttons */
+        NULL //&colorScheme /* .colorScheme */
+    };
+    int buttonid;
+    if (SDL_ShowMessageBox(&messageboxdata, &buttonid) < 0) {
+        SDL_Log("error displaying message box");
+    }
+    if (buttonid == 0) {
+        CONFIG_SaveModelIfNeeded();
+        CONFIG_SaveTxIfNeeded();
+    }
+}
+
+void update_mouse(int x, int y)
+{
+   if (x < 0)
+        x = 0;
+   if (x >= LCD_WIDTH)
+        x = LCD_WIDTH -1;
+   if (y < 0)
+        y = 0;
+   if (y >= LCD_HEIGHT)
+        y = LCD_HEIGHT -1;
+   gui.mouse = 1;
+   gui.mousex = calibration.xscale * x / 0x10000 + calibration.xoffset;
+   gui.mousey = calibration.yscale * y / 0x10000 + calibration.yoffset;
+}
+
 void PWR_Sleep()
 {
     SDL_Event event;
@@ -406,6 +448,29 @@ void PWR_Sleep()
             }
             break;
         }
+        case SDL_MOUSEBUTTONDOWN: {
+            if (event.button.button == SDL_BUTTON_LEFT)
+                update_mouse(event.button.x, event.button.y);
+            break;
+        }
+        case SDL_MOUSEBUTTONUP: {
+            if (event.button.button == SDL_BUTTON_LEFT)
+                gui.mouse = 0;
+            break;
+        }
+        case SDL_MOUSEMOTION: {
+            if (! event.motion.state & SDL_BUTTON_LMASK)
+                break;
+            int x = event.motion.x;
+            int y = event.motion.y; //FIXME - image_ypos;
+            update_mouse(x, y);
+            break;
+        }
+        case SDL_QUIT: {
+            close_window();
+            exit(0);
+            break;
+        }
     }
 }
 
@@ -457,4 +522,5 @@ struct touch SPITouch_GetCoords() {
 
 int SPITouch_IRQ()
 {
+    return gui.mouse;
 }
