@@ -31,7 +31,7 @@ else
     ifndef SOUND
         CFLAGS += -DNO_SOUND
     else
-        LFLAGS := $(LFLAGS) -lportaudio
+        LFLAGS := $(LFLAGS) -lportaudio -lm
     endif
 endif
 else #BUILD_TARGET

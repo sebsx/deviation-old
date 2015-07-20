@@ -1,3 +1,4 @@
+#if 0
 /*
  *
  * This program uses the PortAudio Portable Audio Library.
@@ -182,4 +183,5 @@ void SOUND_Stop()
 {
     Pa_StopStream( paData.stream );
 }
+#endif
 #endif

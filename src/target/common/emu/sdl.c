@@ -174,7 +174,7 @@ uint32_t tick_callbackfunc(uint32_t interval, void *param)
 
 void CLOCK_Init()
 {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER );
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO);
     SDL_AddTimer(100, tick_callbackfunc, NULL);
 }
 
