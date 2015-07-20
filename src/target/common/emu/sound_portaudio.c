@@ -1,4 +1,3 @@
-#if 0
 /*
  *
  * This program uses the PortAudio Portable Audio Library.
@@ -24,6 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#ifndef USE_SDL
+
 #include <stdio.h>
 #include <math.h>
 #include "common.h"
@@ -184,4 +185,4 @@ void SOUND_Stop()
     Pa_StopStream( paData.stream );
 }
 #endif
-#endif
+#endif //USE_SDL

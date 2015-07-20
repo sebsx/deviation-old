@@ -12,6 +12,7 @@
     You should have received a copy of the GNU General Public License
     along with Deviation.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef USE_SDL
 #define _WIN32_WINNT 0x0500
 #include <SDL2/SDL.h>
 #include <sys/time.h>
@@ -524,3 +525,4 @@ int SPITouch_IRQ()
 {
     return gui.mouse;
 }
+#endif //USE_SDL

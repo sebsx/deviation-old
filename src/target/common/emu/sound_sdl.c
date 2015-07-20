@@ -23,6 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#ifdef USE_SDL
 #include <stdio.h>
 #include <math.h>
 #include "common.h"
@@ -32,17 +33,18 @@
 #endif
 
 #define TABLE_SIZE   (250)
+
 #ifdef NO_SOUND
 void SOUND_SetFrequency(unsigned freq, unsigned volume) {(void)freq; (void)volume;}
 void SOUND_Init() {}
-void SOUND_Start(unsigned msec, u16(*_next_note_cb)()) {
+void SOUND_Start(unsigned msec, u16(*next_note_cb)()) {
     (void)msec;
-    (void)_next_note_cb;
+    (void)next_note_cb;
     printf("beep\n");
 }
-void SOUND_StartWithoutVibrating(unsigned msec, u16(*_next_note_cb)()) {
+void SOUND_StartWithoutVibrating(unsigned msec, u16(*next_note_cb)()) {
     (void)msec;
-    (void)_next_note_cb;
+    (void)next_note_cb;
     printf("beep\n");
 }
 void SOUND_Stop() {}
@@ -161,4 +163,5 @@ void SOUND_Stop()
 {
     SDL_PauseAudioDevice(AudioDevice, 1);
 }
-#endif
+#endif //NO_SOUND
+#endif //USE_SDL
