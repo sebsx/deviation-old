@@ -1,11 +1,23 @@
 ifndef BUILD_TARGET
 
-#SRC_CXX  = $(wildcard target/$(TARGET)/*.cpp) $(wildcard target/common/emu/*.cpp)
 SRC_C  = $(wildcard target/$(TARGET)/*.c) $(wildcard target/common/emu/*.c)
 
-#LFLAGS = -lfltk
-LFLAGS = -lSDL2
-CFLAGS = -DEMULATOR -Itarget/common/emu
+ifdef SDL
+  LFLAGS = -lSDL2 -lm
+  CFLAGS += -DUSE_SDL
+else
+  LFLAGS = -lfltk
+  SRC_CXX  = $(wildcard target/$(TARGET)/*.cpp) $(wildcard target/common/emu/*.cpp)
+  ifneq "$(strip $(WINDOWS) $(SOUND))" ""
+    LFLAGS += -lportaudio -lm
+  else
+    CFLAGS += -DNO_SOUND
+  endif
+  ifndef WINDOWS
+    LFLAGS += `fltk-config --cxxflags --ldflags` -lrt
+  endif
+endif
+CFLAGS += -DEMULATOR -Itarget/common/emu
 
 ALL = $(TARGET).$(EXEEXT)
 
@@ -22,17 +34,10 @@ ifdef WINDOWS
     else
         LFLAGS += -static-libgcc -static-libstdc++
     endif
-    LFLAGS := -L$(FLTK_DIR)/lib -L$(PORTAUDIO_DIR)/lib $(LFLAGS) -lole32 -luuid -lcomctl32 -lwsock32 -lgdi32 -lcomdlg32 -lportaudio 
+    LFLAGS := -L$(FLTK_DIR)/lib -L$(PORTAUDIO_DIR)/lib $(LFLAGS) -lole32 -luuid -lcomctl32 -lwsock32 -lgdi32 -lcomdlg32
     CFLAGS += -I$(FLTK_DIR)/include -I$(PORTAUDIO_DIR)/include -DWIN32
     EXEEXT = exe
     ODIREXT = -w32
-else
-    LFLAGS := $(LFLAGS) `fltk-config --cxxflags --ldflags` -lrt
-    ifndef SOUND
-        CFLAGS += -DNO_SOUND
-    else
-        LFLAGS := $(LFLAGS) -lportaudio -lm
-    endif
 endif
 else #BUILD_TARGET
 
