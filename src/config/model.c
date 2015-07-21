@@ -19,6 +19,7 @@
 #include "tx.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stddef.h>
 
 struct Model Model;
 /*set this to write all model data even if it is the same as the default */
@@ -28,6 +29,12 @@ const char * const MODEL_TYPE_VAL[MODELTYPE_LAST] = { "heli", "plane", "multi" }
 const char * const RADIO_TX_POWER_VAL[TXPOWER_LAST] =
      { "100uW", "300uW", "1mW", "3mW", "10mW", "30mW", "100mW", "150mW" };
 
+struct ini_params {
+    const char *section;
+    const char *name;
+    const char *value;
+    int value_int;
+};
 #define MATCH_SECTION(s) (strcasecmp(section, s) == 0)
 #define MATCH_START(x,y) (strncasecmp(x, y, sizeof(y)-1) == 0)
 #define MATCH_KEY(s)     (strcasecmp(name,    s) == 0)
@@ -484,10 +491,11 @@ static int layout_ini_handler(void* user, const char* section, const char* name,
 
 struct struct_map {const char *str;  u16 offset; u16 defval;};
 #define MAPSIZE(x)  (sizeof(x) / sizeof(struct struct_map))
-#define OFFSET(s,v) (((long)(&s.v) - (long)(&s)) | ((sizeof(s.v)-1) << 13))
-#define OFFSETS(s,v) (((long)(&s.v) - (long)(&s)) | ((sizeof(s.v)+3) << 13))
-#define OFFSET_SRC(s,v) (((long)(&s.v) - (long)(&s)) | (2 << 13))
-#define OFFSET_BUT(s,v) (((long)(&s.v) - (long)(&s)) | (6 << 13))
+#define _OFFSET(s,v)    (offsetof(typeof(s), v))
+#define OFFSET(s,v)     (_OFFSET(s, v) | ((sizeof(s.v)-1) << 13))
+#define OFFSETS(s,v)    (_OFFSET(s, v) | ((sizeof(s.v)+3) << 13))
+#define OFFSET_SRC(s,v) (_OFFSET(s, v) | (2 << 13))
+#define OFFSET_BUT(s,v) (_OFFSET(s, v) | (6 << 13))
 static const struct struct_map _secnone[] =
 {
     {PERMANENT_TIMER, OFFSET(Model, permanent_timer), 0},
@@ -538,39 +546,43 @@ static const struct struct_map _secppm[] = {
     {PPMIN_DELTAPW,  OFFSET(Model, ppmin_deltapw), 0},
     {PPMIN_SWITCH,   OFFSET_SRC(Model, train_sw), 0xFFFF},
 };
-static int ini_handler(void* user, const char* section, const char* name, const char* value)
+
+int assign_int(struct ini_params *params, void* ptr, const struct struct_map *map, int map_size)
 {
-    int value_int = atoi(value);
-    struct Model *m = (struct Model *)user;
-int assign_int(void* ptr, const struct struct_map *map, int map_size)
-{
+    const char *name = params->name;
     for(int i = 0; i < map_size; i++) {
         if(MATCH_KEY(map[i].str)) {
             int size = map[i].offset >> 13;
             int offset = map[i].offset & 0x1FFF;
             switch(size) {
                 case 0:
-                    *((u8 *)((long)ptr + offset)) = value_int; break;
+                    *((u8 *)((long)ptr + offset)) = params->value_int; break;
                 case 1:
-                    *((u16 *)((long)ptr + offset)) = value_int; break;
+                    *((u16 *)((long)ptr + offset)) = params->value_int; break;
                 case 2:
-                    *((u8 *)((long)ptr + offset)) = get_source(section, value); break;
+                    *((u8 *)((long)ptr + offset)) = get_source(params->section, params->value); break;
                 case 3:
-                    *((u32 *)((long)ptr + offset)) = value_int; break;
+                    *((u32 *)((long)ptr + offset)) = params->value_int; break;
                 case 4:
-                    *((s8 *)((long)ptr + offset)) = value_int; break;
+                    *((s8 *)((long)ptr + offset)) = params->value_int; break;
                 case 5:
-                    *((s16 *)((long)ptr + offset)) = value_int; break;
+                    *((s16 *)((long)ptr + offset)) = params->value_int; break;
                 case 6:
-                    *((u8 *)((long)ptr + offset)) = get_button(section, value); break;
+                    *((u8 *)((long)ptr + offset)) = get_button(params->section, params->value); break;
                 case 7:
-                    *((s32 *)((long)ptr + offset)) = value_int; break;
+                    *((s32 *)((long)ptr + offset)) = params->value_int; break;
             }
             return 1;
         }
     }
     return 0;
 }
+
+static int ini_handler(void* user, const char* section, const char* name, const char* value)
+{
+    int value_int = atoi(value);
+    struct ini_params params = {section, name, value, value_int};
+    struct Model *m = (struct Model *)user;
     CLOCK_ResetWatchdog();
     unsigned i;
     if (MATCH_SECTION("")) {
@@ -586,7 +598,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             CONFIG_ParseIconName(m->icon, value);
             return 1;
         }
-        if(assign_int(&Model, _secnone, MAPSIZE(_secnone)))
+        if(assign_int(&params, &Model, _secnone, MAPSIZE(_secnone)))
             return 1;
         if (MATCH_KEY(MODEL_TYPE)) {
             for (i = 0; i < NUM_STR_ELEMS(MODEL_TYPE_VAL); i++) {
@@ -622,7 +634,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             printf("Unknown protocol: %s\n", value);
             return 1;
         }
-        if(assign_int(&Model, _secradio, MAPSIZE(_secradio)))
+        if(assign_int(&params, &Model, _secradio, MAPSIZE(_secradio)))
             return 1;
         if (MATCH_KEY(RADIO_TX_POWER)) {
             for (i = 0; i < NUM_STR_ELEMS(RADIO_TX_POWER_VAL); i++) {
@@ -662,7 +674,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             m->mixers[idx].dest = get_source(section, value) - NUM_INPUTS - 1;
             return 1;
         }
-        if(assign_int(&m->mixers[idx], _secmixer, MAPSIZE(_secmixer)))
+        if(assign_int(&params, &m->mixers[idx], _secmixer, MAPSIZE(_secmixer)))
             return 1;
         if (MATCH_KEY(MIXER_USETRIM)) {
             MIXER_SET_APPLY_TRIM(&m->mixers[idx], value_int);
@@ -731,7 +743,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             return 1;
         }
        
-        if(assign_int(&m->limits[idx], _seclimit, MAPSIZE(_seclimit)))
+        if(assign_int(&params, &m->limits[idx], _seclimit, MAPSIZE(_seclimit)))
             return 1;
         if (MATCH_KEY(CHAN_LIMIT_MIN)) {
             m->limits[idx].min = -value_int;
@@ -789,7 +801,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             return 1;
         }
         idx--;
-        if(assign_int(&m->trims[idx], _sectrim, MAPSIZE(_sectrim)))
+        if(assign_int(&params, &m->trims[idx], _sectrim, MAPSIZE(_sectrim)))
             return 1;
         if (MATCH_KEY(TRIM_SWITCH)) {
             for (int i = 0; i <= NUM_SOURCES; i++) {
@@ -834,7 +846,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
                 m->swash_invert |= 0x04;
             return 1;
         }
-        if(assign_int(m, _secswash, MAPSIZE(_secswash)))
+        if(assign_int(&params, m, _secswash, MAPSIZE(_secswash)))
             return 1;
     }
     if (MATCH_START(section, SECTION_TIMER)) {
@@ -858,7 +870,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             printf("%s: Unknown timer type: %s\n", section, value);
             return 1;
         }
-        if(assign_int(&m->timer[idx], _sectimer, MAPSIZE(_sectimer)))
+        if(assign_int(&params, &m->timer[idx], _sectimer, MAPSIZE(_sectimer)))
             return 1;
     }
     if (MATCH_START(section, SECTION_TELEMALARM)) {
@@ -955,7 +967,7 @@ int assign_int(void* ptr, const struct struct_map *map, int map_size)
             }
             return 1;
         }
-        if(assign_int(m, _secppm, MAPSIZE(_secppm)))
+        if(assign_int(&params, m, _secppm, MAPSIZE(_secppm)))
             return 1;
         if (MATCH_START(name, PPMIN_MAP)) {
             u8 idx = atoi(name + sizeof(PPMIN_MAP)-1) -1;

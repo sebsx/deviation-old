@@ -14,14 +14,14 @@
 */
 #ifdef USE_SDL
 #define _WIN32_WINNT 0x0500
-#include <SDL2/SDL.h>
+#include "SDL2/SDL.h"
 #include <sys/time.h>
 
 #include "common.h"
 #include "fltk.h"
 #include "mixer.h"
 #include "config/tx.h"
-#include "fltk_resample.h"
+//#include "fltk_resample.h"
 
 #define FL_Left   SDLK_LEFT
 #define FL_Right  SDLK_RIGHT
