@@ -95,7 +95,7 @@ const char *utf8_to_u32(const char *str, u32 *ch)
 
 //strlcpy from
 //http://stackoverflow.com/questions/1453876/why-does-strncpy-not-null-terminate
-size_t strlcpy(char* dst, const char* src, size_t bufsize)
+size_t _strlcpy(char* dst, const char* src, size_t bufsize)
 {
   size_t srclen =strlen(src);
   size_t result =srclen; /* Result is always the length of the src string */
