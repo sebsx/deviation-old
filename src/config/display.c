@@ -177,7 +177,7 @@ static int assign_int(struct ini_params *params, void* ptr, const struct struct_
     return 0;
 }
 
-static int ini_handler(void* user, const char* section, const char* name, const char* value)
+int CONFIG_Display_INI_Handler(void* user, const char* section, const char* name, const char* value)
 {
     u8 idx;
     struct display_settings *d = (struct display_settings *)user;
@@ -256,11 +256,16 @@ static int ini_handler(void* user, const char* section, const char* name, const 
     return 1;
 }
 
-u8 CONFIG_ReadDisplay()
+void CONFIG_DisplayInit()
 {
     memset(&Display, 0, sizeof(Display));
     DEFAULT_FONT.font = 7;
     DEFAULT_FONT.font_color = 0xffff;
+
+}
+u8 CONFIG_ReadDisplay()
+{
+    CONFIG_DisplayInit();
     char filename[] = "media/config.ini\0\0\0"; // placeholder for longer folder name
     #ifdef _DEVO12_TARGET_H_
     static u8 checked;
@@ -274,5 +279,5 @@ u8 CONFIG_ReadDisplay()
             checked = 1;
         }
     #endif
-    return CONFIG_IniParse(filename, ini_handler, (void *)&Display);
+    return CONFIG_IniParse(filename, CONFIG_Display_INI_Handler, (void *)&Display);
 }
