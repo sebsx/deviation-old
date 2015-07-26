@@ -1,4 +1,3 @@
-#include <FL/Fl_Image.H>
 #include <string.h>
 
 
@@ -177,10 +176,7 @@
 
 
 
-namespace { // anonymous namespace
-
-
-unsigned get_resample_scale(unsigned w1, unsigned w2) {
+static unsigned get_resample_scale(unsigned w1, unsigned w2) {
   if(w2<w1) {
 #ifdef FL_RESAMPLE_EXPERIMENTAL
     if(!(w1%w2)) return w1 /w2;
@@ -191,7 +187,7 @@ unsigned get_resample_scale(unsigned w1, unsigned w2) {
 }
 
 // resampling fron "unsigned char" to intermediate "unsigned int" array. The function returns the scalling factor.
-unsigned resample(unsigned w1, unsigned w2, const unsigned char * source, unsigned * target, int source_stride, int target_stride, unsigned sets, int source_set_stride, int target_set_stride) {
+static unsigned _resample(unsigned w1, unsigned w2, const unsigned char * source, unsigned * target, int source_stride, int target_stride, unsigned sets, int source_set_stride, int target_set_stride) {
   if(w2<w1) {
 #ifdef FL_RESAMPLE_EXPERIMENTAL
     if(!(w1%w2)) {
@@ -219,7 +215,7 @@ unsigned resample(unsigned w1, unsigned w2, const unsigned char * source, unsign
 }
 
 // resampling from intermediate "unsigned" to final "unsigned char" with scalling
-void resample_scale(unsigned w1, unsigned w2, const unsigned * source, unsigned char * target, int source_stride, int target_stride, unsigned sets, int source_set_stride, int target_set_stride, unsigned long long scale) {
+static void resample_scale_ll(unsigned w1, unsigned w2, const unsigned * source, unsigned char * target, int source_stride, int target_stride, unsigned sets, int source_set_stride, int target_set_stride, unsigned long long scale) {
   unsigned long long sc_add = scale / 2;
   if(w2<w1) {
 #ifdef FL_RESAMPLE_EXPERIMENTAL
@@ -247,7 +243,7 @@ void resample_scale(unsigned w1, unsigned w2, const unsigned * source, unsigned 
 }
 
 // direct resampling  "unsigned char" to  "unsigned char" with scalling
-void resample_scale(unsigned w1, unsigned w2, const unsigned char * source, unsigned char * target, int source_stride, int target_stride, unsigned sets, int source_set_stride, int target_set_stride, unsigned scale) {
+static void resample_scale(unsigned w1, unsigned w2, const unsigned char * source, unsigned char * target, int source_stride, int target_stride, unsigned sets, int source_set_stride, int target_set_stride, unsigned scale) {
   unsigned sc_add = scale / 2;
   if(w2<w1) {
 #ifdef FL_RESAMPLE_EXPERIMENTAL
@@ -288,7 +284,7 @@ void resample_scale(unsigned w1, unsigned w2, const unsigned char * source, unsi
 // target_row_stride - pointer shift between rows for the resampled image. If 0, target_row_stride = w2 * pixel_stride.
 // The function returns the "target" parameter or pointer to newly allocated data (if target==0).
 
-  unsigned char * resample(int w2, int h2, const unsigned char * const source, int w1, int h1, int no_channels, int pixel_stride = 0, int row_stride = 0, unsigned char * target = 0, int target_pixel_stride = 0, int target_row_stride = 0) {
+unsigned char * resample(int w2, int h2, const unsigned char * const source, int w1, int h1, int no_channels, int pixel_stride /*= 0*/, int row_stride /*= 0*/, unsigned char * target /*= 0*/, int target_pixel_stride /*= 0*/, int target_row_stride /*= 0*/) {
     if(!pixel_stride) pixel_stride = no_channels;
     if(!row_stride) row_stride = pixel_stride * w1;
     const unsigned char * src = source;
@@ -309,8 +305,6 @@ void resample_scale(unsigned w1, unsigned w2, const unsigned char * source, unsi
 
 
     int size = target_row_stride *h2;
-    if(!target)
-      target = new unsigned char[size];
 
     if(w1==w2 && h1==h2) { // direct copy
       if(target_pixel_stride==pixel_stride) {
@@ -354,7 +348,7 @@ void resample_scale(unsigned w1, unsigned w2, const unsigned char * source, unsi
     // First we try to find optimal approach to minimize intermediate data size:
 
     int s = w2 * h1;
-    bool rows_first = 1;
+    int rows_first = 1;
     {
       int s2 = w1 * h2;
       if(s2<s) {
@@ -363,26 +357,24 @@ void resample_scale(unsigned w1, unsigned w2, const unsigned char * source, unsi
       }
     }
 
-    unsigned * buffer = new unsigned[s]; // intermediate buffer
+    unsigned * buffer = (unsigned *)malloc(s* sizeof(unsigned)); // intermediate buffer
     unsigned long long scale = ((unsigned long long)(get_resample_scale(w1, w2))) * ((unsigned long long)(get_resample_scale(h1, h2)));
 
     if(rows_first) {
       for(int ch = 0; ch< no_channels; ch++) {
-        resample(w1, w2, source + ch, buffer, pixel_stride, 1, h1, row_stride, w2);
-        resample_scale(h1, h2, buffer, target + ch, w2, target_row_stride, w2, 1, target_pixel_stride, scale);
+        _resample(w1, w2, source + ch, buffer, pixel_stride, 1, h1, row_stride, w2);
+        resample_scale_ll(h1, h2, buffer, target + ch, w2, target_row_stride, w2, 1, target_pixel_stride, scale);
       }
     } else {
       for(int ch = 0; ch< no_channels; ch++) {
-        resample(h1, h2, source + ch, buffer, row_stride, w1, w1, pixel_stride, 1);
-        resample_scale(w1, w2, buffer, target + ch, 1, target_pixel_stride, h2, w1, target_row_stride, scale);
+        _resample(h1, h2, source + ch, buffer, row_stride, w1, w1, pixel_stride, 1);
+        resample_scale_ll(w1, w2, buffer, target + ch, 1, target_pixel_stride, h2, w1, target_row_stride, scale);
       }
     }
-    delete[] buffer;
+    free(buffer);
     return target;
 
   }
-
-}  // end of anonymous namespace
 
 void pixel_mult(unsigned char *dest, const unsigned char *src, unsigned x, unsigned y, unsigned scale_x, unsigned scale_y, unsigned bytes_per_pixel) {
     for (unsigned i = 0; i < y; i++) {
@@ -397,25 +389,3 @@ void pixel_mult(unsigned char *dest, const unsigned char *src, unsigned x, unsig
         }
     }
 }
-// This is  a simple function to replace Fl_RGB_Image::copy().
-// Note a clumsy hack to detect Fl_RGB_IMAGE (or subclass) using count(0 and d() methods
-// (RTTI users can modify this using dynamic_cast< >() function)
-// If it is Fl_Bitmap or Fl_Pixmap original resampling methods are used.
-/*
-Fl_Image * fl_copy_image(Fl_Image * im, int w2, int h2) {
-  if(im->count()!=1 || !im->d()) // birmap or pixmap
-    return im->copy(w2, h2);
-
-  int ld = im->ld();
-  int w1 = im->w();
-  int pixel_stride = im->d();
-  int row_stride = ld? ld : pixel_stride * w1 ;
-
-  const unsigned char * data = (const unsigned char *)(*(im->data()));
-  unsigned char * array = resample(w2, h2, data, w1, im->h(), pixel_stride, pixel_stride, row_stride);
-  Fl_RGB_Image * ni =   new Fl_RGB_Image(array, w2, h2, pixel_stride);
-  ni->alloc_array = 1;
-  return ni;
-
-}
-*/

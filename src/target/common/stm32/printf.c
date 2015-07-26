@@ -103,22 +103,21 @@ static char a2i(char ch, const char** src,int base,int* nump)
     return ch;
     }
 
-static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, va_list va)
-    {
-    int bufsize = 0;
-    char bf[12];
-    
-    char ch;
-
-    void _putc(char ch)
-    {
-        if (buffer_len != INT32_MIN && bufsize + 1 >= buffer_len)
+struct params {
+    void *putp;
+    putcf putf;
+    int buffer_len;
+    int bufsize;
+};
+static void _putc(char ch, struct params *params)
+{
+        if (params->buffer_len != INT32_MIN && params->bufsize + 1 >= params->buffer_len)
             return;
-        putf(putp, ch);
-        bufsize++;
-    }
-    void _putchw(int n, char z, char* bf)
-    {
+        params->putf(params->putp, ch);
+        params->bufsize++;
+}
+void _putchw(int n, char z, char* bf, struct params *params)
+{
         char fc=z? '0' : ' ';
         char* p=bf;
         int i;
@@ -127,23 +126,29 @@ static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, v
                 n--;
         }
         int len = (p - bf) + n - 1;
-        if (buffer_len != INT32_MIN && buffer_len - bufsize - 1 < len)
-            len = buffer_len - bufsize - 1;
+        if (params->buffer_len != INT32_MIN && params->buffer_len - params->bufsize - 1 < len)
+            len = params->buffer_len - params->bufsize - 1;
         for (i = 0; i < len; i++) {
             if(n) {
-                putf(putp,fc);
+                params->putf(params->putp,fc);
                 n--;
             } else {
-                putf(putp, *bf++);
+                params->putf(params->putp, *bf++);
             }
         }
-        bufsize += len;
-    }
+        params->bufsize += len;
+}
+static void tfp_format(struct params *params, const char *fmt, va_list va)
+    {
+    char bf[12];
+    
+    char ch;
+
 
 
     while ((ch=*(fmt++))) {
         if (ch!='%') 
-            _putc(ch);
+            _putc(ch, params);
         else {
             char lz=0;
 #ifdef  PRINTF_LONG_SUPPORT
@@ -171,7 +176,7 @@ static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, v
                     else
 #endif
                     ui2a(va_arg(va, unsigned int),10,0,bf);
-                    _putchw(w,lz,bf);
+                    _putchw(w,lz,bf, params);
                     break;
                     }
                 case 'd' :  {
@@ -181,7 +186,7 @@ static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, v
                     else
 #endif
                     i2a(va_arg(va, int),bf);
-                    _putchw(w,lz,bf);
+                    _putchw(w,lz,bf, params);
                     break;
                     }
                 case 'x': case 'X' : 
@@ -191,16 +196,16 @@ static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, v
                     else
 #endif
                     ui2a(va_arg(va, unsigned int),16,(ch=='X'),bf);
-                    _putchw(w,lz,bf);
+                    _putchw(w,lz,bf, params);
                     break;
                 case 'c' : 
-                    _putc((char)(va_arg(va, int)));
+                    _putc((char)(va_arg(va, int)), params);
                     break;
                 case 's' : 
-                    _putchw(w,0,va_arg(va, char*));
+                    _putchw(w,0,va_arg(va, char*), params);
                     break;
                 case '%' :
-                    _putc(ch);
+                    _putc(ch, params);
                 default:
                     break;
                 }
@@ -213,8 +218,9 @@ static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, v
 void tfp_printf(const char *fmt, ...)
     {
     va_list va;
+    struct params params = {stdout_putp, stdout_putf, INT32_MIN, 0};
     va_start(va,fmt);
-    tfp_format(stdout_putp, stdout_putf, INT32_MIN, fmt, va);
+    tfp_format(&params, fmt, va);
     va_end(va);
     }
 
@@ -223,23 +229,26 @@ void tfp_printf(const char *fmt, ...)
 void tfp_sprintf(char* s, const char *fmt, ...)
     {
     va_list va;
+    struct params params = {&s, putcp, INT32_MIN, 0};
     va_start(va,fmt);
-    tfp_format(&s, putcp, INT32_MIN, fmt, va);
+    tfp_format(&params, fmt, va);
     va_end(va);
     }
 
 void tfp_snprintf(char* s, int len, const char *fmt, ...)
     {
     va_list va;
+    struct params params = {&s, putcp, len, 0};
     va_start(va,fmt);
-    tfp_format(&s, putcp, len, fmt, va);
+    tfp_format(&params, fmt, va);
     va_end(va);
     }
 
 void tfp_fprintf(FILE* fh, const char *fmt, ...)
     {
     va_list va;
+    struct params params = {fh, fputf, INT32_MIN, 0};
     va_start(va,fmt);
-    tfp_format(fh, fputf, INT32_MIN, fmt, va);
+    tfp_format(&params, fmt, va);
     va_end(va);
     }
