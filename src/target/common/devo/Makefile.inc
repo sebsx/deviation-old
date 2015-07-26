@@ -20,6 +20,11 @@ ifdef MODULAR
 PROTO_EXTRA_C = $(wildcard $(SDIR)/target/common/devo/protocol/*.c) \
                 $(wildcard $(SDIR)/target/common/devo/hid/*.c) \
                 $(wildcard $(SDIR)/protocol/spi/*.c)
+
+INI_C =    $(SDIR)/target/common/devo/javascript/main.c \
+           $(SDIR)/screen/$(SCREENSIZE)/lcd_string.c \
+           $(SDIR)/misc.c \
+           $(SDIR)/config/display.c
 else
 SRC_C   += $(wildcard $(SDIR)/target/common/devo/protocol/*.c) \
            $(wildcard $(SDIR)/target/common/devo/hid/*.c)
@@ -35,7 +40,7 @@ LFLAGS2OPT  = -Wl,-T$(SDIR)/target/$(TARGET)/$(TARGET)_opt.ld
 
 #-lnosys
 
-ALL = $(LIBOPENCM3) $(TARGET).dfu
+ALL = $(LIBOPENCM3) $(TARGET).dfu $(TARGET).js
 
 else #BUILD_TARGET
 
@@ -68,5 +73,14 @@ $(ODIR)/%.bin: $(ODIR)/%.o_ $(PROTO_LINKFILE) $(PROTO_EXTRA_OBJS) $(TARGET).bin
 		--cref -T$(PROTO_LINKFILE) --just-symbols=$(SYMBOL_FILE)
 	$(DUMP) -t $(@:.bin=.elf) | grep -q _from_thumb; if [ $$? -eq 0 ]; then echo "ERROR: Bad address found"; false; else true; fi
 	$(CP) -O binary  $(@:.bin=.elf) $@
+
+$(TARGET).js: $(INI_C)
+	emcc -o $@ -O2 \
+		-I$(SDIR)/. \
+		-I$(SDIR)/target/$(TARGET) \
+		-I$(SDIR)/target/common/devo/petit_fat \
+		-I$(SDIR)/target/common/devo/devofs \
+		-I$(SDIR)/gui/$(SCREENSIZE) \
+		$(INI_C)
 
 endif #BUILD_TARGET

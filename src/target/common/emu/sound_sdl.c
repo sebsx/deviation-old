@@ -23,18 +23,17 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#ifdef USE_SDL
 #include <stdio.h>
 #include <math.h>
 #include "common.h"
-
-#define SAMPLE_RATE   (44100)
-#define FRAMES_PER_BUFFER  (64)
 
 #ifndef M_PI
 #define M_PI  (3.14159265)
 #endif
 
 #define TABLE_SIZE   (250)
+
 #ifdef NO_SOUND
 void SOUND_SetFrequency(unsigned freq, unsigned volume) {(void)freq; (void)volume;}
 void SOUND_Init() {}
@@ -51,11 +50,19 @@ void SOUND_StartWithoutVibrating(unsigned msec, u16(*next_note_cb)()) {
 void SOUND_Stop() {}
 #else
 
-#include "portaudio.h"
+#include "SDL/SDL.h"
 
-struct {
-    PaStreamParameters outputParameters;
-    PaStream *stream;
+static uint32_t sampleRate = 48000;
+static uint32_t floatStreamLength = 2048;// must be a power of two, decrease to allow for a lower syncCompensationFactor to allow for lower latency, increase to reduce risk of underrun
+
+static SDL_AudioDeviceID AudioDevice;
+static SDL_AudioSpec audioSpec;
+
+static u16(*next_note_cb)() = NULL;
+
+static struct {
+    //PaStreamParameters outputParameters;
+    //PaStream *stream;
 
     float sine[TABLE_SIZE];
     int table_size;
@@ -73,7 +80,7 @@ void SOUND_SetFrequency(unsigned freq, unsigned volume)
         paData.table_size = TABLE_SIZE;
         volume = 0;
     } else {
-        paData.table_size = SAMPLE_RATE / freq;
+        paData.table_size = sampleRate / freq;
     }
     for(i = 0; i < paData.table_size; i++)
         paData.sine[i] = (float)volume / 100.0 * sin( ((double)i/(double)paData.table_size) * M_PI * 2. );
@@ -83,103 +90,78 @@ void SOUND_SetFrequency(unsigned freq, unsigned volume)
 ** It may called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
 */
-static int paCallback( const void *inputBuffer, void *outputBuffer,
-                            unsigned long framesPerBuffer,
-                            const PaStreamCallbackTimeInfo* timeInfo,
-                            PaStreamCallbackFlags statusFlags,
-                            void *userData )
-{
+void audioCallback(void *userData, uint8_t *outputBuffer, int byteStreamLength) {
     float *out = (float*)outputBuffer;
-    unsigned long i;
-
-    (void) timeInfo; /* Prevent unused variable warnings. */
-    (void) statusFlags;
-    (void) inputBuffer;
-    u16(*next_note_cb)() = (u16(*)())userData;
-    for (i=0; i<framesPerBuffer; i++ )
+    int i;
+    (void)userData;
+    int sampleLength = byteStreamLength / sizeof(float) / 2;
+    for (i=0; i<sampleLength; i++ )
     {
         *out++ = paData.sine[paData.phase];
         *out++ = paData.sine[paData.phase];
         paData.phase+=1;
         paData.duration--;
         if (! paData.duration) {
-            if (next_note_cb == NULL)
-                return paComplete;
-            u16 msec = next_note_cb();
-            if(! msec)
-                return paComplete;
-            paData.duration = SAMPLE_RATE * (long)msec / 1000;
+            u16 msec;
+            if (next_note_cb == NULL || (msec = next_note_cb()) == 0) {
+                while (++i < sampleLength) {
+                    *out++ = 0;
+                    *out++ = 0;
+                }
+                SOUND_Stop();
+                return;
+            }
+            paData.duration = sampleRate * (long)msec / 1000;
             paData.phase = 0;
         }
         if (paData.phase >= paData.table_size) {
             paData.phase -= paData.table_size;
         }
     }
-    
-    return paContinue;
 }
 
 void SOUND_Init()
 {
-    PaError err;
+    static SDL_AudioSpec spec;
+
+    spec.callback = audioCallback;
+    spec.userdata = NULL;
+    spec.freq     = sampleRate;
+    spec.channels = 2;
+    spec.samples  = floatStreamLength;
+    spec.format   = AUDIO_F32;
     memset(&paData, 0, sizeof(paData));
-    err = Pa_Initialize();
-    if( err != paNoError ) {
-        printf("Sound initialization failed.  Disabling sound\n");
-        Pa_Terminate();
+    AudioDevice = SDL_OpenAudioDevice(NULL, 0, &spec, &audioSpec, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+
+    if (AudioDevice == 0) {
+        printf("\nFailed to open audio: %s\n", SDL_GetError());
         return;
     }
-    paData.outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
-    if (paData.outputParameters.device == paNoDevice) {
-      printf("Error: No default output device.\n");
-      Pa_Terminate();
-      return;
+    if (audioSpec.format != spec.format) {
+        printf("\nCouldn't get Float32 audio format.\n");
+        return;
     }
-    paData.outputParameters.channelCount = 2;       /* stereo output */
-    paData.outputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
-    paData.outputParameters.suggestedLatency =
-              Pa_GetDeviceInfo( paData.outputParameters.device )->defaultLowOutputLatency;
-    paData.outputParameters.hostApiSpecificStreamInfo = NULL;
+    sampleRate = audioSpec.freq;
     paData.enable = 1;
 }
 
-void SOUND_StartWithoutVibrating(unsigned msec, u16(*next_note_cb)())
+void SOUND_StartWithoutVibrating(unsigned msec, u16(*_next_note_cb)())
 {
-    SOUND_Start(msec, next_note_cb);
+    SOUND_Start(msec, _next_note_cb);
 }
 
-void SOUND_Start(unsigned msec, u16(*next_note_cb)()) {
-    PaError err;
+void SOUND_Start(unsigned msec, u16(*_next_note_cb)()) {
     if (! paData.enable)
         return;
     SOUND_Stop();
-    paData.duration = SAMPLE_RATE * (long)msec / 1000;
-    err = Pa_OpenStream(
-              &paData.stream,
-              NULL, /* no input */
-              &paData.outputParameters,
-              SAMPLE_RATE,
-              FRAMES_PER_BUFFER,
-              paClipOff,      /* we won't output out of range samples so don't bother clipping them */
-              paCallback,
-              next_note_cb);
-    if (err != paNoError) {
-        printf("Sound Failed.  Disabling\n");
-        paData.enable = 0;
-        Pa_Terminate();
-        return;
-    }
-    err = Pa_StartStream(paData.stream);
-    if(err != paNoError) {
-        printf("Sound Failed.  Disabling\n");
-        paData.enable = 0;
-        Pa_Terminate();
-        return;
-    }
+    next_note_cb = _next_note_cb;
+    paData.duration = sampleRate * (long)msec / 1000;
+    SDL_PauseAudioDevice(AudioDevice, 0);// unpause audio.
 }
 
 void SOUND_Stop()
 {
-    Pa_StopStream( paData.stream );
+    SDL_PauseAudioDevice(AudioDevice, 1);
 }
-#endif
+#endif //NO_SOUND
+#endif //USE_SDL
