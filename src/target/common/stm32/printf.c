@@ -138,12 +138,13 @@ void _putchw(int n, char z, char* bf, struct params *params)
         }
         params->bufsize += len;
 }
-static void tfp_format(struct params *params, const char *fmt, va_list va)
+static void tfp_format(void* putp,putcf putf, int buffer_len, const char *fmt, va_list va)
     {
     char bf[12];
     
     char ch;
-
+    struct params _params = {putp, putf, buffer_len, 0};
+    struct params *params  = &_params;
 
 
     while ((ch=*(fmt++))) {
@@ -214,13 +215,11 @@ static void tfp_format(struct params *params, const char *fmt, va_list va)
     abort:;
     }
 
-
 void tfp_printf(const char *fmt, ...)
     {
     va_list va;
-    struct params params = {stdout_putp, stdout_putf, INT32_MIN, 0};
     va_start(va,fmt);
-    tfp_format(&params, fmt, va);
+    tfp_format(stdout_putp, stdout_putf, INT32_MIN, fmt, va);
     va_end(va);
     }
 
@@ -229,26 +228,23 @@ void tfp_printf(const char *fmt, ...)
 void tfp_sprintf(char* s, const char *fmt, ...)
     {
     va_list va;
-    struct params params = {&s, putcp, INT32_MIN, 0};
     va_start(va,fmt);
-    tfp_format(&params, fmt, va);
+    tfp_format(&s, putcp, INT32_MIN, fmt, va);
     va_end(va);
     }
 
 void tfp_snprintf(char* s, int len, const char *fmt, ...)
     {
     va_list va;
-    struct params params = {&s, putcp, len, 0};
     va_start(va,fmt);
-    tfp_format(&params, fmt, va);
+    tfp_format(&s, putcp, len, fmt, va);
     va_end(va);
     }
 
 void tfp_fprintf(FILE* fh, const char *fmt, ...)
     {
     va_list va;
-    struct params params = {fh, fputf, INT32_MIN, 0};
     va_start(va,fmt);
-    tfp_format(&params, fmt, va);
+    tfp_format(fh, fputf, INT32_MIN, fmt, va);
     va_end(va);
     }
