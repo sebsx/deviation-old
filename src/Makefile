@@ -148,11 +148,15 @@ HGTEST := $(shell mkdir -p $(ODIR); \
 #This section contains switches used for building#
 ##################################################
 ifeq "$(TYPE)" "dev"
-  CFLAGS   := $(CFLAGS) -g -DBUILDTYPE_DEV
+  CFLAGS   := $(CFLAGS) -DBUILDTYPE_DEV
 endif
 ifdef MODULAR
 CFLAGS   +=  -DMODULAR=$(MODULAR)
 endif
+
+#We must enable debug so we can extract the struct layout.
+#we'll remove it in a later step
+CFLAGS := $(CFLAGS) -g
 
 CFLAGS   := $(CFLAGS) -Wall -Wextra -Werror=undef -I. -D$(PROGMODE) -std=gnu99 -Itarget/$(TARGET) -Igui/$(SCREENSIZE) \
             -DHGVERSION="\"${HGVERSION}\""

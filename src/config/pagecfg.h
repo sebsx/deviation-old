@@ -2,6 +2,7 @@
 #define _PAGECFG_H_
 #define GUI_ADVANCED 1
 #include "gui/gui.h"
+#include "stddef.h"
 
 #define NUM_QUICKPAGES 4
 enum DisplayTrims {
@@ -77,6 +78,7 @@ struct elem {
 struct PageCfg2 {
     struct elem elem[NUM_ELEMS];
     u8 quickpage[NUM_QUICKPAGES];
+    u8 padding_1[3];
 };
 
 enum {

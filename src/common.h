@@ -53,6 +53,10 @@ int CONFIG_IniParse(const char* filename,
 u8 CONFIG_IsModelChanged();
 u8 CONFIG_SaveModelIfNeeded();
 void CONFIG_SaveTxIfNeeded();
+void CONFIG_BinRead(FILE *fh, void *data, int length);
+void CONFIG_BinWrite(FILE *fh, void *data, int length);
+void CONFIG_BinReadFile(char *file, void *data, int length);
+void CONFIG_BinWriteFile(char *file, void *data, int length);
 extern const char * const MODULE_NAME[TX_MODULE_LAST];
 
 /* LCD primitive functions */
