@@ -256,7 +256,7 @@ int CONFIG_Display_INI_Handler(void* user, const char* section, const char* name
     return 1;
 }
 
-void CONFIG_DisplayInit()
+inline void CONFIG_DisplayInit()
 {
     memset(&Display, 0, sizeof(Display));
     DEFAULT_FONT.font = 7;

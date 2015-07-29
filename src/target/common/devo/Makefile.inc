@@ -24,7 +24,10 @@ PROTO_EXTRA_C = $(wildcard $(SDIR)/target/common/devo/protocol/*.c) \
 INI_C =    $(SDIR)/target/common/devo/javascript/main.c \
            $(SDIR)/screen/$(SCREENSIZE)/lcd_string.c \
            $(SDIR)/misc.c \
-           $(SDIR)/config/display.c
+           $(SDIR)/target/common/emu/radio.c \
+           $(SDIR)/target/$(TARGET)/switchcfg.c \
+           $(SDIR)/config/display.c \
+           $(SDIR)/config/tx.c
 else
 SRC_C   += $(wildcard $(SDIR)/target/common/devo/protocol/*.c) \
            $(wildcard $(SDIR)/target/common/devo/hid/*.c)
@@ -40,7 +43,7 @@ LFLAGS2OPT  = -Wl,-T$(SDIR)/target/$(TARGET)/$(TARGET)_opt.ld
 
 #-lnosys
 
-ALL = $(LIBOPENCM3) $(TARGET).dfu $(TARGET).js
+ALL = $(LIBOPENCM3) $(TARGET).dfu
 
 else #BUILD_TARGET
 
@@ -52,6 +55,8 @@ ifdef OPTIMIZE_DFU
 	$(CC) -o $< $(OBJS) $(LIBOPENCM3) $(LFLAGS) $(LFLAGS2OPT) $(CFLAGS)
 endif
 ifdef MODULAR # the following builds a symbol file with thumb addresses (address+1 for functions, address+0 for variables)
+	@echo " + Searching for holes in structures"
+	$(SDIR)/../utils/elf_to_struct.pl -file objs/$(TARGET)/$(TARGET).elf -struct Transmitter -struct Model -struct display_settings >/dev/null
 	$(DUMP) -t $< | $(SDIR)/../utils/build_symbolfile.pl > $(SYMBOL_FILE)
 endif
 	$(CP) -O binary $< $@
@@ -75,7 +80,9 @@ $(ODIR)/%.bin: $(ODIR)/%.o_ $(PROTO_LINKFILE) $(PROTO_EXTRA_OBJS) $(TARGET).bin
 	$(CP) -O binary  $(@:.bin=.elf) $@
 
 $(TARGET).js: $(INI_C)
-	emcc -o $@ -O2 \
+	emcc -o $@ \
+                -s NO_EXIT_RUNTIME=1 \
+                -s EXPORTED_FUNCTIONS="['_CONFIG_TransmitterInit','_CONFIG_Transmitter_INI_Write', '_CONFIG_Transmitter_INI_Handler']" \
 		-I$(SDIR)/. \
 		-I$(SDIR)/target/$(TARGET) \
 		-I$(SDIR)/target/common/devo/petit_fat \

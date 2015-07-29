@@ -82,9 +82,10 @@ static const char * const TELEM_LENGTH_VAL[2] = { "meters", "feet" };
 #define MATCH_VALUE(s)   strcasecmp(value,   s) == 0
 #define NUM_STR_ELEMS(s) (sizeof(s) / sizeof(char *))
 
-static int ini_handler(void* user, const char* section, const char* name, const char* value)
+int CONFIG_Transmitter_INI_Handler(void* user, const char* section, const char* name, const char* value)
 {
-    struct Transmitter *t = (struct Transmitter *)user;
+    (void)user;
+    struct Transmitter *t = &Transmitter;
 
     s32 value_int = atoi(value);
     if (section[0] == '\0') {
@@ -235,17 +236,10 @@ static int ini_handler(void* user, const char* section, const char* name, const 
     return 0;
 }
 
-void CONFIG_WriteTx()
+void CONFIG_Transmitter_INI_Write(FILE * fh)
 {
-    int i;
-    FILE *fh;
     struct Transmitter *t = &Transmitter;
-    fh = fopen("tx.ini", "w");
-    if (! fh) {
-        printf("Couldn't open tx.ini\n");
-        return;
-    }
-    CONFIG_EnableLanguage(0);
+    int i;
     fprintf(fh, "%s=%d\n", CURRENT_MODEL, Transmitter.current_model);
     fprintf(fh, "%s=%d\n", LANGUAGE, Transmitter.language);
     fprintf(fh, "%s=%d\n", MUSIC_SHUTD, Transmitter.music_shutdown);
@@ -287,12 +281,23 @@ void CONFIG_WriteTx()
     fprintf(fh, "[%s]\n", SECTION_TELEMETRY);
     fprintf(fh, "%s=%s\n", TELEM_TEMP, TELEM_TEMP_VAL[(t->telem & TELEMUNIT_FAREN) ? 1 : 0]);
     fprintf(fh, "%s=%s\n", TELEM_LENGTH, TELEM_LENGTH_VAL[(t->telem & TELEMUNIT_FEET) ? 1 : 0]);
+}
 
+void CONFIG_WriteTx()
+{
+    FILE *fh;
+    fh = fopen("tx.ini", "w");
+    if (! fh) {
+        printf("Couldn't open tx.ini\n");
+        return;
+    }
+    CONFIG_EnableLanguage(0);
+    CONFIG_Transmitter_INI_Write(fh);
     CONFIG_EnableLanguage(1);
     fclose(fh);
 }
 
-void CONFIG_LoadTx()
+inline void CONFIG_TransmitterInit()
 {
     memset(&Transmitter, 0, sizeof(Transmitter));
     Transmitter.current_model = 1;
@@ -316,8 +321,17 @@ void CONFIG_LoadTx()
     CHAN_SetSwitchCfg("");
 #endif
     MCU_InitModules();
+}
+
+void CONFIG_LoadTx()
+{
+    CONFIG_TransmitterInit();
     CONFIG_LoadHardware();
-    CONFIG_IniParse("tx.ini", ini_handler, (void *)&Transmitter);
+    #ifdef MODULAR
+        CONFIG_BinReadFile("tx.ini", (void *)&Transmitter, sizeof(struct Transmitter));
+    #else
+        CONFIG_IniParse("tx.ini", CONFIG_Transmitter_INI_Handler, (void *)&Transmitter);
+    #endif
     crc32 = Crc(&Transmitter, sizeof(Transmitter));
     return;
 }
@@ -328,5 +342,9 @@ void CONFIG_SaveTxIfNeeded()
     if (crc32 == newCrc)
         return;
     crc32 = newCrc;
-    CONFIG_WriteTx();
+    #ifdef MODULAR
+        CONFIG_BinWriteFile("tx.ini", (void *)&Transmitter, sizeof(struct Transmitter));
+    #else
+        CONFIG_WriteTx();
+    #endif
 }
