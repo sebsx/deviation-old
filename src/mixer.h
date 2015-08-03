@@ -41,7 +41,7 @@ enum Safety {
     SAFE_COUNT,
 };
 
-enum Mode {
+packed_enum Mode {
     MODE_1=1,
     MODE_2=2,
     MODE_3=3,
@@ -55,7 +55,7 @@ enum PPMInMode {
     PPM_IN_SOURCE,
 };
 
-enum CurveType {
+packed_enum CurveType {
     CURVE_NONE,
     CURVE_FIXED,
     CURVE_MIN_MAX,
@@ -109,7 +109,7 @@ enum MuxType {
     MUX_LAST,
 };
 
-enum SwashType {
+packed_enum SwashType {
     SWASH_TYPE_NONE,
     SWASH_TYPE_120,
     SWASH_TYPE_120X,

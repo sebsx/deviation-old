@@ -4,9 +4,10 @@ SRC_C  = $(wildcard target/$(TARGET)/*.c) $(wildcard target/common/emu/*.c)
 
 ifdef SDL
   LFLAGS = -lSDL2 -lm
-  CFLAGS += -DUSE_SDL -s USE_SDL=2
-  EXEEXT = html
-  CC = emcc
+  #CFLAGS += -DUSE_SDL -s USE_SDL=2
+  CFLAGS += -DUSE_SDL 
+  #EXEEXT = html
+  CC = clang
 else
   LFLAGS = -lfltk
   SRC_CXX  = $(wildcard target/$(TARGET)/*.cpp) $(wildcard target/common/emu/*.cpp)

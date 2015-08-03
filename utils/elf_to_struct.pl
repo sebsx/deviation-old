@@ -70,6 +70,12 @@ sub process_elf {
                             } else {
                                 $array{$id}{size} = $1+1;
                             }
+                        } elsif (/DW_AT_count\s+:.*\s(\d+)\s*$/) {
+                            if ($array{$id}{size}) {
+                                $array{$id}{size} *= $1;
+                            } else {
+                                $array{$id}{size} = $1;
+                            }
                         }
                     }
                 }

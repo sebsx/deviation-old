@@ -27,7 +27,8 @@ INI_C =    $(SDIR)/target/common/devo/javascript/main.c \
            $(SDIR)/target/common/emu/radio.c \
            $(SDIR)/target/$(TARGET)/switchcfg.c \
            $(SDIR)/config/display.c \
-           $(SDIR)/config/tx.c
+           $(SDIR)/config/tx.c \
+           $(SDIR)/config/binini.c
 else
 SRC_C   += $(wildcard $(SDIR)/target/common/devo/protocol/*.c) \
            $(wildcard $(SDIR)/target/common/devo/hid/*.c)
@@ -82,7 +83,7 @@ $(ODIR)/%.bin: $(ODIR)/%.o_ $(PROTO_LINKFILE) $(PROTO_EXTRA_OBJS) $(TARGET).bin
 $(TARGET).js: $(INI_C)
 	emcc -o $@ \
                 -s NO_EXIT_RUNTIME=1 \
-                -s EXPORTED_FUNCTIONS="['_CONFIG_TransmitterInit','_CONFIG_Transmitter_INI_Write', '_CONFIG_Transmitter_INI_Handler']" \
+                -s EXPORTED_FUNCTIONS="['_CONFIG_TransmitterInit','_CONFIG_Transmitter_INI_Write', '_CONFIG_Transmitter_INI_Handler', '_CONFIG_Transmitter_BinWrite', '_CONFIG_BinRead']" \
 		-I$(SDIR)/. \
 		-I$(SDIR)/target/$(TARGET) \
 		-I$(SDIR)/target/common/devo/petit_fat \

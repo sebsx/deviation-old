@@ -41,7 +41,7 @@ enum KeyboardType {
     KEYBOARD_SPECIAL,
 };
 
-enum LabelType {
+packed_enum LabelType {
     LABEL_NO_BOX,
     LABEL_CENTER,
     LABEL_FILL,

@@ -78,7 +78,7 @@ struct disp_metrics {
     u8 line_space;
 };
 
-enum DispFlags {
+packed_enum DispFlags {
     BAR_TRANSPARENT   = 0x01,
     TRIM_TRANSPARENT  = 0x02,
     SHOW_TIME         = 0x40,
