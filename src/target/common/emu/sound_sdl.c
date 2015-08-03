@@ -50,7 +50,7 @@ void SOUND_StartWithoutVibrating(unsigned msec, u16(*next_note_cb)()) {
 void SOUND_Stop() {}
 #else
 
-#include "SDL/SDL.h"
+#include "SDL2/SDL.h"
 
 static uint32_t sampleRate = 48000;
 static uint32_t floatStreamLength = 2048;// must be a power of two, decrease to allow for a lower syncCompensationFactor to allow for lower latency, increase to reduce risk of underrun

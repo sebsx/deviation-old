@@ -11,7 +11,7 @@
 #define MIN_PERALERT_TIME 0
 #define MAX_PERALERT_TIME 60
 
-enum TimerType {
+packed_enum TimerType {
     TIMER_STOPWATCH,
     TIMER_STOPWATCH_PROP,
     TIMER_COUNTDOWN,

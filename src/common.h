@@ -9,6 +9,7 @@
 //#define ctassert(n,e) extern unsigned char n[(e)?0:-1]
 #define ctassert(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]
 #define _UNUSED __attribute__ ((unused))
+#define packed_enum enum __attribute__((packed))
 
 #define TEMPSTRINGLENGTH 400 //This is the max dialog size (80 characters * 5 lines)
                              //We could reduce this to ~240 on the 128x64 screens
@@ -118,7 +119,7 @@ int PAGE_GetID();
 
 /* Protocol */
 #define PROTODEF(proto, module, map, init, name) proto,
-enum Protocols {
+packed_enum Protocols {
     PROTOCOL_NONE,
     #include "protocol/protocol.h"
     PROTOCOL_COUNT,
@@ -128,14 +129,14 @@ extern const u8 *ProtocolChannelMap[PROTOCOL_COUNT];
 extern const char * const ProtocolNames[PROTOCOL_COUNT];
 #define PROTO_MAP_LEN 5
 
-enum ModelType {
+packed_enum ModelType {
     MODELTYPE_HELI,
     MODELTYPE_PLANE,
     MODELTYPE_MULTI,
 };
 #define MODELTYPE_LAST (MODELTYPE_MULTI + 1)
 
-enum TxPower {
+packed_enum TxPower {
     TXPOWER_100uW,
     TXPOWER_300uW,
     TXPOWER_1mW,
@@ -209,7 +210,7 @@ void DEBUGLOG_Putc(char c);
 u8 BATTERY_Check();
 
 /* Mixer mode */
-typedef enum {
+typedef packed_enum {
     MIXER_ADVANCED = 0,
     MIXER_STANDARD,
     MIXER_ALL,

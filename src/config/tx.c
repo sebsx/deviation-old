@@ -297,7 +297,7 @@ void CONFIG_WriteTx()
     fclose(fh);
 }
 
-inline void CONFIG_TransmitterInit()
+void CONFIG_TransmitterInit()
 {
     memset(&Transmitter, 0, sizeof(Transmitter));
     Transmitter.current_model = 1;
@@ -347,4 +347,9 @@ void CONFIG_SaveTxIfNeeded()
     #else
         CONFIG_WriteTx();
     #endif
+}
+
+void CONFIG_Transmitter_BinWrite(FILE *fh)
+{
+    CONFIG_BinWrite(fh, (void *)&Transmitter, sizeof(struct Transmitter));
 }

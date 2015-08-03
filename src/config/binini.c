@@ -23,15 +23,21 @@
 ## else if length == 0, read next byte as length, and fill length bytes with 0
 ## Repeat until EOF
 */
-static void write_zeros(FILE *fh, int count)
-{
-    while(count--) {
-        fputc(0, fh);
-    }
-}
 static void write_data(FILE *fh, u8 *data, int count)
 {
-    fwrite(data, 1, count, fh);
+    if (count > 0) {
+        fputc(count & 0xff, fh);
+        fputc((count >> 8) & 0xff, fh);
+        fwrite(data, 1, count, fh);
+    }
+}
+static void write_zeros(FILE *fh, int count)
+{
+    u8 c[3] = {0, 0, count};
+    fwrite(c, 1, 3, fh);
+    //fputc(0, fh);
+    //fputc(0, fh);
+    //fputc(count, fh);
 }
 void CONFIG_BinWrite(FILE *fh, void *data, int len)
 {
@@ -42,14 +48,17 @@ void CONFIG_BinWrite(FILE *fh, void *data, int len)
     const int min_zeros = 6;
 
     while (ptr < (u8*)data+len) {
+        fprintf(NULL, "%02x ", *ptr);
         if (*ptr == 0 && zeros < 255) {
             zeros++;
         } else {
            if (zeros) {
                if (zeros >= min_zeros) {
+                   fprintf(NULL, "\n--\n");
                    write_data(fh, last_write, count);
                    write_zeros(fh, zeros);
-                   last_write = ptr+1;
+                   last_write = ptr;
+                   count = 0;
                } else {
                    count += zeros;
                }
@@ -60,9 +69,6 @@ void CONFIG_BinWrite(FILE *fh, void *data, int len)
         ptr++;
     }
     //No need to write zeros at end of file
-    if (zeros < min_zeros) {
-        count += zeros;
-    }
     write_data(fh, last_write, count);
 } 
 
