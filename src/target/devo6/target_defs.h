@@ -18,7 +18,7 @@
 #define HAS_DATALOG         1
 #define HAS_SCANNER         1
 #define HAS_MULTIMOD_SUPPORT 1
-#define HAS_EXTRA_SWITCHES  0
+#define HAS_EXTRA_SWITCHES  1
 #define HAS_VIDEO           0
 
 #ifdef BUILDTYPE_DEV
@@ -36,7 +36,7 @@
 #define NUM_OUT_CHANNELS 12
 #define NUM_VIRT_CHANNELS 10
 
-#define NUM_TRIMS 6
+#define NUM_TRIMS 10
 #define NUM_TOGGLES 4
 #define MAX_POINTS 13
 #define NUM_MIXERS ((NUM_OUT_CHANNELS + NUM_VIRT_CHANNELS) * 4)
