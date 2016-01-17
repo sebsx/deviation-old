@@ -112,15 +112,15 @@ static int row_cb(int absrow, int relrow, int y, void *data)
             value = batalarm_select_cb;
             break;
         case ITEM_ALARM_INTV:
-            label = _tr_noop("Alarm intvl");
+            label = _tr_noop("Alarm interval");
             value = batalarmwarn_select_cb;
             break;
         case ITEM_PWR_ALARM:
-            label = _tr_noop("PwrOn alarm");
+            label = _tr_noop("Idle alert");
             value = poweralarm_select_cb;
             break;
         case ITEM_PWRDN_ALARM:
-            label = _tr_noop("PwrDn alert");
+            label = _tr_noop("Poweroff tone");
             value = _music_shutdown_cb;
             break;
         case ITEM_BACKLIGHT:
@@ -142,15 +142,15 @@ static int row_cb(int absrow, int relrow, int y, void *data)
             break;
         case ITEM_PREALERT:
             title = _tr_noop("Timer settings");
-            label = _tr_noop("Prealert time");
+            label = _tr_noop("Pre-alert time");
             value = prealert_time_cb; data = (void *)0L; x = MED_SEL_X_OFFSET;
             break;
         case ITEM_PREALERT_IVAL:
-            label = _tr_noop("Prealert intvl");
+            label = _tr_noop("Pre-alert interval");
             value = timer_interval_cb; data = &Transmitter.countdown_timer_settings.prealert_interval; x = SMALL_SEL_X_OFFSET;
             break;
         case ITEM_TIMEUP:
-            label = _tr_noop("Timeup intvl");
+            label = _tr_noop("Time-up interval");
             value = timer_interval_cb; data = &Transmitter.countdown_timer_settings.timeup_interval; x = SMALL_SEL_X_OFFSET;
             break;
         case ITEM_TELEMTEMP:
@@ -159,7 +159,7 @@ static int row_cb(int absrow, int relrow, int y, void *data)
             value = units_cb; data = (void *)1L;
             break;
         case ITEM_TELEMLEN:
-            label = _tr_noop("Length");
+            label = _tr_noop("Distance");
             value = units_cb; data = (void *)0L;
             break;
     }
