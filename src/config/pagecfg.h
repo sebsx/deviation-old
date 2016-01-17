@@ -90,6 +90,7 @@ enum {
     ELEM_MODELICO,
     ELEM_BATTERY,
     ELEM_TXPOWER,
+    ELEM_PROTO,
     ELEM_LAST,
 };
 
