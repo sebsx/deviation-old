@@ -24,7 +24,7 @@
 enum {
     LABELNUM_X        = 0,
     LABELNUM_WIDTH    = 16,
-    LABEL_X           = 17,
+    LABEL_X           = 5,
     LABEL_WIDTH       = 0,
 };
 #endif //OVERRIDE_PLACEMENT
@@ -115,8 +115,6 @@ static int row_cb(int absrow, int relrow, int y, void *data)
         if (menu_item_type == MENUTYPE_SUBMENU &&  group != menus[i].menu_num)
             continue;
         if (idx == absrow) {
-            GUI_CreateLabelBox(&gui->idx[relrow], LABELNUM_X, y,
-                LABELNUM_WIDTH, LINE_HEIGHT,  &DEFAULT_FONT, idx_string_cb, NULL, (void *)(absrow+ 1L));
             GUI_CreateLabelBox(&gui->name[relrow], LABEL_X, y,
                 LABEL_WIDTH, LINE_HEIGHT, &labelDesc, menu_name_cb, menu_press_cb, (const void *)(long)i);
             break;
@@ -174,14 +172,6 @@ const char *menu_name_cb(guiObject_t *obj, const void *data)
     if (menus[i].name != NULL)
         return _tr(menus[i].name);
     return PAGE_GetName(menus[i].id);
-}
-
-const char *idx_string_cb(guiObject_t *obj, const void *data)
-{
-    (void)obj;
-    u8 idx = (long)data;
-    sprintf(tempstring, "%d.", idx);
-    return tempstring;
 }
 
 static unsigned action_cb(u32 button, unsigned flags, void *data)

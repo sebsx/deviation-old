@@ -149,9 +149,13 @@ static void _edit_cb(guiObject_t *obj, const void *data)
     tp->index = (long)data;
     tp->trim = trim[tp->index];
     PAGE_RemoveAllObjects();
-    PAGE_ShowHeader(_tr("Edit")); // to draw a line only
-
-    GUI_CreateButtonPlateText(&guit->save, BUTTON2_X, BUTTON2_Y, BUTTON2_WIDTH, LINE_HEIGHT,
+    // PAGE_ShowHeader(_tr("Edit")); // to draw a line only
+    enum LabelType oldType = labelDesc.style;
+    labelDesc.style = LABEL_UNDERLINE;
+    GUI_CreateLabelBox(&guit->title, 0, 0, LCD_WIDTH - BUTTON2_WIDTH - 2, HEADER_HEIGHT,
+            &labelDesc, NULL, NULL,  _tr("Edit"));
+    labelDesc.style = oldType;
+    GUI_CreateButtonPlateText(&guit->save, BUTTON2_X, BUTTON2_Y+1, BUTTON2_WIDTH, LINE_HEIGHT,
             &DEFAULT_FONT, NULL, 0x0000, okcancel_cb, (void *)_tr("Save"));
     GUI_CreateScrollable(&gui->scrollable, 0, HEADER_HEIGHT, LCD_WIDTH, LCD_HEIGHT - HEADER_HEIGHT,
                          LINE_SPACE, ITEM_LAST, row2_cb, getobj2_cb, NULL, NULL);

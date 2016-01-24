@@ -50,7 +50,7 @@ static void _show_titlerow()
 
     labelDesc.style = LABEL_UNDERLINE;
     labelDesc.font_color = labelDesc.fill_color = labelDesc.outline_color = 0xffff;
-    GUI_CreateLabelBox(&gui->chan, LABEL_X, 0 , TYPE_X - LABEL_X, HEADER_HEIGHT, &labelDesc,
+    GUI_CreateLabelBox(&gui->chan, LABEL_X, 0, TYPE_X - LABEL_X, HEADER_HEIGHT, &labelDesc,
             MIXPAGE_ChanNameProtoCB, NULL, (void *)((long)mp->cur_mixer->dest));
     labelDesc.style = LABEL_CENTER;
     GUI_CreateTextSelectPlate(&gui->tmpl, TYPE_X, 0,  TYPE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, templatetype_cb, (void *)((long)mp->channel));

@@ -263,7 +263,7 @@ static const char *poweralarm_select_cb(guiObject_t *obj, int dir, void *data)
             0 , MAX_POWER_ALARM, dir, 1 , 5 , &changed);
     if( 0 == Transmitter.power_alarm)
 	return _tr("Off");
-    sprintf(tempstring, "%2dmn", Transmitter.power_alarm);
+    sprintf(tempstring, "%2dm", Transmitter.power_alarm);
     return tempstring;
 }
 
