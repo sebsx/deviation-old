@@ -45,12 +45,15 @@ void _DrawButton(struct guiObject *obj)
     if (box->height == 0)
         h = text_h;
     if (obj == objSELECTED) {
-        LCD_FillRoundRect(obj->box.x, obj->box.y, w, h , BUTTON_ROUND, 1);
+        //LCD_FillRoundRect(obj->box.x, obj->box.y, w, h , BUTTON_ROUND, 1);
+        LCD_FillRect(obj->box.x, obj->box.y, w, h, 1);
         LCD_SetFontColor(0);
     }  else {
-        LCD_FillRoundRect(obj->box.x, obj->box.y, w, h , BUTTON_ROUND, 0); // clear the background
+        //LCD_FillRoundRect(obj->box.x, obj->box.y, w, h , BUTTON_ROUND, 0); // clear the background
+        LCD_FillRect(obj->box.x, obj->box.y, w, h, 0); // clear the background
         if (button->enable)
-            LCD_DrawRoundRect(obj->box.x, obj->box.y, w, h , BUTTON_ROUND,  1);
+            // LCD_DrawRoundRect(obj->box.x, obj->box.y, w, h , BUTTON_ROUND,  1);
+            LCD_DrawLine(obj->box.x, obj->box.y + h - 1, obj->box.x + w - 1, obj->box.y + h - 1, 1);
         /* Bracket style button, disable temporarily
         u16 y1 = obj->box.y + 2;
         u16 y2 = obj->box.y + obj->box.height -3;
