@@ -39,6 +39,8 @@ enum {
      BATTERY_H    = 6,
      TXPOWER_W    = 26,
      TXPOWER_H    = 6,
+     PROTO_W      = 26,
+     PROTO_H      = 6,
 //
     MODEL_NAME_X  = 0,
     MODEL_NAME_Y  = 1,
