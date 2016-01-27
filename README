@@ -1,3 +1,16 @@
+What's this? 
+
+This is a fork of Deviation with some UI modifications aimed at B&W screens, such as Devo 10 and Devo 7E.
+Some features:
+
+- default to more lines per screen
+- buttons & spin selects shape changed from rounded rectangle to underline only
+- some more screen elements are (re)movable, such as protocol
+- misc alignment fixes here and there
+- English strings changed where better alternatives were available (ex: PwrOn Alarm -> Idle Alert, etc)
+
+
+---- 8< -----
 You an find information about nightly builds and team deviationTx development on the team devaitionTx wik: https://bitbucket.org/deviationtx/deviation/wiki/Home
 
 Bugs can be reported and features requested at http://deviationtx.com/mantisbt/
