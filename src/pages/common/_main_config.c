@@ -90,7 +90,8 @@ const char *GetElemName(int type)
         case ELEM_HTRIM:    return _tr("H-trim");
         case ELEM_MODELICO: return _tr("Model");
         case ELEM_BATTERY:  return _tr("Battery");
-        case ELEM_TXPOWER:  return _tr("TxPower");
+        case ELEM_TXPOWER:  return _tr("Power");
+        case ELEM_PROTO:    return _tr("Protocol");
     }
     return "";
 }

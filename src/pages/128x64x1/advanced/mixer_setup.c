@@ -50,7 +50,7 @@ static void _show_titlerow()
 
     labelDesc.style = LABEL_UNDERLINE;
     labelDesc.font_color = labelDesc.fill_color = labelDesc.outline_color = 0xffff;
-    GUI_CreateLabelBox(&gui->chan, LABEL_X, 0 , TYPE_X - LABEL_X, HEADER_HEIGHT, &labelDesc,
+    GUI_CreateLabelBox(&gui->chan, LABEL_X, 0, TYPE_X - LABEL_X, HEADER_HEIGHT, &labelDesc,
             MIXPAGE_ChanNameProtoCB, NULL, (void *)((long)mp->cur_mixer->dest));
     labelDesc.style = LABEL_CENTER;
     GUI_CreateTextSelectPlate(&gui->tmpl, TYPE_X, 0,  TYPE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, templatetype_cb, (void *)((long)mp->channel));
@@ -270,7 +270,7 @@ static int expo_row_cb(int absrow, int relrow, int y, void *data)
             tgl = sourceselect_cb; value = set_source_cb; data = &mp->mixer[0].src; input_value = set_input_source_cb;
             break;
         case COMMON_CURVE:
-            label = _tr("High-Rate");
+            label = _tr("Pos0");
             tgl = curveselect_cb; value = set_curvename_cb; data = &mp->mixer[0];
             break;
         case COMMON_SCALE:
@@ -345,9 +345,9 @@ static void _show_expo_dr()
     int left_side_num_elements = (LCD_HEIGHT - HEADER_HEIGHT) / LINE_SPACE;
     //left_side_num_elements = ((LINES_PER_ROW - 1) + left_side_num_elements) / LINES_PER_ROW;
     left_side_num_elements = left_side_num_elements - left_side_num_elements%2;
-    mp->firstObj = GUI_CreateScrollable(&gui->scrollable, 0, HEADER_HEIGHT, LEFT_VIEW_WIDTH + ARROW_WIDTH, 
+    mp->firstObj = GUI_CreateScrollable(&gui->scrollable, 0, HEADER_HEIGHT, LEFT_VIEW_WIDTH + ARROW_WIDTH,
                         left_side_num_elements * LINE_SPACE, LINE_SPACE, EXPO_LAST, expo_row_cb, expo_getobj_cb, expo_size_cb, NULL);
-    
+
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
                               CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
                               CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
