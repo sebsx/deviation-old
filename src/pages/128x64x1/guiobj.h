@@ -173,6 +173,7 @@ struct trim_obj {
 };
 struct trim2_obj {
     guiButton_t save;
+    guiLabel_t title;
     guiLabel_t label[7];
     guiTextSelect_t value[7];
     guiScrollable_t scrollable;
