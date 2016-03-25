@@ -276,6 +276,7 @@ void GetElementSize(unsigned type, u16 *w, u16 *h)
         [ELEM_MODELICO] = MODEL_ICO_W,
         [ELEM_BATTERY]  = BATTERY_W,
         [ELEM_TXPOWER]  = TXPOWER_W,
+        [ELEM_PROTO]    = PROTO_W,
     };
     const u8 height[ELEM_LAST] = {
         [ELEM_SMALLBOX] = SMALLBOX_H,
@@ -287,6 +288,7 @@ void GetElementSize(unsigned type, u16 *w, u16 *h)
         [ELEM_MODELICO] = MODEL_ICO_H,
         [ELEM_BATTERY]  = BATTERY_H,
         [ELEM_TXPOWER]  = TXPOWER_H,
+        [ELEM_PROTO]    = PROTO_H,
     };
     if (type == ELEM_MODELICO && Model.icon[0]) {
         if(LCD_ImageDimensions(CONFIG_GetCurrentIcon(), w, h))
@@ -411,6 +413,9 @@ void show_elements()
                 break; 
             case ELEM_TXPOWER:
                 GUI_CreateLabelBox(&gui->elem[i].box, x, y, w, h, &MICRO_FONT,  _power_to_string, NULL, NULL);
+                break;
+            case ELEM_PROTO:
+                GUI_CreateLabelBox(&gui->elem[i].box, x, y, w, h, &MICRO_FONT, NULL, NULL, ProtocolNames[Model.protocol]);
                 break; 
         }
     }

@@ -20,8 +20,8 @@
 enum {
     NAME_X = 0,
     NAME_W = 60,
-    SAVE_X = LCD_WIDTH - 60,
-    SAVE_W = 60,
+    SAVE_X = LCD_WIDTH - 40,
+    SAVE_W = 40,
     UNDERLINE = 1,
     LABEL_X = 0,
     LABEL_W = 74,
@@ -32,11 +32,11 @@ enum {
     TEXTSEL2_X = 50,
     TEXTSEL2_W = 24,
     VALUE_X = 0,
-    #define VALUE_Y_OFFSET LINE_SPACE
+    #define VALUE_Y_OFFSET LINE_HEIGHT
     GRAPH_X = 77,
-    #define GRAPH_Y LINE_HEIGHT
-    GRAPH_W = 50,
-    GRAPH_H = 50,
+    GRAPH_Y    = LCD_HEIGHT - 48,
+    GRAPH_W = 48,
+    GRAPH_H = 48,
 };
 #endif //OVERRIDE_PLACEMENT
 #include "../../common/advanced/_mixer_curves.c"
@@ -63,14 +63,14 @@ void MIXPAGE_EditCurves(struct Curve *curve, void *data)
     edit->curveptr = curve;
 
     labelDesc.style = LABEL_CENTER;
-    GUI_CreateTextSelectPlate(&gui->name, NAME_X, 0, NAME_W, HEADER_HEIGHT, &labelDesc, NULL, set_curvename_cb, NULL);
-    GUI_CreateButtonPlateText(&gui->save, SAVE_X, 0, SAVE_W, HEADER_WIDGET_HEIGHT, &labelDesc , NULL, 0, okcancel_cb, (void *)_tr("Save"));
+    GUI_CreateTextSelectPlate(&gui->name, NAME_X, 0, LCD_WIDTH - NAME_W - 1, HEADER_HEIGHT, &labelDesc, NULL, set_curvename_cb, NULL);
+    GUI_CreateButtonPlateText(&gui->save, SAVE_X, 1, SAVE_W, HEADER_HEIGHT, &labelDesc , NULL, 0, okcancel_cb, (void *)_tr("Save"));
     // Draw a line
     if (UNDERLINE)
-        GUI_CreateRect(&gui->rect, 0, HEADER_WIDGET_HEIGHT, LCD_WIDTH, 1, &labelDesc);
+        GUI_CreateRect(&gui->rect, 0, HEADER_WIDGET_HEIGHT+2, LCD_WIDTH - SAVE_W - 1, 1, &labelDesc);
 
-    u8 space = LINE_SPACE;
-    u8 y = space;
+    u8 space = LINE_HEIGHT;
+    u8 y = HEADER_HEIGHT + 1;
     labelDesc.style = LABEL_LEFT;
 
     if (type >= CURVE_3POINT) {
