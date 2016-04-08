@@ -73,7 +73,7 @@ void MIXPAGE_ChangeTemplate(int show_header)
         PAGE_RemoveAllObjects();
         _show_titlerow();
     } else {
-        GUI_RemoveHierObjects(mp->firstObj); 
+        GUI_RemoveHierObjects(mp->firstObj);
     }
     mp->firstObj = NULL;
     switch(mp->cur_template)  {
@@ -124,7 +124,7 @@ static u8 touch_cb(s16 x, s16 y, void *data);
 
 static void show_none()
 {
-    mp->firstObj = NULL;   
+    mp->firstObj = NULL;
     //Row 0
 }
 
@@ -139,7 +139,7 @@ static void toggle_trim_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
     (void)data;
-    
+
     u8 trim = MIXER_APPLY_TRIM(mp->cur_mixer) ? 1 : 0;
     MIXER_SET_APPLY_TRIM(mp->cur_mixer, trim ^ 0x01);
 }
@@ -168,7 +168,7 @@ void toggle_link_cb(guiObject_t *obj, const void *data)
 static const char *show_rate_cb(guiObject_t *obj, const void *data)
 {
     (void)obj;
-    return (long)data == 0 ? _tr("Mid-Rate") : _tr("Low-Rate");
+    return (long)data == 0 ? _tr("Pos1") : _tr("Pos2");
 }
 
 s32 eval_mixer_cb(s32 xval, void * data)
@@ -427,7 +427,7 @@ const char *set_drsource_cb(guiObject_t *obj, int dir, void *data)
                 else if(data == &mp->mixer[2].sw)
                     _update_rate_widgets(1);
             }
-        } else {    
+        } else {
             MIXPAGE_RedrawGraphs();
         }
     }
